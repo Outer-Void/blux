@@ -1,0 +1,37 @@
+contract: blux.capability-set
+contract_version: "1.0"
+capabilities:
+  - contract: blux.capability
+    contract_version: "1.0"
+    capability_id: notes.search
+    version: 0.1.0
+    summary: Full-text search over the local notes directory.
+    contract_versions: ["1.0"]
+    input_schema:
+      type: object
+      additionalProperties: false
+      required: [query]
+      properties:
+        query: {type: string, minLength: 1, maxLength: 256}
+        limit: {type: integer, minimum: 1, maximum: 100}
+    output_schema:
+      type: object
+      additionalProperties: false
+      required: [matches]
+      properties:
+        matches:
+          type: array
+          items:
+            type: object
+            required: [path, line]
+            properties:
+              path: {type: string}
+              line: {type: integer}
+    side_effects: read
+    required_permissions: ["fs:read:notes"]
+    idempotent: true
+    timeout_ms: 5000
+    provider:
+      repository: Outer-Void/example-notes
+      kind: subprocess
+      entrypoint: notes blux-capability notes.search

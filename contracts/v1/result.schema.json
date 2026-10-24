@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:result",
+  "title": "BLUX execution result",
+  "description": "Structured outcome of one execution request. succeeded carries output; failed (ran, then errored) and rejected (never ran) carry error.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract", "contract_version", "operation_id", "capability_id", "status",
+    "output", "error", "artifact_ids", "receipt_id", "started_at", "finished_at", "duration_ms"
+  ],
+  "properties": {
+    "contract": {"const": "blux.result"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "operation_id": {"$ref": "urn:blux:contract:v1:common#/$defs/operation_id"},
+    "capability_id": {
+      "oneOf": [
+        {"$ref": "urn:blux:contract:v1:common#/$defs/capability_id"},
+        {"type": "null"}
+      ]
+    },
+    "status": {"enum": ["succeeded", "failed", "rejected"]},
+    "output": {"type": ["object", "null"]},
+    "error": {
+      "oneOf": [
+        {"$ref": "urn:blux:contract:v1:error"},
+        {"type": "null"}
+      ]
+    },
+    "artifact_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "urn:blux:contract:v1:common#/$defs/artifact_id"}
+    },
+    "receipt_id": {"$ref": "urn:blux:contract:v1:common#/$defs/receipt_id"},
+    "started_at": {"$ref": "urn:blux:contract:v1:common#/$defs/timestamp"},
+    "finished_at": {"$ref": "urn:blux:contract:v1:common#/$defs/timestamp"},
+    "duration_ms": {"type": "integer", "minimum": 0}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "succeeded"}}},
+      "then": {"properties": {"output": {"type": "object"}, "error": {"type": "null"}}},
+      "else": {"properties": {"output": {"type": "null"}, "error": {"type": "object"}}}
+    }
+  ]
+}

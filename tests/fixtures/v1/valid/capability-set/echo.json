@@ -1,0 +1,65 @@
+{
+  "capabilities": [
+    {
+      "capability_id": "echo.test",
+      "contract": "blux.capability",
+      "contract_version": "1.0",
+      "contract_versions": [
+        "1.0"
+      ],
+      "idempotent": true,
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "maxLength": 4096,
+            "type": "string"
+          },
+          "uppercase": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "labels": {
+        "stage": "reference"
+      },
+      "output_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "length": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "uppercase": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "message",
+          "length",
+          "uppercase"
+        ],
+        "type": "object"
+      },
+      "provider": {
+        "entrypoint": "blux_runtime.builtin.echo:handle",
+        "kind": "builtin",
+        "repository": "Outer-Void/blux"
+      },
+      "required_permissions": [],
+      "side_effects": "none",
+      "summary": "Return the given message, optionally upper-cased, with its length.",
+      "timeout_ms": 1000,
+      "version": "1.0.0"
+    }
+  ],
+  "contract": "blux.capability-set",
+  "contract_version": "1.0"
+}

@@ -1,0 +1,13 @@
+{
+  "context_window_tokens": 4096,
+  "contract": "blux.model",
+  "contract_version": "1.0",
+  "deterministic": true,
+  "locality": "local",
+  "model_id": "blux/echo-model",
+  "name": "echo-model",
+  "provider": "blux",
+  "tasks": [
+    "text-generation"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "document": {
+    "actor": {
+      "id": "fixture",
+      "type": "user"
+    },
+    "capability_id": "echo.test",
+    "contract": "blux.execution",
+    "contract_version": "2.0",
+    "input": {
+      "message": "hello"
+    },
+    "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "parent_operation_id": null,
+    "project_id": "blux",
+    "requested_at": "2026-10-24T00:00:00.000Z",
+    "session_id": "ses_01JAAAAAAAAAAAAAAAAAAAAAAA"
+  },
+  "expect": "UNSUPPORTED_CONTRACT_VERSION"
+}

@@ -1,0 +1,16 @@
+contract: blux.policy
+contract_version: "1.0"
+policy_id: example-notes
+default_effect: deny
+rules:
+  - rule_id: deny-agents-everything-but-read
+    effect: deny
+    capabilities: ["notes.*"]
+    actor_types: [agent]
+    reason: agents are limited to the explicit read rule below
+  - rule_id: allow-users-search
+    effect: allow
+    capabilities: [notes.search]
+    actor_types: [user]
+    max_side_effects: read
+    grants: ["fs:read:notes"]

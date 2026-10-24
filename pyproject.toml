@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "outervoid-blux"
+version = "0.1.0"
+description = "BLUX reference runtime and the `blux` command line (Contract v1)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+authors = [{ name = "Outer-Void" }]
+dependencies = ["blux-sdk==0.1.0"]
+
+[project.scripts]
+blux = "blux_cli.main:main"
+
+[tool.setuptools]
+packages = ["blux_runtime", "blux_runtime.builtin", "blux_cli"]
+
+[tool.setuptools.package-dir]
+blux_runtime = "runtime/blux_runtime"
+blux_cli = "cli/blux_cli"
+
+[tool.setuptools.package-data]
+"blux_runtime.builtin" = ["reference_policy.json"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["sdk/python/src/blux_sdk/schemas"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "A", "BLE", "RUF", "SIM", "PL", "C4"]
+ignore = ["PLR0911", "PLR0917", "PLR0912", "PLR0913", "PLR0915", "PLR2004", "PLC0415", "S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "PLR", "BLE", "PLW1510"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["blux_sdk", "blux_runtime", "blux_cli"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+mypy_path = ["sdk/python/src", "runtime", "cli"]
+packages = ["blux_sdk", "blux_runtime", "blux_cli"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+xfail_strict = true

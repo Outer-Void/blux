@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:artifact",
+  "title": "BLUX artifact descriptor",
+  "description": "Content-addressed description of a file or blob produced by an operation. Describes; does not store.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract", "contract_version", "artifact_id", "operation_id", "name",
+    "media_type", "sha256", "size_bytes", "created_at"
+  ],
+  "properties": {
+    "contract": {"const": "blux.artifact"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "artifact_id": {"$ref": "urn:blux:contract:v1:common#/$defs/artifact_id"},
+    "operation_id": {"$ref": "urn:blux:contract:v1:common#/$defs/operation_id"},
+    "name": {"type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[^/\\\\\\u0000]+$"},
+    "media_type": {"type": "string", "pattern": "^[a-z0-9][a-z0-9!#$&^_.+-]*/[a-z0-9][a-z0-9!#$&^_.+-]*$"},
+    "sha256": {"$ref": "urn:blux:contract:v1:common#/$defs/sha256"},
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "uri": {"type": "string", "maxLength": 2048, "pattern": "^(file|blux|https)://"},
+    "created_at": {"$ref": "urn:blux:contract:v1:common#/$defs/timestamp"},
+    "labels": {"$ref": "urn:blux:contract:v1:common#/$defs/labels"}
+  }
+}

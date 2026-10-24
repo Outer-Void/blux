@@ -1,0 +1,9 @@
+contract: blux.project
+contract_version: '1.0'
+project_id: blux
+name: BLUX
+description: Canonical BLUX contracts, SDK, reference runtime and CLI.
+role: integrated
+repository: Outer-Void/blux
+capabilities: capabilities.yaml
+policy: policy.yaml

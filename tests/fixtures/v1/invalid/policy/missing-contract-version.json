@@ -1,0 +1,31 @@
+{
+  "document": {
+    "contract": "blux.policy",
+    "default_effect": "deny",
+    "policy_id": "blux.reference",
+    "rules": [
+      {
+        "capabilities": [
+          "echo.*"
+        ],
+        "effect": "allow",
+        "max_side_effects": "none",
+        "rule_id": "allow-echo"
+      },
+      {
+        "actor_types": [
+          "agent"
+        ],
+        "capabilities": [
+          "fs.delete"
+        ],
+        "effect": "deny",
+        "grants": [
+          "fs:write"
+        ],
+        "rule_id": "deny-agents-destructive"
+      }
+    ]
+  },
+  "expect": "INVALID_ENVELOPE"
+}

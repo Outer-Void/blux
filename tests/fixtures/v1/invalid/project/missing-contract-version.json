@@ -1,0 +1,12 @@
+{
+  "document": {
+    "capabilities": "capabilities.yaml",
+    "contract": "blux.project",
+    "name": "BLUX",
+    "policy": "policy.yaml",
+    "project_id": "blux",
+    "repository": "Outer-Void/blux",
+    "role": "integrated"
+  },
+  "expect": "INVALID_ENVELOPE"
+}

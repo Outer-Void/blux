@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:model",
+  "title": "BLUX model descriptor",
+  "description": "Describes a model a runtime can route to. Models are invoked through capabilities, never directly.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "model_id", "provider", "name", "tasks", "locality", "deterministic"],
+  "properties": {
+    "contract": {"const": "blux.model"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "model_id": {"$ref": "urn:blux:contract:v1:common#/$defs/model_id"},
+    "provider": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$"},
+    "name": {"type": "string", "minLength": 1, "maxLength": 128},
+    "version": {"type": "string", "maxLength": 64},
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["text-generation", "chat", "embedding", "classification", "reasoning", "code", "vision", "audio"]}
+    },
+    "locality": {"enum": ["local", "remote"]},
+    "deterministic": {"type": "boolean"},
+    "context_window_tokens": {"type": "integer", "minimum": 1},
+    "max_output_tokens": {"type": "integer", "minimum": 1},
+    "required_permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "urn:blux:contract:v1:common#/$defs/permission"}
+    },
+    "labels": {"$ref": "urn:blux:contract:v1:common#/$defs/labels"}
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:common",
+  "title": "BLUX Contract v1 common definitions",
+  "description": "Shared identifiers, version strings and value types used by every BLUX v1 contract.",
+  "$defs": {
+    "contract_version": {
+      "description": "MAJOR.MINOR contract version within the v1 family. Implementations additionally gate on the exact set they support.",
+      "type": "string",
+      "pattern": "^1\\.(0|[1-9][0-9]{0,3})$"
+    },
+    "ulid": {
+      "type": "string",
+      "pattern": "^[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "project_id": {
+      "description": "Declared, human-chosen project slug.",
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,62}[a-z0-9]$"
+    },
+    "capability_id": {
+      "description": "Declared dotted capability name: namespace.name[.name...].",
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9_-]*)+$"
+    },
+    "model_id": {
+      "description": "Declared model identifier: provider/name.",
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^[a-z0-9][a-z0-9_-]*/[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "operation_id": {
+      "type": "string",
+      "pattern": "^op_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "parent_operation_id": {
+      "oneOf": [
+        {"$ref": "#/$defs/operation_id"},
+        {"type": "null"}
+      ]
+    },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^rcpt_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "artifact_id": {
+      "type": "string",
+      "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "session_id": {
+      "type": "string",
+      "pattern": "^ses_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "nullable_session_id": {
+      "oneOf": [
+        {"$ref": "#/$defs/session_id"},
+        {"type": "null"}
+      ]
+    },
+    "nullable_project_id": {
+      "oneOf": [
+        {"$ref": "#/$defs/project_id"},
+        {"type": "null"}
+      ]
+    },
+    "timestamp": {
+      "description": "RFC 3339 UTC timestamp with Z suffix.",
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\\.[0-9]{1,9})?Z$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "semver": {
+      "type": "string",
+      "maxLength": 64,
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$"
+    },
+    "side_effect": {
+      "description": "Highest side-effect class a capability may cause.",
+      "enum": ["none", "read", "write", "external", "destructive"]
+    },
+    "permission": {
+      "type": "string",
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9_-]*(:[a-z0-9_*.-]+)*$"
+    },
+    "actor": {
+      "description": "Who asked. A claim used as policy input, never an authorization by itself.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id"],
+      "properties": {
+        "type": {"enum": ["user", "agent", "service"]},
+        "id": {"type": "string", "minLength": 1, "maxLength": 256}
+      }
+    },
+    "labels": {
+      "type": "object",
+      "maxProperties": 64,
+      "propertyNames": {"pattern": "^[a-z][a-z0-9_.-]{0,62}$"},
+      "additionalProperties": {"type": "string", "maxLength": 256}
+    }
+  }
+}

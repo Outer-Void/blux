@@ -1,0 +1,12 @@
+# Example .blux/manifest.yaml for a standalone repository that exposes one read-only capability.
+contract: blux.project
+contract_version: "1.0"
+project_id: example-notes
+name: Example Notes
+description: A standalone notes tool that can also be driven through BLUX.
+role: standalone
+repository: Outer-Void/example-notes
+capabilities: capabilities.yaml
+policy: policy.yaml
+labels:
+  owner: example

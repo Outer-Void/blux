@@ -1,0 +1,38 @@
+{
+  "document": {
+    "actor": {
+      "id": "fixture",
+      "type": "user"
+    },
+    "artifact_ids": [
+      "art_01JAAAAAAAAAAAAAAAAAAAAAAA"
+    ],
+    "capability_id": "echo.test",
+    "capability_version": "1.0.0",
+    "contract": "blux.receipt",
+    "contract_version": "1.0",
+    "error_code": null,
+    "finished_at": "2026-10-24T00:00:00.250Z",
+    "input_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "issuer": {
+      "component": "blux-runtime",
+      "version": "0.1.0"
+    },
+    "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "output_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "parent_operation_id": null,
+    "policy_decision": {
+      "effect": "allow",
+      "policy_id": "blux.reference",
+      "reason": "ok",
+      "rule_id": "allow-echo-test"
+    },
+    "project_id": "blux",
+    "receipt_id": "rcpt_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "session_id": "ses_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "started_at": "2026-10-24T00:00:00.000Z",
+    "status": "succeeded",
+    "x_unknown": true
+  },
+  "expect": "SCHEMA_VALIDATION_FAILED"
+}

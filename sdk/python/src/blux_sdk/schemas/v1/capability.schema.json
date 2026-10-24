@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:capability",
+  "title": "BLUX capability descriptor",
+  "description": "Declares one invocable capability: identity, versioned I/O schemas, side effects and required permissions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract", "contract_version", "capability_id", "version", "summary",
+    "contract_versions", "input_schema", "output_schema", "side_effects",
+    "required_permissions", "idempotent", "timeout_ms", "provider"
+  ],
+  "properties": {
+    "contract": {"const": "blux.capability"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "capability_id": {"$ref": "urn:blux:contract:v1:common#/$defs/capability_id"},
+    "version": {"$ref": "urn:blux:contract:v1:common#/$defs/semver"},
+    "summary": {"type": "string", "minLength": 1, "maxLength": 280},
+    "contract_versions": {
+      "description": "Contract versions this capability can accept requests in.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"}
+    },
+    "input_schema": {"type": "object", "description": "JSON Schema (2020-12) for execution.input."},
+    "output_schema": {"type": "object", "description": "JSON Schema (2020-12) for result.output."},
+    "side_effects": {"$ref": "urn:blux:contract:v1:common#/$defs/side_effect"},
+    "required_permissions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "urn:blux:contract:v1:common#/$defs/permission"}
+    },
+    "idempotent": {"type": "boolean"},
+    "timeout_ms": {"type": "integer", "minimum": 1, "maximum": 3600000},
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "kind"],
+      "properties": {
+        "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+(/[A-Za-z0-9_.-]+)?$"},
+        "kind": {"enum": ["builtin", "python", "subprocess"]},
+        "entrypoint": {"type": "string", "maxLength": 512}
+      }
+    },
+    "labels": {"$ref": "urn:blux:contract:v1:common#/$defs/labels"}
+  }
+}

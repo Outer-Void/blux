@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:capability-set",
+  "title": "BLUX capability set",
+  "description": "A list of capability descriptors. Serialized as .blux/capabilities.yaml and registry/capabilities.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "capabilities"],
+  "properties": {
+    "contract": {"const": "blux.capability-set"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "capabilities": {
+      "type": "array",
+      "items": {"$ref": "urn:blux:contract:v1:capability"}
+    }
+  }
+}

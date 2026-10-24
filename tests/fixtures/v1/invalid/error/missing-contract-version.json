@@ -1,0 +1,12 @@
+{
+  "document": {
+    "code": "TIMEOUT",
+    "contract": "blux.error",
+    "details": {
+      "timeout_ms": 1000
+    },
+    "message": "Capability exceeded 1000 ms.",
+    "retryable": true
+  },
+  "expect": "INVALID_ENVELOPE"
+}

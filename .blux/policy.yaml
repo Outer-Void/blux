@@ -1,0 +1,11 @@
+contract: blux.policy
+contract_version: '1.0'
+policy_id: blux.reference
+default_effect: deny
+rules:
+- rule_id: allow-echo-test
+  effect: allow
+  capabilities:
+  - echo.test
+  max_side_effects: none
+  reason: reference capability; pure and side-effect free

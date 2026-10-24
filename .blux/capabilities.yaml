@@ -1,0 +1,47 @@
+# Generated from blux_runtime.builtin; tests fail if this drifts from the runtime descriptor.
+contract: blux.capability-set
+contract_version: '1.0'
+capabilities:
+- contract: blux.capability
+  contract_version: '1.0'
+  capability_id: echo.test
+  version: 1.0.0
+  summary: Return the given message, optionally upper-cased, with its length.
+  contract_versions:
+  - '1.0'
+  input_schema:
+    type: object
+    additionalProperties: false
+    required:
+    - message
+    properties:
+      message:
+        type: string
+        maxLength: 4096
+      uppercase:
+        type: boolean
+  output_schema:
+    type: object
+    additionalProperties: false
+    required:
+    - message
+    - length
+    - uppercase
+    properties:
+      message:
+        type: string
+      length:
+        type: integer
+        minimum: 0
+      uppercase:
+        type: boolean
+  side_effects: none
+  required_permissions: []
+  idempotent: true
+  timeout_ms: 1000
+  provider:
+    repository: Outer-Void/blux
+    kind: builtin
+    entrypoint: blux_runtime.builtin.echo:handle
+  labels:
+    stage: reference

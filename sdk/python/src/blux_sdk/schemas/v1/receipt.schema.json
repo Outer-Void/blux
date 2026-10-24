@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:receipt",
+  "title": "BLUX execution receipt",
+  "description": "Tamper-evident record of what was requested, what policy decided and what was produced. BLUX emits receipts; persistence authority belongs to blux-system.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract", "contract_version", "receipt_id", "operation_id", "parent_operation_id",
+    "session_id", "project_id", "capability_id", "capability_version", "actor",
+    "status", "error_code", "policy_decision", "input_sha256", "output_sha256",
+    "artifact_ids", "started_at", "finished_at", "issuer"
+  ],
+  "properties": {
+    "contract": {"const": "blux.receipt"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "receipt_id": {"$ref": "urn:blux:contract:v1:common#/$defs/receipt_id"},
+    "operation_id": {"$ref": "urn:blux:contract:v1:common#/$defs/operation_id"},
+    "parent_operation_id": {"$ref": "urn:blux:contract:v1:common#/$defs/parent_operation_id"},
+    "session_id": {"$ref": "urn:blux:contract:v1:common#/$defs/nullable_session_id"},
+    "project_id": {"$ref": "urn:blux:contract:v1:common#/$defs/nullable_project_id"},
+    "capability_id": {
+      "oneOf": [
+        {"$ref": "urn:blux:contract:v1:common#/$defs/capability_id"},
+        {"type": "null"}
+      ]
+    },
+    "capability_version": {
+      "oneOf": [
+        {"$ref": "urn:blux:contract:v1:common#/$defs/semver"},
+        {"type": "null"}
+      ]
+    },
+    "actor": {
+      "oneOf": [
+        {"$ref": "urn:blux:contract:v1:common#/$defs/actor"},
+        {"type": "null"}
+      ]
+    },
+    "status": {"enum": ["succeeded", "failed", "rejected"]},
+    "error_code": {
+      "oneOf": [
+        {"$ref": "urn:blux:contract:v1:error#/properties/code"},
+        {"type": "null"}
+      ]
+    },
+    "policy_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effect", "policy_id", "rule_id", "reason"],
+      "properties": {
+        "effect": {"enum": ["allow", "deny", "not_evaluated"]},
+        "policy_id": {"type": ["string", "null"], "maxLength": 128},
+        "rule_id": {"type": ["string", "null"], "maxLength": 128},
+        "reason": {"type": "string", "maxLength": 512}
+      }
+    },
+    "input_sha256": {"$ref": "urn:blux:contract:v1:common#/$defs/sha256"},
+    "output_sha256": {
+      "oneOf": [
+        {"$ref": "urn:blux:contract:v1:common#/$defs/sha256"},
+        {"type": "null"}
+      ]
+    },
+    "artifact_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "urn:blux:contract:v1:common#/$defs/artifact_id"}
+    },
+    "started_at": {"$ref": "urn:blux:contract:v1:common#/$defs/timestamp"},
+    "finished_at": {"$ref": "urn:blux:contract:v1:common#/$defs/timestamp"},
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["component", "version"],
+      "properties": {
+        "component": {"type": "string", "minLength": 1, "maxLength": 128},
+        "version": {"$ref": "urn:blux:contract:v1:common#/$defs/semver"}
+      }
+    }
+  }
+}

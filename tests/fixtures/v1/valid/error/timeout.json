@@ -1,0 +1,10 @@
+{
+  "code": "TIMEOUT",
+  "contract": "blux.error",
+  "contract_version": "1.0",
+  "details": {
+    "timeout_ms": 1000
+  },
+  "message": "Capability exceeded 1000 ms.",
+  "retryable": true
+}

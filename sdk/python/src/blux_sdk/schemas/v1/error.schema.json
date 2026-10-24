@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:error",
+  "title": "BLUX error",
+  "description": "Normalized error. The code is the machine-readable contract; message is for humans only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "code", "message", "retryable", "details"],
+  "properties": {
+    "contract": {"const": "blux.error"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "code": {
+      "enum": [
+        "MALFORMED_INPUT",
+        "INVALID_ENVELOPE",
+        "MALFORMED_CONTRACT_VERSION",
+        "UNSUPPORTED_CONTRACT_VERSION",
+        "SCHEMA_VALIDATION_FAILED",
+        "UNKNOWN_CAPABILITY",
+        "CAPABILITY_VERSION_MISMATCH",
+        "POLICY_DENIED",
+        "EXECUTION_FAILED",
+        "TIMEOUT",
+        "OUTPUT_VALIDATION_FAILED",
+        "INTERNAL_ERROR"
+      ]
+    },
+    "message": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "retryable": {"type": "boolean"},
+    "operation_id": {"$ref": "urn:blux:contract:v1:common#/$defs/operation_id"},
+    "details": {"type": "object"}
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "document": {
+    "artifact_id": "art_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "contract": "blux.artifact",
+    "contract_version": "1.0",
+    "created_at": "2026-10-24T00:00:00.250Z",
+    "labels": {
+      "kind": "log"
+    },
+    "media_type": "text/plain",
+    "name": "out.txt",
+    "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "size_bytes": 5,
+    "uri": "file:///tmp/out.txt",
+    "x_unknown": true
+  },
+  "expect": "SCHEMA_VALIDATION_FAILED"
+}

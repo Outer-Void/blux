@@ -1,0 +1,15 @@
+{
+  "document": {
+    "context_window_tokens": 4096,
+    "contract": "blux.model",
+    "deterministic": true,
+    "locality": "local",
+    "model_id": "blux/echo-model",
+    "name": "echo-model",
+    "provider": "blux",
+    "tasks": [
+      "text-generation"
+    ]
+  },
+  "expect": "INVALID_ENVELOPE"
+}

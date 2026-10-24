@@ -1,0 +1,12 @@
+{
+  "contract": "blux.execution",
+  "contract_version": "2.0",
+  "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAB",
+  "parent_operation_id": null,
+  "session_id": null,
+  "project_id": null,
+  "capability_id": "echo.test",
+  "actor": {"type": "user", "id": "example"},
+  "input": {"message": "this request is refused"},
+  "requested_at": "2026-10-24T00:00:00.000Z"
+}

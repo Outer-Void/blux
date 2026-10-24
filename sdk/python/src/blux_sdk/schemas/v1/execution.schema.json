@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:execution",
+  "title": "BLUX execution request",
+  "description": "Operation envelope asking a runtime to execute one capability.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract", "contract_version", "operation_id", "parent_operation_id",
+    "session_id", "project_id", "capability_id", "actor", "input", "requested_at"
+  ],
+  "properties": {
+    "contract": {"const": "blux.execution"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "operation_id": {"$ref": "urn:blux:contract:v1:common#/$defs/operation_id"},
+    "parent_operation_id": {"$ref": "urn:blux:contract:v1:common#/$defs/parent_operation_id"},
+    "session_id": {"$ref": "urn:blux:contract:v1:common#/$defs/nullable_session_id"},
+    "project_id": {"$ref": "urn:blux:contract:v1:common#/$defs/nullable_project_id"},
+    "capability_id": {"$ref": "urn:blux:contract:v1:common#/$defs/capability_id"},
+    "capability_version": {
+      "description": "Optional exact capability version pin.",
+      "$ref": "urn:blux:contract:v1:common#/$defs/semver"
+    },
+    "actor": {"$ref": "urn:blux:contract:v1:common#/$defs/actor"},
+    "input": {"type": "object"},
+    "requested_at": {"$ref": "urn:blux:contract:v1:common#/$defs/timestamp"},
+    "timeout_ms": {"type": "integer", "minimum": 1, "maximum": 3600000},
+    "labels": {"$ref": "urn:blux:contract:v1:common#/$defs/labels"}
+  }
+}

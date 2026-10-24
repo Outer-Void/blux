@@ -1,0 +1,32 @@
+{
+  "document": {
+    "contract": "blux.policy",
+    "contract_version": "1.0",
+    "default_effect": "allow",
+    "policy_id": "blux.reference",
+    "rules": [
+      {
+        "capabilities": [
+          "echo.*"
+        ],
+        "effect": "allow",
+        "max_side_effects": "none",
+        "rule_id": "allow-echo"
+      },
+      {
+        "actor_types": [
+          "agent"
+        ],
+        "capabilities": [
+          "fs.delete"
+        ],
+        "effect": "deny",
+        "grants": [
+          "fs:write"
+        ],
+        "rule_id": "deny-agents-destructive"
+      }
+    ]
+  },
+  "expect": "SCHEMA_VALIDATION_FAILED"
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:contract:v1:project",
+  "title": "BLUX project manifest",
+  "description": "Identity and integration metadata for a repository participating in BLUX. Serialized as .blux/manifest.yaml.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "project_id", "name", "role", "capabilities", "policy"],
+  "properties": {
+    "contract": {"const": "blux.project"},
+    "contract_version": {"$ref": "urn:blux:contract:v1:common#/$defs/contract_version"},
+    "project_id": {"$ref": "urn:blux:contract:v1:common#/$defs/project_id"},
+    "name": {"type": "string", "minLength": 1, "maxLength": 128},
+    "description": {"type": "string", "maxLength": 1024},
+    "role": {
+      "description": "standalone: usable without BLUX. integrated: requires BLUX runtime. Both are first-class (ADR-0002).",
+      "enum": ["standalone", "integrated"]
+    },
+    "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+    "capabilities": {
+      "description": "Relative path to the capability set document.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+\\.ya?ml$"
+    },
+    "policy": {
+      "description": "Relative path to the policy document.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+\\.ya?ml$"
+    },
+    "labels": {"$ref": "urn:blux:contract:v1:common#/$defs/labels"}
+  }
+}

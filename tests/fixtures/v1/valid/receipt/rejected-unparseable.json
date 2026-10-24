@@ -1,0 +1,29 @@
+{
+  "actor": null,
+  "artifact_ids": [],
+  "capability_id": null,
+  "capability_version": null,
+  "contract": "blux.receipt",
+  "contract_version": "1.0",
+  "error_code": "MALFORMED_INPUT",
+  "finished_at": "2026-10-24T00:00:00.000Z",
+  "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "issuer": {
+    "component": "blux-runtime",
+    "version": "0.1.0"
+  },
+  "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+  "output_sha256": null,
+  "parent_operation_id": null,
+  "policy_decision": {
+    "effect": "not_evaluated",
+    "policy_id": null,
+    "reason": "request rejected before policy evaluation",
+    "rule_id": null
+  },
+  "project_id": null,
+  "receipt_id": "rcpt_01JAAAAAAAAAAAAAAAAAAAAAAA",
+  "session_id": null,
+  "started_at": "2026-10-24T00:00:00.000Z",
+  "status": "rejected"
+}

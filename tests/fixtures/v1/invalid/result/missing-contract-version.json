@@ -1,0 +1,20 @@
+{
+  "document": {
+    "artifact_ids": [],
+    "capability_id": "echo.test",
+    "contract": "blux.result",
+    "duration_ms": 250,
+    "error": null,
+    "finished_at": "2026-10-24T00:00:00.250Z",
+    "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "output": {
+      "length": 5,
+      "message": "hello",
+      "uppercase": false
+    },
+    "receipt_id": "rcpt_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "started_at": "2026-10-24T00:00:00.000Z",
+    "status": "succeeded"
+  },
+  "expect": "INVALID_ENVELOPE"
+}

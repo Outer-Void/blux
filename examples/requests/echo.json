@@ -1,0 +1,12 @@
+{
+  "contract": "blux.execution",
+  "contract_version": "1.0",
+  "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+  "parent_operation_id": null,
+  "session_id": null,
+  "project_id": "blux",
+  "capability_id": "echo.test",
+  "actor": {"type": "user", "id": "example"},
+  "input": {"message": "hello from a file", "uppercase": false},
+  "requested_at": "2026-10-24T00:00:00.000Z"
+}

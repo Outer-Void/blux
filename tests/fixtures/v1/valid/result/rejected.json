@@ -1,0 +1,24 @@
+{
+  "artifact_ids": [],
+  "capability_id": null,
+  "contract": "blux.result",
+  "contract_version": "1.0",
+  "duration_ms": 0,
+  "error": {
+    "code": "POLICY_DENIED",
+    "contract": "blux.error",
+    "contract_version": "1.0",
+    "details": {
+      "rule_id": null
+    },
+    "message": "Denied by policy.",
+    "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+    "retryable": false
+  },
+  "finished_at": "2026-10-24T00:00:00.000Z",
+  "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+  "output": null,
+  "receipt_id": "rcpt_01JAAAAAAAAAAAAAAAAAAAAAAA",
+  "started_at": "2026-10-24T00:00:00.000Z",
+  "status": "rejected"
+}

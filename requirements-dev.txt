@@ -1,0 +1,6 @@
+pytest>=8
+ruff==0.17.2
+mypy==2.4.0
+types-PyYAML
+types-jsonschema
+build>=1.2

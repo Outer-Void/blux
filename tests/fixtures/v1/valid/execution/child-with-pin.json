@@ -1,0 +1,23 @@
+{
+  "actor": {
+    "id": "blhermes",
+    "type": "agent"
+  },
+  "capability_id": "echo.test",
+  "capability_version": "1.0.0",
+  "contract": "blux.execution",
+  "contract_version": "1.0",
+  "input": {
+    "message": "x",
+    "uppercase": true
+  },
+  "labels": {
+    "origin": "fixture"
+  },
+  "operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAB",
+  "parent_operation_id": "op_01JAAAAAAAAAAAAAAAAAAAAAAA",
+  "project_id": null,
+  "requested_at": "2026-10-24T00:00:00.000Z",
+  "session_id": null,
+  "timeout_ms": 500
+}
