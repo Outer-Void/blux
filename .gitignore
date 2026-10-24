@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# CI checkout of DAT for its .blux/ (Stage 03)
+_dat/

@@ -15,6 +15,8 @@ import blux_runtime
 import blux_sdk
 from blux_runtime.builtin import builtin_registry, reference_policy
 from blux_runtime.executor import Outcome, Runtime
+from blux_runtime.project import register_project
+from blux_runtime.registry import CapabilityRegistry
 from blux_runtime.system_sink import BluxSystemSink
 from blux_sdk import dot_blux, envelopes, ids
 from blux_sdk.errors import BluxError, ErrorCode
@@ -51,10 +53,23 @@ def _emit(doc: Any, out: TextIO, pretty: bool) -> None:
     out.flush()
 
 
-def _runtime(policy_path: str | None, stdin: TextIO, system_store: str | None = None) -> Runtime:
-    policy = _read_document(policy_path, stdin) if policy_path else reference_policy()
+def _registry(project_dir: str | None) -> tuple[CapabilityRegistry, dict[str, Any] | None]:
+    """Built-ins, plus the project's `.blux/` capabilities and its policy when --project is given."""
+    registry = builtin_registry()
+    if project_dir is None:
+        return registry, None
+    project = dot_blux.load(project_dir)
+    register_project(registry, project)
+    return registry, project.policy
+
+
+def _runtime(
+    policy_path: str | None, stdin: TextIO, system_store: str | None = None, project_dir: str | None = None
+) -> Runtime:
+    registry, project_policy = _registry(project_dir)
+    policy = _read_document(policy_path, stdin) if policy_path else project_policy or reference_policy()
     sink = BluxSystemSink(system_store) if system_store else None
-    return Runtime(builtin_registry(), policy, receipt_sink=sink)
+    return Runtime(registry, policy, receipt_sink=sink)
 
 
 def _finish(outcome: Outcome, args: argparse.Namespace, out: TextIO) -> int:
@@ -88,6 +103,7 @@ def build_parser() -> argparse.ArgumentParser:
     e.add_argument("--policy", help="policy document (default: built-in reference policy)")
     e.add_argument("--receipt-out", help="also write the blux.receipt to this path")
     e.add_argument("--system-store", help="record the receipt in this BLUX System store (needs blux-system)")
+    e.add_argument("--project", help="also load capabilities (and, without --policy, the policy) from DIR/.blux")
 
     r = sub.add_parser("run", help="build and execute a request for CAPABILITY; prints blux.result")
     r.add_argument("capability_id")
@@ -100,8 +116,10 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--policy")
     r.add_argument("--receipt-out")
     r.add_argument("--system-store", help="record the receipt in this BLUX System store (needs blux-system)")
+    r.add_argument("--project", help="also load capabilities (and, without --policy, the policy) from DIR/.blux")
 
-    sub.add_parser("capabilities", help="print the built-in blux.capability-set")
+    c = sub.add_parser("capabilities", help="print the blux.capability-set (built-ins, plus --project)")
+    c.add_argument("--project", help="also list capabilities from DIR/.blux")
 
     i = sub.add_parser("id", help="generate an identifier")
     i.add_argument("kind", choices=["operation", "receipt", "artifact", "session"])
@@ -142,7 +160,7 @@ def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
         return EXIT_OK
 
     if args.command == "exec":
-        runtime = _runtime(args.policy, stdin, args.system_store)
+        runtime = _runtime(args.policy, stdin, args.system_store, args.project)
         raw: str | bytes
         if args.file == "-":
             raw = stdin.buffer.read() if hasattr(stdin, "buffer") else stdin.read()
@@ -158,7 +176,7 @@ def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
         return _finish(runtime.execute(raw), args, out)
 
     if args.command == "run":
-        runtime = _runtime(args.policy, stdin, args.system_store)
+        runtime = _runtime(args.policy, stdin, args.system_store, args.project)
         request = envelopes.execution_request(
             args.capability_id,
             loads_json(args.input),
@@ -170,7 +188,7 @@ def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
         return _finish(runtime.execute(request), args, out)
 
     if args.command == "capabilities":
-        _emit(builtin_registry().to_capability_set(), out, args.pretty)
+        _emit(_registry(args.project)[0].to_capability_set(), out, args.pretty)
         return EXIT_OK
 
     if args.command == "id":

@@ -2,6 +2,12 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 03
+- `provider.kind: subprocess` capabilities (ADR-0009): `blux_runtime.subprocess_provider.SubprocessProvider` (argv, stdin request, one JSON object out, minimal env, stderr discarded, timeout kill).
+- `blux_runtime.project.register_project` and `blux run|exec|capabilities --project DIR` load a repository's `.blux/` capabilities; the project policy applies unless `--policy` is given.
+- Handlers may raise `OUTPUT_VALIDATION_FAILED` (a failure, still never a rejection).
+- Hard-gate integration tests with DAT and BLUX System (`tests/integration/test_dat.py`); CI requires them.
+
 ## Unreleased: Stage 02
 - `blux_runtime.system_sink.BluxSystemSink` records receipts in BLUX System through the `blux-system` CLI. It spools to a local outbox when the store is unavailable, `flush()` retries, and refused receipts are kept in `*.refused.jsonl`.
 - `Runtime.execute` never loses a result when a sink fails. `Outcome.sink_error` reports the failure.

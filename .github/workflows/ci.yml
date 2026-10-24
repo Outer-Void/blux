@@ -25,6 +25,16 @@ jobs:
           python -m pip install -e sdk/python -e . -r requirements-dev.txt
           # Stage 02 integration target. --no-deps keeps the editable local blux-sdk under test.
           python -m pip install --no-deps "blux-system @ git+https://github.com/Outer-Void/blux-system.git@ebdf84c8e422ae2b9a88278008e9b4b3f4fdfc3a"
+      # Stage 03 integration target (DAT needs Python 3.11+). Its .blux/ comes from the same pinned commit.
+      - name: Install DAT
+        if: matrix.python != '3.10'
+        run: python -m pip install --no-deps "outervoid-dat @ git+https://github.com/Outer-Void/dat.git@ba5838636d8576b555fcf854793a709210814a1a"
+      - uses: actions/checkout@v4
+        if: matrix.python != '3.10'
+        with:
+          repository: Outer-Void/dat
+          ref: ba5838636d8576b555fcf854793a709210814a1a
+          path: _dat
       - name: Schema drift and lock
         run: python packaging/sync_schemas.py --check
       - name: Format
@@ -33,9 +43,11 @@ jobs:
         run: ruff check .
       - name: Types
         run: mypy
-      - name: Tests (incl. BLUX System hard-gate integration)
+      - name: Tests (incl. BLUX System and DAT hard-gate integration)
         run: pytest
         env:
           BLUX_REQUIRE_SYSTEM: "1"
+          BLUX_REQUIRE_DAT: ${{ matrix.python != '3.10' && '1' || '0' }}
+          DAT_PROJECT_DIR: ${{ github.workspace }}/_dat
       - name: Wheel round trip
         run: bash packaging/verify_wheel.sh

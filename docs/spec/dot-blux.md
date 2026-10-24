@@ -28,4 +28,11 @@ from blux_sdk import dot_blux
 project = dot_blux.load("path/to/repo")
 ```
 
+## Run
+```sh
+blux capabilities --project path/to/repo                    # built-ins plus the repo's capabilities
+blux run CAPABILITY --project path/to/repo --input '{...}'  # policy: the repo's policy.yaml unless --policy
+```
+`provider.kind: subprocess` follows ADR-0009. Kind `python` is not implemented by the reference runtime.
+
 Examples: `examples/project/.blux/` (standalone, read-only capability) and this repository's own `.blux/`.

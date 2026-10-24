@@ -211,7 +211,7 @@ def _call_with_timeout(
         ) from None
     except BluxError as exc:
         # Handlers may only fail as execution failures; they cannot impersonate rejections.
-        if exc.code in (ErrorCode.EXECUTION_FAILED, ErrorCode.TIMEOUT):
+        if exc.code in (ErrorCode.EXECUTION_FAILED, ErrorCode.TIMEOUT, ErrorCode.OUTPUT_VALIDATION_FAILED):
             raise
         raise BluxError(ErrorCode.EXECUTION_FAILED, exc.message, details={"handler_code": exc.code.value}) from None
     except Exception as exc:  # noqa: BLE001 - normalize all handler failures
