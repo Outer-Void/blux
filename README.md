@@ -42,6 +42,10 @@ make ci                 # drift/lock check, format, lint, mypy --strict, tests, 
 [0007](docs/adr/0007-authority-authorization-model.md) authority model ·
 [0008](docs/adr/0008-no-arbitrary-stdout-protocol.md) no arbitrary stdout
 
+## Licensing and credits
+See [CREDITS.md](CREDITS.md) and [docs/ecosystem/licensing.md](docs/ecosystem/licensing.md).
+Outer Void is proprietary by default. Third-party rights remain third-party rights.
+
 ## Out of scope for Stage 01
 BLHermes is not absorbed. There are no web/UI layers. There is no receipt persistence, because blux-system owns it.
 The PyPI name `blux` belongs to an unrelated project, so the runtime distribution is `outervoid-blux`.

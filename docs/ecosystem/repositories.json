@@ -65,7 +65,14 @@
       "blockers": [
         "docs/ecosystem-diagram.md lists 5 repos that do not exist (blux-core, blux-orbit, blux-design-system, blux-experience-kit, blux-governance)",
         "No LICENSE"
-      ]
+      ],
+      "licensing": {
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "NONE (all rights reserved by default)",
+        "credits_record": "credits:repo:dotgithub",
+        "unresolved": [],
+        "traveling_notices": []
+      }
     },
     {
       "name": ".github-private",
@@ -109,7 +116,14 @@
           "detail": "no .github/workflows"
         }
       ],
-      "blockers": []
+      "blockers": [],
+      "licensing": {
+        "decision": "PRIVATE_PROPRIETARY",
+        "current_license": "NONE",
+        "credits_record": "credits:repo:dotgithub-private",
+        "unresolved": [],
+        "traveling_notices": []
+      }
     },
     {
       "name": "axiom",
@@ -172,7 +186,18 @@
         "2 failing shell tests",
         "Stale github.com/Justadudeinspace/ links (3)",
         "No CI"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "Apache-2.0",
+        "credits_record": "credits:repo:axiom",
+        "unresolved": [
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blhermes-agent",
@@ -252,7 +277,19 @@
         "Fork is 14 commits past upstream base 3fa571a5 but touches 4,257 files (textual rebrand) - high merge-conflict cost; upstream main has moved (now 5894e750)",
         "BLHERMES_BASELINE.md still cites origin Justadudeinspace/blhermes-agent (now Outer-Void)",
         "Termux/production/device acceptance gates NOT RUN"
-      ]
+      ],
+      "licensing": {
+        "decision": "UPSTREAM_LICENSE_RETAINED",
+        "current_license": "MIT (Copyright (c) 2025 Nous Research) + 23 nested upstream licences",
+        "credits_record": "credits:repo:blhermes-agent",
+        "unresolved": [
+          "UNR-001",
+          "UNR-005"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blux",
@@ -292,7 +329,19 @@
           "detail": "no .github/workflows"
         }
       ],
-      "blockers": []
+      "blockers": [],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "Apache-2.0 (LICENSE; sdk/runtime pyproject declare Apache-2.0)",
+        "credits_record": "credits:repo:blux",
+        "unresolved": [
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE",
+          "CREDITS.md"
+        ]
+      }
     },
     {
       "name": "blux-app",
@@ -343,7 +392,18 @@
         "Proprietary license on public repo",
         "No packaging metadata",
         "No CI"
-      ]
+      ],
+      "licensing": {
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary",
+        "credits_record": "credits:repo:blux-app",
+        "unresolved": [
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blux-ca",
@@ -406,7 +466,19 @@
         "No 1.0.0 tag for declared frozen identity",
         "Proprietary license on public repo",
         "No CI"
-      ]
+      ],
+      "licensing": {
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary",
+        "credits_record": "credits:repo:blux-ca",
+        "unresolved": [
+          "UNR-013",
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blux-ca-dataset",
@@ -461,7 +533,18 @@
       "blockers": [
         "Several stale remote codex/* branches",
         "No CI"
-      ]
+      ],
+      "licensing": {
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary",
+        "credits_record": "credits:repo:blux-ca-dataset",
+        "unresolved": [
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blux-coga",
@@ -521,7 +604,18 @@
         "No 1.0.0 tag",
         "Proprietary license on public repo",
         "No CI"
-      ]
+      ],
+      "licensing": {
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary",
+        "credits_record": "credits:repo:blux-coga",
+        "unresolved": [
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blux-coga-dataset",
@@ -575,7 +669,18 @@
       ],
       "blockers": [
         "No CI"
-      ]
+      ],
+      "licensing": {
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary",
+        "credits_record": "credits:repo:blux-coga-dataset",
+        "unresolved": [
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blux-gpt",
@@ -634,7 +739,19 @@
       "blockers": [
         "Hardcoded model IDs (gpt-5-mini, claude-haiku-4.5, deepseek-*) not verified against current provider catalogs",
         "No CI"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "Apache-2.0",
+        "credits_record": "credits:repo:blux-gpt",
+        "unresolved": [
+          "UNR-008",
+          "UNR-013"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blux-system",
@@ -691,7 +808,18 @@
       "blockers": [
         "Installed package cannot find its JSON schemas (packaging defect)",
         "Proprietary license on public repo"
-      ]
+      ],
+      "licensing": {
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary",
+        "credits_record": "credits:repo:blux-system",
+        "unresolved": [
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "blux10k",
@@ -752,7 +880,17 @@
       ],
       "blockers": [
         "No LICENSE file"
-      ]
+      ],
+      "licensing": {
+        "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
+        "current_license": "NONE; contains MIT-derived dotfiles/.p10k.zsh",
+        "credits_record": "credits:repo:blux10k",
+        "unresolved": [],
+        "traveling_notices": [
+          "THIRD_PARTY_NOTICES.md",
+          "licenses/MIT-powerlevel10k.txt"
+        ]
+      }
     },
     {
       "name": "dat",
@@ -822,7 +960,18 @@
         "Duplicate sign-and-release workflows (.yml and .yaml)",
         "Version/tag mismatch",
         "16 stale github.com/Justadudeinspace/ links"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "MIT",
+        "credits_record": "credits:repo:dat",
+        "unresolved": [
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "docs",
@@ -866,7 +1015,18 @@
       ],
       "blockers": [
         "Covers DevBoard and Grit & Grain, which have no repositories under ~/ov"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "Apache-2.0",
+        "credits_record": "credits:repo:docs",
+        "unresolved": [
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "god",
@@ -924,7 +1084,18 @@
         "Stale version test",
         "No v1.0.1 git tag matching PyPI release",
         "README 'BLUX integration' claim has no corresponding code coupling"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "MIT (published to PyPI as god-cli 1.0.1)",
+        "credits_record": "credits:repo:god",
+        "unresolved": [
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "jadis.toolbox",
@@ -977,7 +1148,19 @@
           "detail": "no .github/workflows"
         }
       ],
-      "blockers": []
+      "blockers": [],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "MIT",
+        "credits_record": "credits:repo:jadis-toolbox",
+        "unresolved": [
+          "UNR-008",
+          "UNR-010"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "lrc",
@@ -1034,7 +1217,18 @@
         "PyPI name collision",
         "Duplicate release workflows",
         "7 stale Justadudeinspace links"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "MIT",
+        "credits_record": "credits:repo:lrc",
+        "unresolved": [
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "resolver",
@@ -1103,7 +1297,19 @@
       "blockers": [
         "No tag for current release candidate (v4.0 is 71 commits old)",
         "Two public bot identities in code (@TheResolverBot and t.me/ResolvingBot) - confirm intended"
-      ]
+      ],
+      "licensing": {
+        "decision": "PRIVATE_PROPRIETARY",
+        "current_license": "LicenseRef-OuterVoid-Proprietary",
+        "credits_record": "credits:repo:resolver",
+        "unresolved": [
+          "UNR-005",
+          "UNR-009"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "roughin",
@@ -1183,7 +1389,19 @@
         "Missing greenlet dependency",
         "Test run leaves backend/roughin.db, which is not gitignored",
         "Source marked 'proprietary and confidential' in a PUBLIC repo"
-      ]
+      ],
+      "licensing": {
+        "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
+        "current_license": "LicenseRef-OuterVoid-Proprietary (header: proprietary and confidential)",
+        "credits_record": "credits:repo:roughin",
+        "unresolved": [
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE",
+          "THIRD_PARTY_NOTICES.md"
+        ]
+      }
     },
     {
       "name": "termux-background",
@@ -1249,7 +1467,20 @@
         "Self-declared non-operational release",
         "Device qualification outstanding",
         "Unremoved remote branch Justadudeinspace-patch-1"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "MIT (holder 'Termux Background')",
+        "credits_record": "credits:repo:termux-background",
+        "unresolved": [
+          "UNR-007",
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE",
+          "THIRD_PARTY_NOTICES.md"
+        ]
+      }
     },
     {
       "name": "vigyl",
@@ -1300,7 +1531,18 @@
       "blockers": [
         "Proprietary, privacy-sensitive product source in a PUBLIC repo",
         "No tests"
-      ]
+      ],
+      "licensing": {
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-Vigyl-Proprietary",
+        "credits_record": "credits:repo:vigyl",
+        "unresolved": [
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "void.game",
@@ -1363,7 +1605,20 @@
       "blockers": [
         "Diverged copy in void.os: 22 of 27 Kotlin files differ - no single source of truth",
         "Proprietary source in a PUBLIC repo"
-      ]
+      ],
+      "licensing": {
+        "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
+        "current_license": "LicenseRef-OuterVoid-AllRightsReserved; bundles Apache-2.0 libGDX natives",
+        "credits_record": "credits:repo:void-game",
+        "unresolved": [
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE",
+          "THIRD_PARTY_NOTICES.md",
+          "licenses/Apache-2.0.txt"
+        ]
+      }
     },
     {
       "name": "void.os",
@@ -1426,7 +1681,27 @@
         "620 void.sys PNGs duplicated with no sync tool in void.os",
         "7 local-only branches (all merged, 0 unique commits - safe to prune)",
         "Proprietary paid product source in a PUBLIC repo"
-      ]
+      ],
+      "licensing": {
+        "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
+        "current_license": "LicenseRef-OuterVoid-AllRightsReserved; bundles 41 fonts, libGDX, AndroidX",
+        "credits_record": "credits:repo:void-os",
+        "unresolved": [
+          "UNR-002",
+          "UNR-003",
+          "UNR-004",
+          "UNR-005",
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE",
+          "THIRD_PARTY_NOTICES.md",
+          "licenses/Apache-2.0.txt",
+          "licenses/OFL-1.1.txt",
+          "licenses/Ubuntu-font-1.0.txt",
+          "licenses/Hack-LICENSE.md"
+        ]
+      }
     },
     {
       "name": "void.sys",
@@ -1485,7 +1760,21 @@
       "blockers": [
         "Proprietary paid asset source in a PUBLIC repo",
         "Asset export to void.os is manual / undocumented"
-      ]
+      ],
+      "licensing": {
+        "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
+        "current_license": "LicenseRef-OuterVoid-AllRightsReserved; bundles AndroidX",
+        "credits_record": "credits:repo:void-sys",
+        "unresolved": [
+          "UNR-004",
+          "UNR-014"
+        ],
+        "traveling_notices": [
+          "LICENSE",
+          "THIRD_PARTY_NOTICES.md",
+          "licenses/Apache-2.0.txt"
+        ]
+      }
     },
     {
       "name": "voidforge",
@@ -1546,7 +1835,19 @@
       ],
       "blockers": [
         "Device writes locked by design; future privileged ops must live behind a separately authenticated service (per BLHermes security note)"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "Apache-2.0 (with THIRD_PARTY_NOTICES)",
+        "credits_record": "credits:repo:voidforge",
+        "unresolved": [
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE",
+          "THIRD_PARTY_NOTICES"
+        ]
+      }
     },
     {
       "name": "bluxai.app",
@@ -1583,7 +1884,18 @@
       ],
       "blockers": [
         "Empty"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "Apache-2.0 (placeholder)",
+        "credits_record": "credits:repo:bluxai-app",
+        "unresolved": [
+          "UNR-008"
+        ],
+        "traveling_notices": [
+          "LICENSE"
+        ]
+      }
     },
     {
       "name": "ivrp",
@@ -1621,7 +1933,14 @@
       "blockers": [
         "Empty",
         "No LICENSE"
-      ]
+      ],
+      "licensing": {
+        "decision": "PRIVATE_PROPRIETARY",
+        "current_license": "NONE",
+        "credits_record": "credits:repo:ivrp",
+        "unresolved": [],
+        "traveling_notices": []
+      }
     },
     {
       "name": "operationrestore",
@@ -1667,7 +1986,16 @@
       ],
       "blockers": [
         "No LICENSE"
-      ]
+      ],
+      "licensing": {
+        "decision": "REVIEW_REQUIRED",
+        "current_license": "NONE",
+        "credits_record": "credits:repo:operationrestore",
+        "unresolved": [
+          "UNR-006"
+        ],
+        "traveling_notices": []
+      }
     },
     {
       "name": "theresolver",
@@ -1738,7 +2066,18 @@
         "Lint errors",
         "functions/_middleware.ts is a no-op pass-through",
         "No LICENSE"
-      ]
+      ],
+      "licensing": {
+        "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
+        "current_license": "NONE; bundles MIT Next.js/React when built",
+        "credits_record": "credits:repo:theresolver",
+        "unresolved": [
+          "UNR-005"
+        ],
+        "traveling_notices": [
+          "THIRD_PARTY_NOTICES.md"
+        ]
+      }
     }
   ],
   "absent_repositories": [
@@ -1754,5 +2093,7 @@
       ],
       "conclusion": "No accessible code, history or contract exists. Nothing to preserve. If it exists under another owner or was deleted, recovery would need GitHub org audit-log access (gh is not authenticated)."
     }
-  ]
+  ],
+  "licensing_policy": "Outer Void is proprietary by default. Third-party rights remain third-party rights. Attribution is preserved beyond the minimum legal requirement where provenance is known.",
+  "licensing_source": "https://github.com/Outer-Void/credits (Stage 01A, 2026-10-24)"
 }
