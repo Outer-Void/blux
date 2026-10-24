@@ -221,3 +221,5 @@ __marimo__/
 
 # CI checkout of DAT for its .blux/ (Stage 03)
 _dat/
+# CI checkout of LRC for its .blux/ and hard-gate fixture (Stage 04)
+_lrc/

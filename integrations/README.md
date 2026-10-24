@@ -50,3 +50,26 @@ blux run repo.release --project path/to/dat --input '{"target": "."}' --system-s
 
 `output.linkage.operation_id` equals the BLUX operation id, and the receipt's `output_sha256` is the hash
 of the report. Tests: `tests/integration/test_dat.py`. CI installs DAT at a pinned commit.
+
+## LRC (Stage 04)
+[LRC](https://github.com/Outer-Void/lrc) is `role: standalone`. Its `.blux/` declares `repo.compile` and
+`repo.validate` (read), `repo.create` and `repo.scaffold` (write) and `repo.migrate` (destructive; the default
+policy allows it for users only). All are `provider.kind: subprocess` (`lrc blux-capability <id>`).
+
+LRC never calls DAT through BLUX. A create/scaffold/migrate result carries
+`handoff: {"tool": "dat", "capability_id": "repo.audit", "input": {"target": ...}}`; run it as a child:
+
+```sh
+blux run repo.create --project path/to/lrc --actor-type service \
+  --input '{"spec_file": "tests/fixtures/hardgate.lrc", "target": "fixture"}' --system-store ./truth > create.json
+blux run repo.audit --project path/to/dat --actor-type service --input "$(jq -c .output.handoff.input create.json)" \
+  --parent-operation-id "$(jq -r .operation_id create.json)" --system-store ./truth
+```
+
+| LRC | BLUX result | BLUX System |
+|---|---|---|
+| Repository created / applied (or validation verdict pass *or fail*) | `succeeded` | `SUCCESS` |
+| LRC could not act (invalid plan, target exists, migration conflicts) | `failed`, `EXECUTION_FAILED`, `details.provider_code` = LRC's code | `FAILURE` |
+
+The fixture is reproducible: its `plan_id` and initial git commit are pinned in LRC's
+`tests/fixtures/hardgate.expected.json`, and the hard-gate test checks them. Tests: `tests/integration/test_lrc.py`.
