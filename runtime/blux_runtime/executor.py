@@ -38,6 +38,8 @@ class InMemoryReceiptSink:
 class Outcome:
     result: dict[str, Any]
     receipt: dict[str, Any]
+    # Set when the receipt sink failed. The result is still authoritative; durable recording did not happen.
+    sink_error: dict[str, Any] | None = None
 
 
 @dataclass
@@ -185,8 +187,13 @@ class Runtime:
             finished_at=finished_at,
             issuer=dict(ISSUER),
         )
-        self.receipt_sink.emit(receipt)
-        return Outcome(result=result, receipt=receipt)
+        sink_error: dict[str, Any] | None = None
+        try:
+            self.receipt_sink.emit(receipt)
+        except Exception as exc:  # noqa: BLE001 - a sink failure must never lose the result
+            to_doc = getattr(exc, "to_document", None)
+            sink_error = to_doc() if callable(to_doc) else {"exception_type": type(exc).__name__}
+        return Outcome(result=result, receipt=receipt, sink_error=sink_error)
 
 
 def _call_with_timeout(

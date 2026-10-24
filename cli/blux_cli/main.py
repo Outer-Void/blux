@@ -14,7 +14,8 @@ from typing import Any, NoReturn, TextIO
 import blux_runtime
 import blux_sdk
 from blux_runtime.builtin import builtin_registry, reference_policy
-from blux_runtime.executor import Runtime
+from blux_runtime.executor import Outcome, Runtime
+from blux_runtime.system_sink import BluxSystemSink
 from blux_sdk import dot_blux, envelopes, ids
 from blux_sdk.errors import BluxError, ErrorCode
 from blux_sdk.schemas import KINDS, check_envelope
@@ -50,9 +51,20 @@ def _emit(doc: Any, out: TextIO, pretty: bool) -> None:
     out.flush()
 
 
-def _runtime(policy_path: str | None, stdin: TextIO) -> Runtime:
+def _runtime(policy_path: str | None, stdin: TextIO, system_store: str | None = None) -> Runtime:
     policy = _read_document(policy_path, stdin) if policy_path else reference_policy()
-    return Runtime(builtin_registry(), policy)
+    sink = BluxSystemSink(system_store) if system_store else None
+    return Runtime(builtin_registry(), policy, receipt_sink=sink)
+
+
+def _finish(outcome: Outcome, args: argparse.Namespace, out: TextIO) -> int:
+    _write_receipt(args.receipt_out, outcome.receipt)
+    _emit(outcome.result, out, args.pretty)
+    if outcome.sink_error is not None:
+        # Fail closed: the result above is real, but it was not durably recorded.
+        print(f"blux: receipt not recorded by BLUX System: {dumps_json(outcome.sink_error)}", file=sys.stderr)
+        return EXIT_FAILED
+    return EXIT_OK if outcome.result["status"] == "succeeded" else EXIT_FAILED
 
 
 def _write_receipt(path: str | None, receipt: dict[str, Any]) -> None:
@@ -75,6 +87,7 @@ def build_parser() -> argparse.ArgumentParser:
     e.add_argument("file", help="path or - for stdin")
     e.add_argument("--policy", help="policy document (default: built-in reference policy)")
     e.add_argument("--receipt-out", help="also write the blux.receipt to this path")
+    e.add_argument("--system-store", help="record the receipt in this BLUX System store (needs blux-system)")
 
     r = sub.add_parser("run", help="build and execute a request for CAPABILITY; prints blux.result")
     r.add_argument("capability_id")
@@ -86,6 +99,7 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--parent-operation-id")
     r.add_argument("--policy")
     r.add_argument("--receipt-out")
+    r.add_argument("--system-store", help="record the receipt in this BLUX System store (needs blux-system)")
 
     sub.add_parser("capabilities", help="print the built-in blux.capability-set")
 
@@ -128,7 +142,7 @@ def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
         return EXIT_OK
 
     if args.command == "exec":
-        runtime = _runtime(args.policy, stdin)
+        runtime = _runtime(args.policy, stdin, args.system_store)
         raw: str | bytes
         if args.file == "-":
             raw = stdin.buffer.read() if hasattr(stdin, "buffer") else stdin.read()
@@ -141,13 +155,10 @@ def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
                     "Cannot read input file.",
                     details={"reason": "unreadable", "errno": exc.errno},
                 ) from None
-        outcome = runtime.execute(raw)
-        _write_receipt(args.receipt_out, outcome.receipt)
-        _emit(outcome.result, out, args.pretty)
-        return EXIT_OK if outcome.result["status"] == "succeeded" else EXIT_FAILED
+        return _finish(runtime.execute(raw), args, out)
 
     if args.command == "run":
-        runtime = _runtime(args.policy, stdin)
+        runtime = _runtime(args.policy, stdin, args.system_store)
         request = envelopes.execution_request(
             args.capability_id,
             loads_json(args.input),
@@ -156,10 +167,7 @@ def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
             project_id=args.project_id,
             parent_operation_id=args.parent_operation_id,
         )
-        outcome = runtime.execute(request)
-        _write_receipt(args.receipt_out, outcome.receipt)
-        _emit(outcome.result, out, args.pretty)
-        return EXIT_OK if outcome.result["status"] == "succeeded" else EXIT_FAILED
+        return _finish(runtime.execute(request), args, out)
 
     if args.command == "capabilities":
         _emit(builtin_registry().to_capability_set(), out, args.pretty)

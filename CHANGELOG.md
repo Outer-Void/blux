@@ -2,7 +2,14 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
-## Unreleased: Stage 01
+## Unreleased: Stage 02
+- `blux_runtime.system_sink.BluxSystemSink` records receipts in BLUX System through the `blux-system` CLI. It spools to a local outbox when the store is unavailable, `flush()` retries, and refused receipts are kept in `*.refused.jsonl`.
+- `Runtime.execute` never loses a result when a sink fails. `Outcome.sink_error` reports the failure.
+- `blux run|exec --system-store DIR` records the receipt and fails closed (exit 1, result still on stdout) if it cannot.
+- Integration tests (`tests/integration/`) run echo.test → BLUX System → graph/timeline/replay, plus failed, denied and cancelled operations and secret redaction. CI requires them.
+- Tag `blux-sdk-v0.1.0` marks the SDK commit pinned by blux-system 2.0.0.
+
+## Stage 01
 ### Contract v1.0
 - Schemas: capability, capability-set, execution, result, receipt, artifact, model, project, policy, error, plus common definitions.
 - Universal IDs: `op_`/`rcpt_`/`art_`/`ses_` ULIDs; declared `project_id`, `capability_id`, `model_id`.
