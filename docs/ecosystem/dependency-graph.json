@@ -1,0 +1,287 @@
+{
+  "stage": "00",
+  "generated_at": "2026-10-24T00:50:00Z",
+  "host": "aarch64 Debian (PRoot on Android kernel 6.17); Python 3.13.5; Node 20.19.2; OpenJDK 21; no Android SDK; gh unauthenticated",
+  "status_values": [
+    "BASELINED",
+    "NEEDS_REPAIR",
+    "READY_FOR_INTEGRATION",
+    "TRANSITIONAL",
+    "DEPRECATED",
+    "RELEASE_CANDIDATE"
+  ],
+  "check_values": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT PRESENT",
+    "NOT RUN"
+  ],
+  "nodes": [
+    {
+      "id": ".github",
+      "status": "NEEDS_REPAIR",
+      "visibility": "public"
+    },
+    {
+      "id": ".github-private",
+      "status": "BASELINED",
+      "visibility": "private"
+    },
+    {
+      "id": "axiom",
+      "status": "NEEDS_REPAIR",
+      "visibility": "public"
+    },
+    {
+      "id": "blhermes-agent",
+      "status": "TRANSITIONAL",
+      "visibility": "public"
+    },
+    {
+      "id": "blux",
+      "status": "BASELINED",
+      "visibility": "public"
+    },
+    {
+      "id": "blux-app",
+      "status": "READY_FOR_INTEGRATION",
+      "visibility": "public"
+    },
+    {
+      "id": "blux-ca",
+      "status": "READY_FOR_INTEGRATION",
+      "visibility": "public"
+    },
+    {
+      "id": "blux-ca-dataset",
+      "status": "READY_FOR_INTEGRATION",
+      "visibility": "public"
+    },
+    {
+      "id": "blux-coga",
+      "status": "READY_FOR_INTEGRATION",
+      "visibility": "public"
+    },
+    {
+      "id": "blux-coga-dataset",
+      "status": "READY_FOR_INTEGRATION",
+      "visibility": "public"
+    },
+    {
+      "id": "blux-gpt",
+      "status": "BASELINED",
+      "visibility": "public"
+    },
+    {
+      "id": "blux-system",
+      "status": "NEEDS_REPAIR",
+      "visibility": "public"
+    },
+    {
+      "id": "blux10k",
+      "status": "BASELINED",
+      "visibility": "public"
+    },
+    {
+      "id": "dat",
+      "status": "NEEDS_REPAIR",
+      "visibility": "public"
+    },
+    {
+      "id": "docs",
+      "status": "BASELINED",
+      "visibility": "public"
+    },
+    {
+      "id": "god",
+      "status": "NEEDS_REPAIR",
+      "visibility": "public"
+    },
+    {
+      "id": "jadis.toolbox",
+      "status": "BASELINED",
+      "visibility": "public"
+    },
+    {
+      "id": "lrc",
+      "status": "NEEDS_REPAIR",
+      "visibility": "public"
+    },
+    {
+      "id": "resolver",
+      "status": "RELEASE_CANDIDATE",
+      "visibility": "private"
+    },
+    {
+      "id": "roughin",
+      "status": "NEEDS_REPAIR",
+      "visibility": "public"
+    },
+    {
+      "id": "termux-background",
+      "status": "NEEDS_REPAIR",
+      "visibility": "public"
+    },
+    {
+      "id": "vigyl",
+      "status": "BASELINED",
+      "visibility": "public"
+    },
+    {
+      "id": "void.game",
+      "status": "TRANSITIONAL",
+      "visibility": "public"
+    },
+    {
+      "id": "void.os",
+      "status": "TRANSITIONAL",
+      "visibility": "public"
+    },
+    {
+      "id": "void.sys",
+      "status": "BASELINED",
+      "visibility": "public"
+    },
+    {
+      "id": "voidforge",
+      "status": "BASELINED",
+      "visibility": "public"
+    },
+    {
+      "id": "bluxai.app",
+      "status": "BASELINED",
+      "visibility": "private"
+    },
+    {
+      "id": "ivrp",
+      "status": "BASELINED",
+      "visibility": "private"
+    },
+    {
+      "id": "operationrestore",
+      "status": "BASELINED",
+      "visibility": "private"
+    },
+    {
+      "id": "theresolver",
+      "status": "NEEDS_REPAIR",
+      "visibility": "private"
+    },
+    {
+      "id": "NousResearch/hermes-agent",
+      "external": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "blux-ca-dataset",
+      "to": "blux-ca",
+      "type": "contract",
+      "mechanism": "fixtures verified via `python -m blux_ca accept` (BLUX_CA_ENGINE_ROOT)",
+      "documentation": "documented in README"
+    },
+    {
+      "from": "blux-coga-dataset",
+      "to": "blux-coga",
+      "type": "contract",
+      "mechanism": "harness runs `blux-coga run` (BLUX_COGA_REPO)",
+      "documentation": "documented in README"
+    },
+    {
+      "from": "lrc",
+      "to": "dat",
+      "type": "runtime",
+      "mechanism": "`lrc --audit` shells out to `dat audit` (src/lrc/audit.py, integration.py)",
+      "documentation": "documented in lrc docs/dat-integration.md"
+    },
+    {
+      "from": "void.os",
+      "to": "void.game",
+      "type": "vendored",
+      "mechanism": "Axiom Shooter source copied into app/src/main/java/com/outervoid/voidgame (diverged: 22/27 files differ)",
+      "documentation": "UNDOCUMENTED sync"
+    },
+    {
+      "from": "void.os",
+      "to": "void.sys",
+      "type": "assets",
+      "mechanism": "620/620 void.sys PNG blobs + icon_map duplicated in void.os",
+      "documentation": "UNDOCUMENTED sync"
+    },
+    {
+      "from": "void.game",
+      "to": "void.os",
+      "type": "runtime",
+      "mechanism": "void.game security/AxiomPackageVerifier + SignatureGate verifies the AXIOM launcher package/signature before launch",
+      "documentation": "documented in void.game README"
+    },
+    {
+      "from": "theresolver",
+      "to": "resolver",
+      "type": "content",
+      "mechanism": "site hardcodes bot handles (@TheResolverBot, t.me/ResolvingBot, ResolvingUpdates, ResolvingDiagnostics, ResolverAdmin) and admin.theresolverbot.net",
+      "documentation": "UNDOCUMENTED - handle changes in bot must be mirrored manually"
+    },
+    {
+      "from": "docs",
+      "to": "resolver",
+      "type": "doc",
+      "mechanism": "legal docs for TheResolverBot",
+      "documentation": "documented"
+    },
+    {
+      "from": "docs",
+      "to": "vigyl",
+      "type": "doc",
+      "mechanism": "legal docs for Vigyl",
+      "documentation": "documented"
+    },
+    {
+      "from": "docs",
+      "to": "ivrp",
+      "type": "doc",
+      "mechanism": "legal docs for IVRP",
+      "documentation": "documented"
+    },
+    {
+      "from": "blux-gpt",
+      "to": "axiom",
+      "type": "runtime",
+      "mechanism": "trifecta: axiom cockpit invokes bluxgpt; blux10k dotfiles reference both",
+      "documentation": "documented in READMEs"
+    },
+    {
+      "from": "axiom",
+      "to": "blux10k",
+      "type": "runtime",
+      "mechanism": "axiom cockpit runs install_blux10k",
+      "documentation": "documented"
+    },
+    {
+      "from": "blhermes-agent",
+      "to": "NousResearch/hermes-agent",
+      "type": "upstream",
+      "mechanism": "fork; update/source-release/model-catalog/plugin-catalog/installer URLs point upstream",
+      "documentation": "documented in BLHERMES_BASELINE.md"
+    },
+    {
+      "from": "blux-app",
+      "to": "blux-ca/blux-coga/blux-system",
+      "type": "contract",
+      "mechanism": "viewer reads intent/output/discernment/receipt JSON by filename and renders any version-negotiation fields, but does not validate against engine schemas",
+      "documentation": "UNDOCUMENTED contract version binding"
+    },
+    {
+      "from": ".github",
+      "to": "(non-existent blux-core, blux-orbit, blux-design-system, blux-experience-kit, blux-governance)",
+      "type": "doc",
+      "mechanism": "ecosystem-diagram.md describes repos that do not exist",
+      "documentation": "STALE"
+    }
+  ],
+  "notes": [
+    "resolver and theresolver are distinct: bot runtime vs advertising site (task rule 6).",
+    "No repo imports another as a Python/npm/Gradle dependency; all coupling is CLI, file-contract, vendored copy, or hardcoded content."
+  ]
+}

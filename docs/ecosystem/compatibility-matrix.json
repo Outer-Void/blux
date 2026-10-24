@@ -1,0 +1,103 @@
+{
+  "stage": "00",
+  "generated_at": "2026-10-24T00:50:00Z",
+  "host": "aarch64 Debian (PRoot on Android kernel 6.17); Python 3.13.5; Node 20.19.2; OpenJDK 21; no Android SDK; gh unauthenticated",
+  "status_values": [
+    "BASELINED",
+    "NEEDS_REPAIR",
+    "READY_FOR_INTEGRATION",
+    "TRANSITIONAL",
+    "DEPRECATED",
+    "RELEASE_CANDIDATE"
+  ],
+  "check_values": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT PRESENT",
+    "NOT RUN"
+  ],
+  "interfaces": [
+    {
+      "consumer": "blux-ca-dataset@fbc31fba",
+      "provider": "blux-ca@8817f902",
+      "interface": "python -m blux_ca accept (contract 0.2 / schema 1.0, policy pack cA-pro)",
+      "result": "PASS",
+      "evidence": "verify_fixtures.py --engine-root: all fixtures match"
+    },
+    {
+      "consumer": "blux-coga-dataset@b3abf26b",
+      "provider": "blux-coga@a7d88a25",
+      "interface": "blux-coga run --input --output-dir (CogA-1.0-pro, contract 1.0)",
+      "result": "PASS",
+      "evidence": "run_harness.py exit 0"
+    },
+    {
+      "consumer": "lrc@4dbeb99c",
+      "provider": "dat@5fb9de9b",
+      "interface": "`dat audit` CLI",
+      "result": "NOT RUN",
+      "evidence": "lrc test suite fails at collection; dat CLI has subcommand drift (3 CLI test failures) - compatibility unverified"
+    },
+    {
+      "consumer": "blux-app@a361cc02",
+      "provider": "blux-ca / blux-coga / blux-system",
+      "interface": "JSON artifacts by filename",
+      "result": "NOT RUN",
+      "evidence": "viewer renders but does not validate engine schema versions; smoke test uses its own fixtures only"
+    },
+    {
+      "consumer": "void.os@bd871e2a",
+      "provider": "void.game@ffb333ae",
+      "interface": "vendored source",
+      "result": "FAIL",
+      "evidence": "22/27 Kotlin files differ"
+    },
+    {
+      "consumer": "void.os@bd871e2a",
+      "provider": "void.sys@9765f8f4",
+      "interface": "PNG assets + icon_map.json",
+      "result": "PASS",
+      "evidence": "620/620 void.sys PNG blobs byte-identical in void.os"
+    },
+    {
+      "consumer": "theresolver@e4847761",
+      "provider": "resolver@65c2bf03",
+      "interface": "bot handles / t.me links",
+      "result": "PASS",
+      "evidence": "same handle set in both repos"
+    },
+    {
+      "consumer": "blhermes-agent@75624a7a",
+      "provider": "NousResearch/hermes-agent main@5894e750",
+      "interface": "upstream fork",
+      "result": "NOT RUN",
+      "evidence": "upstream moved past recorded 55ee4acd; divergence not recomputed (upstream objects not fetched)"
+    }
+  ],
+  "runtime_requirements": {
+    "python": {
+      "blux-ca": ">=3.11",
+      "blux-coga": ">=3.10",
+      "blux-system": ">=3.10",
+      "dat": ">=3.9",
+      "lrc": ">=3.9",
+      "god": ">=3.8",
+      "blux-gpt": ">=3.8",
+      "resolver": "3.11 (CI)",
+      "blhermes-agent": "3.14 (PM-managed)"
+    },
+    "node": {
+      "theresolver": "unpinned (built with 20.19.2)",
+      "roughin/frontend": "unpinned",
+      "blhermes-agent": "root engine > 20.19.2 (per its baseline)"
+    },
+    "android": {
+      "void.os": "minSdk 26 / targetSdk 36, Gradle 8.11.1",
+      "void.game": "26/34, Gradle 8.6",
+      "void.sys": "26/34, Gradle 8.6",
+      "voidforge": "28/35, Gradle 8.11.1, JDK 21",
+      "termux-background": "targetSdk 35, Gradle 8.7"
+    }
+  }
+}

@@ -1,0 +1,1758 @@
+{
+  "stage": "00",
+  "generated_at": "2026-10-24T00:50:00Z",
+  "host": "aarch64 Debian (PRoot on Android kernel 6.17); Python 3.13.5; Node 20.19.2; OpenJDK 21; no Android SDK; gh unauthenticated",
+  "status_values": [
+    "BASELINED",
+    "NEEDS_REPAIR",
+    "READY_FOR_INTEGRATION",
+    "TRANSITIONAL",
+    "DEPRECATED",
+    "RELEASE_CANDIDATE"
+  ],
+  "check_values": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT PRESENT",
+    "NOT RUN"
+  ],
+  "repository_count": 30,
+  "repositories": [
+    {
+      "name": ".github",
+      "path": "~/ov/.github",
+      "origin": "git@github.com:Outer-Void/.github.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "6fe2eddbcb70b444828289fbfb3e219b9fdc49d6",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 19,
+      "last_commit_date": "2026-10-23",
+      "tags": [],
+      "languages": [
+        "Markdown"
+      ],
+      "frameworks": [],
+      "packaging": [],
+      "ci": [],
+      "deployment": [
+        "GitHub org profile (profile/README.md)",
+        ".github/FUNDING.yml"
+      ],
+      "license": null,
+      "state_config_locations": [],
+      "architecture_role": "Org public profile + doctrine docs (mission, ethics charter, brand manifesto, ecosystem diagram)",
+      "status": "NEEDS_REPAIR",
+      "release_state": "n/a (docs)",
+      "checks": [
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "docs/ecosystem-diagram.md lists 5 repos that do not exist (blux-core, blux-orbit, blux-design-system, blux-experience-kit, blux-governance)",
+        "No LICENSE"
+      ]
+    },
+    {
+      "name": ".github-private",
+      "path": "~/ov/.github-private",
+      "origin": "git@github.com:Outer-Void/.github-private.git",
+      "visibility": "private",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "ba6379137a7eb38d97e73e2e479d58c572f8076d",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 4,
+      "last_commit_date": "2026-01-20",
+      "tags": [],
+      "languages": [
+        "Markdown"
+      ],
+      "frameworks": [],
+      "packaging": [],
+      "ci": [],
+      "deployment": [
+        "GitHub org member-only profile"
+      ],
+      "license": null,
+      "state_config_locations": [],
+      "architecture_role": "Org member-facing profile README",
+      "status": "BASELINED",
+      "release_state": "n/a (docs)",
+      "checks": [
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": []
+    },
+    {
+      "name": "axiom",
+      "path": "~/ov/axiom",
+      "origin": "git@github.com:Outer-Void/axiom.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "a0fe69e85c790938d98861f4ce3d8236bbce4100",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 90,
+      "last_commit_date": "2026-04-22",
+      "tags": [],
+      "languages": [
+        "Shell (bash/zsh/sh)"
+      ],
+      "frameworks": [],
+      "packaging": [
+        "install via axiom.sh / launch.sh"
+      ],
+      "ci": [],
+      "deployment": [
+        "local terminal environment (Termux, WSL2, Linux, macOS)"
+      ],
+      "license": "Apache-2.0",
+      "state_config_locations": [
+        "cockpit/config/.env (untracked, gitignored)",
+        "cockpit/runs/ (local run logs)"
+      ],
+      "architecture_role": "Personal terminal cockpit (cockpit/locker/armory); part of trifecta with blux10k + blux-gpt",
+      "status": "NEEDS_REPAIR",
+      "release_state": "VERSION file present; no tags",
+      "checks": [
+        {
+          "check": "tests/run_tests.sh",
+          "result": "FAIL",
+          "detail": "11/13 pass in isolated git-archive copy; failing: log.sh logging, axiom.sh dry-run (may be env-sensitive)"
+        },
+        {
+          "check": "bash -n",
+          "result": "PASS",
+          "detail": "36 shell files"
+        },
+        {
+          "check": "shellcheck -S error",
+          "result": "FAIL",
+          "detail": "2 errors in py_venv.sh:11 (SC2296, ksh ${.sh.file} idiom - likely intentional multi-shell sourcing)"
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "2 failing shell tests",
+        "Stale github.com/Justadudeinspace/ links (3)",
+        "No CI"
+      ]
+    },
+    {
+      "name": "blhermes-agent",
+      "path": "~/ov/blhermes-agent",
+      "origin": "git@github.com:Outer-Void/blhermes-agent.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "75624a7a0b5d188b15fc9597c8258ae5970a0e98",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 57531,
+      "last_commit_date": "2026-10-22",
+      "tags": [],
+      "languages": [
+        "Python",
+        "TypeScript/TSX",
+        "JavaScript",
+        "Rust (Tauri installer)",
+        "Nix"
+      ],
+      "frameworks": [
+        "Ink TUI",
+        "Electron desktop",
+        "Tauri bootstrap installer",
+        "uv/PM package manager",
+        "Docker"
+      ],
+      "packaging": [
+        "pyproject.toml + uv.lock",
+        "pm/ (separate project + lock)",
+        "npm workspaces",
+        "Termux .deb/APT",
+        "flake.nix",
+        "Dockerfile"
+      ],
+      "ci": [
+        "57 GitHub workflows (inherited from upstream; many require upstream secrets/R2/signing)"
+      ],
+      "deployment": [
+        "Docker / docker-compose",
+        "Termux APT package (unqualified)",
+        "desktop bundles",
+        "website deploy-site.yml"
+      ],
+      "license": "MIT (Copyright Nous Research)",
+      "state_config_locations": [
+        "HERMES_HOME (profile-scoped)",
+        "HERMES_RUNTIME_DIR",
+        "projects.db"
+      ],
+      "architecture_role": "Agent runtime: fork of NousResearch/hermes-agent ('BLUX Assimilated'); candidate BLUX agent/gateway layer",
+      "status": "TRANSITIONAL",
+      "release_state": "No fork release; README states install/package/release services remain upstream",
+      "checks": [
+        {
+          "check": "full python/js suites",
+          "result": "NOT RUN",
+          "detail": "8.5k test files; requires PM/uv bootstrap that BLHERMES_BASELINE.md documents as failing on this PRoot host (uv managed-python path mismatch)"
+        },
+        {
+          "check": "in-repo receipts (BLHERMES_PRE_DEVICE_COMPLETE.md @ HEAD)",
+          "result": "NOT RUN",
+          "detail": "Recorded by prior run, not re-verified here: 696 python contract cases, 144 TUI cases, 12 guard lanes PASS; Bionic/installed/device NOT RUN"
+        },
+        {
+          "check": "secret pattern scan",
+          "result": "PASS",
+          "detail": "only fake xoxb- placeholder in evals/slack_stream_wire_contract.py"
+        }
+      ],
+      "blockers": [
+        "Upstream hooks: update/source-release/model-catalog/plugin-catalog point at NousResearch/hermes-agent; installer at hermes-agent.nousresearch.com; default sandbox image nousresearch/hermes-sandbox; Nous portal/inference endpoints; opt-in telemetry endpoint telemetry.nousresearch.com",
+        "Fork is 14 commits past upstream base 3fa571a5 but touches 4,257 files (textual rebrand) - high merge-conflict cost; upstream main has moved (now 5894e750)",
+        "BLHERMES_BASELINE.md still cites origin Justadudeinspace/blhermes-agent (now Outer-Void)",
+        "Termux/production/device acceptance gates NOT RUN"
+      ]
+    },
+    {
+      "name": "blux",
+      "path": "~/ov/blux",
+      "origin": "git@github.com:Outer-Void/blux.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "42f4e5e36824d4195c563dc7ebe1ad78030b104c",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 1,
+      "last_commit_date": "2026-10-23",
+      "tags": [],
+      "languages": [],
+      "frameworks": [],
+      "packaging": [],
+      "ci": [],
+      "deployment": [],
+      "license": "Apache-2.0",
+      "state_config_locations": [],
+      "architecture_role": "BLUX umbrella / ecosystem coordination repo (hosts docs/ecosystem baseline)",
+      "status": "BASELINED",
+      "release_state": "Initial commit only",
+      "checks": [
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": []
+    },
+    {
+      "name": "blux-app",
+      "path": "~/ov/blux-app",
+      "origin": "git@github.com:Outer-Void/blux-app.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "a361cc025c0bfb39e85083eeaaafeb048fbfefda",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 16,
+      "last_commit_date": "2026-01-31",
+      "tags": [],
+      "languages": [
+        "Python",
+        "JSON"
+      ],
+      "frameworks": [],
+      "packaging": [
+        "script (blux_view.py), no pyproject"
+      ],
+      "ci": [],
+      "deployment": [
+        "local CLI"
+      ],
+      "license": "BLUX Proprietary License",
+      "state_config_locations": [],
+      "architecture_role": "Read-only viewer of intent / model output / discernment / receipts JSON (no authority)",
+      "status": "READY_FOR_INTEGRATION",
+      "release_state": "Phase 1, no tags",
+      "checks": [
+        {
+          "check": "pytest",
+          "result": "PASS",
+          "detail": "1 passed, 4 subtests"
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Proprietary license on public repo",
+        "No packaging metadata",
+        "No CI"
+      ]
+    },
+    {
+      "name": "blux-ca",
+      "path": "~/ov/blux-ca",
+      "origin": "git@github.com:Outer-Void/blux-ca.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "8817f90289e8de3d9f76925ee82b839b6deb8c69",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 52,
+      "last_commit_date": "2026-03-23",
+      "tags": [
+        "cA-0.1",
+        "cA-0.1-mini"
+      ],
+      "languages": [
+        "Python",
+        "JSON Schema",
+        "Shell",
+        "PowerShell"
+      ],
+      "frameworks": [
+        "jsonschema"
+      ],
+      "packaging": [
+        "pyproject.toml (blux-ca 1.0.0, py>=3.11)"
+      ],
+      "ci": [],
+      "deployment": [
+        "local CLI (cA.sh, cA.ps1, python -m blux_ca)"
+      ],
+      "license": "BLUX Proprietary License",
+      "state_config_locations": [],
+      "architecture_role": "Deterministic cA engine (cA-1.0-pro): emits artifact.json / verdict.json / report.json; contract_version 0.2, schema_version 1.0",
+      "status": "READY_FOR_INTEGRATION",
+      "release_state": "README declares frozen 1.0.0; latest tag cA-0.1 (16 commits behind HEAD); not on PyPI",
+      "checks": [
+        {
+          "check": "pytest",
+          "result": "PASS",
+          "detail": "27 passed"
+        },
+        {
+          "check": "dataset live verify (blux-ca-dataset)",
+          "result": "PASS",
+          "detail": "All fixtures match"
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "No 1.0.0 tag for declared frozen identity",
+        "Proprietary license on public repo",
+        "No CI"
+      ]
+    },
+    {
+      "name": "blux-ca-dataset",
+      "path": "~/ov/blux-ca-dataset",
+      "origin": "git@github.com:Outer-Void/blux-ca-dataset.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "fbc31fbaf16a597395ed88737b7d8c4e906a4d79",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 19,
+      "last_commit_date": "2026-03-23",
+      "tags": [],
+      "languages": [
+        "JSON",
+        "Python (stdlib scripts)"
+      ],
+      "frameworks": [],
+      "packaging": [
+        "HuggingFace dataset card (README front-matter)"
+      ],
+      "ci": [],
+      "deployment": [
+        "HuggingFace export (exports/)"
+      ],
+      "license": "BLUX Proprietary License",
+      "state_config_locations": [],
+      "architecture_role": "Fixtures/regression set and export for blux-ca",
+      "status": "READY_FOR_INTEGRATION",
+      "release_state": "DATASET_VERSION file; no tags",
+      "checks": [
+        {
+          "check": "scripts/validate_dataset.py",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "scripts/verify_fixtures.py --engine-root ../blux-ca",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Several stale remote codex/* branches",
+        "No CI"
+      ]
+    },
+    {
+      "name": "blux-coga",
+      "path": "~/ov/blux-coga",
+      "origin": "git@github.com:Outer-Void/blux-coga.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "a7d88a25ebf4f02a8a14738a6a2bc482a4de63f5",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 24,
+      "last_commit_date": "2026-03-23",
+      "tags": [
+        "CogA-0.1-mini"
+      ],
+      "languages": [
+        "Python",
+        "JSON Schema",
+        "Shell",
+        "PowerShell"
+      ],
+      "frameworks": [],
+      "packaging": [
+        "pyproject.toml (blux-coga 1.0.0, py>=3.10)"
+      ],
+      "ci": [],
+      "deployment": [
+        "local CLI (blux-coga run, CogA.sh)"
+      ],
+      "license": "BLUX Proprietary License",
+      "state_config_locations": [],
+      "architecture_role": "Deterministic CogA reasoning engine (CogA-1.0-pro), file-in/file-out; contract 1.0, schema 1.0",
+      "status": "READY_FOR_INTEGRATION",
+      "release_state": "README declares frozen 1.0.0; latest tag CogA-0.1-mini (20 behind); not on PyPI",
+      "checks": [
+        {
+          "check": "pytest",
+          "result": "PASS",
+          "detail": "32 passed"
+        },
+        {
+          "check": "dataset harness (blux-coga-dataset run_harness.py)",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "No 1.0.0 tag",
+        "Proprietary license on public repo",
+        "No CI"
+      ]
+    },
+    {
+      "name": "blux-coga-dataset",
+      "path": "~/ov/blux-coga-dataset",
+      "origin": "git@github.com:Outer-Void/blux-coga-dataset.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "b3abf26b4f9a5e778119ef8634cf8a3b2d7e20db",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 27,
+      "last_commit_date": "2026-03-23",
+      "tags": [],
+      "languages": [
+        "JSON",
+        "Python (stdlib scripts)"
+      ],
+      "frameworks": [],
+      "packaging": [
+        "HuggingFace dataset card"
+      ],
+      "ci": [],
+      "deployment": [
+        "HuggingFace export"
+      ],
+      "license": "BLUX Proprietary License",
+      "state_config_locations": [],
+      "architecture_role": "Drift-detection fixtures recorded from real blux-coga outputs",
+      "status": "READY_FOR_INTEGRATION",
+      "release_state": "no tags",
+      "checks": [
+        {
+          "check": "scripts/verify_fixtures.py",
+          "result": "PASS",
+          "detail": "schema/layout validation (silent on success)"
+        },
+        {
+          "check": "scripts/run_harness.py vs ../blux-coga",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "No CI"
+      ]
+    },
+    {
+      "name": "blux-gpt",
+      "path": "~/ov/blux-gpt",
+      "origin": "git@github.com:Outer-Void/blux-gpt.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "cbb08831625d4832041a1fc114b071e1ce28d01e",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 12,
+      "last_commit_date": "2026-04-22",
+      "tags": [],
+      "languages": [
+        "Python",
+        "Shell"
+      ],
+      "frameworks": [
+        "typer",
+        "rich",
+        "openai SDK",
+        "anthropic SDK"
+      ],
+      "packaging": [
+        "pyproject.toml (bluxgpt 1.0.0)",
+        "requirements.txt",
+        "install.sh"
+      ],
+      "ci": [],
+      "deployment": [
+        "local CLI"
+      ],
+      "license": "Apache-2.0",
+      "state_config_locations": [
+        "config/.env (from .env.example): provider API keys"
+      ],
+      "architecture_role": "Advisory multi-provider AI CLI (OpenAI/DeepSeek/Anthropic lanes); trifecta with axiom + blux10k",
+      "status": "BASELINED",
+      "release_state": "VERSION 1.0 ('v1.0 lock'); no tags; not on PyPI",
+      "checks": [
+        {
+          "check": "pytest",
+          "result": "PASS",
+          "detail": "26 passed"
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Hardcoded model IDs (gpt-5-mini, claude-haiku-4.5, deepseek-*) not verified against current provider catalogs",
+        "No CI"
+      ]
+    },
+    {
+      "name": "blux-system",
+      "path": "~/ov/blux-system",
+      "origin": "git@github.com:Outer-Void/blux-system.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "db70f0fd9c3f716b1bfc16d68fab443a11be2645",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 15,
+      "last_commit_date": "2026-01-31",
+      "tags": [],
+      "languages": [
+        "Python",
+        "JSON Schema"
+      ],
+      "frameworks": [
+        "jsonschema"
+      ],
+      "packaging": [
+        "pyproject.toml (blux-system 1.0.0)"
+      ],
+      "ci": [],
+      "deployment": [
+        "local CLI"
+      ],
+      "license": "BLUX Proprietary License",
+      "state_config_locations": [],
+      "architecture_role": "System state / snapshot / execution-receipt contracts and replay verification (no intelligence)",
+      "status": "NEEDS_REPAIR",
+      "release_state": "no tags",
+      "checks": [
+        {
+          "check": "pytest (installed wheel)",
+          "result": "FAIL",
+          "detail": "5 failed / 9 passed: core.py resolves schemas/ relative to package dir; schemas not shipped as package data"
+        },
+        {
+          "check": "pytest (PYTHONPATH=src, source tree)",
+          "result": "PASS",
+          "detail": "14 passed"
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Installed package cannot find its JSON schemas (packaging defect)",
+        "Proprietary license on public repo"
+      ]
+    },
+    {
+      "name": "blux10k",
+      "path": "~/ov/blux10k",
+      "origin": "git@github.com:Outer-Void/blux10k.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "05894b825e9c48d5b3e5bcc5d6f4ba0b1508256e",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 41,
+      "last_commit_date": "2026-04-22",
+      "tags": [],
+      "languages": [
+        "Shell",
+        "zsh dotfiles"
+      ],
+      "frameworks": [
+        "powerlevel10k"
+      ],
+      "packaging": [
+        "cp_dotfiles.sh"
+      ],
+      "ci": [],
+      "deployment": [
+        "dotfiles symlink install"
+      ],
+      "license": null,
+      "state_config_locations": [],
+      "architecture_role": "Portable shell environment / dotfiles; trifecta with axiom + blux-gpt",
+      "status": "BASELINED",
+      "release_state": "VERSION v2.0; no tags",
+      "checks": [
+        {
+          "check": "bash -n",
+          "result": "PASS",
+          "detail": "18 files"
+        },
+        {
+          "check": "shellcheck -S error",
+          "result": "PASS",
+          "detail": "0 errors, 2 warnings"
+        },
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "No LICENSE file"
+      ]
+    },
+    {
+      "name": "dat",
+      "path": "~/ov/dat",
+      "origin": "git@github.com:Outer-Void/dat.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "5fb9de9bddc66ae8d8c831e4ddc2f24455068e49",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 59,
+      "last_commit_date": "2026-02-02",
+      "tags": [
+        "v1.0.0",
+        "v2.0.0-Stable",
+        "v2.0.0-alpha.1"
+      ],
+      "languages": [
+        "Python"
+      ],
+      "frameworks": [
+        "typer/rich CLI",
+        "reportlab (pdf extra)"
+      ],
+      "packaging": [
+        "pyproject.toml (outervoid-dat 3.0.0)",
+        "requirements*.txt",
+        "Makefile"
+      ],
+      "ci": [
+        "ci.yml",
+        "sign-and-release.yaml",
+        "sign-and-release.yml (duplicate)"
+      ],
+      "deployment": [
+        "CLI; signed release workflow"
+      ],
+      "license": "MIT",
+      "state_config_locations": [],
+      "architecture_role": "Developer's Audit Tool: local secrets/policy audit engine; invoked by lrc --audit",
+      "status": "NEEDS_REPAIR",
+      "release_state": "pyproject 3.0.0 vs latest tag v2.0.0-Stable (50 commits behind); outervoid-dat not on PyPI",
+      "checks": [
+        {
+          "check": "pytest (as configured)",
+          "result": "FAIL",
+          "detail": "collection error without reportlab; with it, async tests fail: no asyncio_mode configured"
+        },
+        {
+          "check": "pytest -o asyncio_mode=auto + pdf extra",
+          "result": "FAIL",
+          "detail": "53 passed, 3 failed: tests/test_cli.py call CLI subcommands that no longer exist"
+        },
+        {
+          "check": "ci",
+          "result": "NOT RUN",
+          "detail": "workflows present, not executed locally"
+        }
+      ],
+      "blockers": [
+        "CLI/test drift (3 failures)",
+        "Missing pytest-asyncio config",
+        "Duplicate sign-and-release workflows (.yml and .yaml)",
+        "Version/tag mismatch",
+        "16 stale github.com/Justadudeinspace/ links"
+      ]
+    },
+    {
+      "name": "docs",
+      "path": "~/ov/docs",
+      "origin": "git@github.com:Outer-Void/docs.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "a604ab04f244450d86c77f5043c87f944f71c2b2",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 9,
+      "last_commit_date": "2026-04-20",
+      "tags": [],
+      "languages": [
+        "Markdown"
+      ],
+      "frameworks": [],
+      "packaging": [],
+      "ci": [],
+      "deployment": [],
+      "license": "Apache-2.0",
+      "state_config_locations": [],
+      "architecture_role": "Legal / policy / trust docs for Outer-Void products (BLUX, IVRP, TheResolverBot, Vigyl, DevBoard, Grit & Grain)",
+      "status": "BASELINED",
+      "release_state": "n/a (docs)",
+      "checks": [
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Covers DevBoard and Grit & Grain, which have no repositories under ~/ov"
+      ]
+    },
+    {
+      "name": "god",
+      "path": "~/ov/god",
+      "origin": "git@github.com:Outer-Void/god.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "699c1d021b4f3ef7193aa46b91b74027eb44fcfb",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 18,
+      "last_commit_date": "2026-05-20",
+      "tags": [
+        "v1.0.0"
+      ],
+      "languages": [
+        "Python",
+        "Shell"
+      ],
+      "frameworks": [],
+      "packaging": [
+        "pyproject.toml (god-cli 1.0.1)",
+        "MANIFEST.in",
+        "Makefile"
+      ],
+      "ci": [
+        "ci.yml"
+      ],
+      "deployment": [
+        "PyPI: god-cli 1.0.1 published",
+        "curl|bash installer"
+      ],
+      "license": "MIT",
+      "state_config_locations": [],
+      "architecture_role": "Global help indexer CLI",
+      "status": "NEEDS_REPAIR",
+      "release_state": "PUBLISHED: PyPI god-cli 1.0.1; git tag v1.0.0 only (18 commits behind)",
+      "checks": [
+        {
+          "check": "pytest",
+          "result": "FAIL",
+          "detail": "7 passed, 1 failed: test_version_flag expects 'GOD v1.0.0', CLI reports v1.0.1"
+        },
+        {
+          "check": "ci",
+          "result": "NOT RUN",
+          "detail": ""
+        }
+      ],
+      "blockers": [
+        "Stale version test",
+        "No v1.0.1 git tag matching PyPI release",
+        "README 'BLUX integration' claim has no corresponding code coupling"
+      ]
+    },
+    {
+      "name": "jadis.toolbox",
+      "path": "~/ov/jadis.toolbox",
+      "origin": "git@github.com:Outer-Void/jadis.toolbox.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "baf97c06d9eb88e50059919b30572b6ae9c61985",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 18,
+      "last_commit_date": "2026-01-24",
+      "tags": [],
+      "languages": [
+        "Markdown",
+        "Shell"
+      ],
+      "frameworks": [],
+      "packaging": [],
+      "ci": [],
+      "deployment": [],
+      "license": "MIT",
+      "state_config_locations": [],
+      "architecture_role": "Operator checklists and setup scripts/guides",
+      "status": "BASELINED",
+      "release_state": "n/a",
+      "checks": [
+        {
+          "check": "bash -n",
+          "result": "PASS",
+          "detail": "4 files"
+        },
+        {
+          "check": "shellcheck -S error",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": []
+    },
+    {
+      "name": "lrc",
+      "path": "~/ov/lrc",
+      "origin": "git@github.com:Outer-Void/lrc.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "4dbeb99ccdd86efe96ef025a5a01d1e273002059",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 11,
+      "last_commit_date": "2026-03-22",
+      "tags": [
+        "v1.0.0-stable"
+      ],
+      "languages": [
+        "Python"
+      ],
+      "frameworks": [],
+      "packaging": [
+        "pyproject.toml (lrc 1.0.0-alpha.1)"
+      ],
+      "ci": [
+        "lrc-build.yml",
+        "sign-and-release.yaml",
+        "sign-and-release.yml (duplicate)"
+      ],
+      "deployment": [
+        "CLI"
+      ],
+      "license": "MIT",
+      "state_config_locations": [],
+      "architecture_role": "Local Repo Compiler: .lrc schema -> generated repos; optional DAT post-build audit",
+      "status": "NEEDS_REPAIR",
+      "release_state": "pyproject 1.0.0-alpha.1 vs tag v1.0.0-stable; PyPI name 'lrc' owned by unrelated project",
+      "checks": [
+        {
+          "check": "pytest",
+          "result": "FAIL",
+          "detail": "2 collection errors: tests import IS_WINDOWS / compile_schema_path from lrc.compiler, but compiler/ package shadows compiler.py"
+        },
+        {
+          "check": "ci",
+          "result": "NOT RUN",
+          "detail": ""
+        }
+      ],
+      "blockers": [
+        "Module/package shadowing: compiler.py+compiler/, parser.py+parser/, generator.py+generator/ (dead or duplicated code)",
+        "PyPI name collision",
+        "Duplicate release workflows",
+        "7 stale Justadudeinspace links"
+      ]
+    },
+    {
+      "name": "resolver",
+      "path": "~/ov/resolver",
+      "origin": "git@github.com:Outer-Void/resolver.git",
+      "visibility": "private",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "65c2bf031658863680bf86f48e9446c6fc8dc70a",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 215,
+      "last_commit_date": "2026-06-30",
+      "tags": [
+        "v4.0"
+      ],
+      "languages": [
+        "Python",
+        "HTML/CSS/JS (webapp)"
+      ],
+      "frameworks": [
+        "aiogram 3",
+        "aiohttp",
+        "pydantic v2",
+        "openai SDK"
+      ],
+      "packaging": [
+        "requirements.txt",
+        "install_resolver.sh / run_resolver.sh"
+      ],
+      "ci": [
+        "ci.yml (compileall + unittest, py3.11)"
+      ],
+      "deployment": [
+        "self-hosted bot + aiohttp webapp",
+        "cloudflared tunnel (cloudflared/config.yml; credentials gitignored)"
+      ],
+      "license": "Outer-Void Proprietary",
+      "state_config_locations": [
+        ".env (BOT_TOKEN, OPENAI_API_KEY, INVOICE_SECRET, WEBAPP_TOKEN_SECRET, OWNER_PORTAL_TOKEN, ...)",
+        "DB_PATH sqlite under data/"
+      ],
+      "architecture_role": "TheResolverBot Telegram moderation platform (free mechanical moderation + paid intelligence layer). NOT a duplicate of theresolver.",
+      "status": "RELEASE_CANDIDATE",
+      "release_state": "tag v4.0 is 71 commits behind HEAD; HEAD message 'Live test ready'",
+      "checks": [
+        {
+          "check": "pytest",
+          "result": "PASS",
+          "detail": "173 passed"
+        },
+        {
+          "check": "secret pattern scan",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT RUN",
+          "detail": "workflow present"
+        }
+      ],
+      "blockers": [
+        "No tag for current release candidate (v4.0 is 71 commits old)",
+        "Two public bot identities in code (@TheResolverBot and t.me/ResolvingBot) - confirm intended"
+      ]
+    },
+    {
+      "name": "roughin",
+      "path": "~/ov/roughin",
+      "origin": "git@github.com:Outer-Void/roughin.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "d4f2fdbc507c2770c9b82c0c7e05b6c182b7833b",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 3,
+      "last_commit_date": "2026-04-25",
+      "tags": [],
+      "languages": [
+        "Python",
+        "JavaScript/JSX"
+      ],
+      "frameworks": [
+        "FastAPI",
+        "SQLAlchemy async",
+        "alembic",
+        "Stripe",
+        "boto3",
+        "React + Vite + PWA",
+        "Tailwind"
+      ],
+      "packaging": [
+        "backend/requirements.txt",
+        "frontend/package.json",
+        "Dockerfiles",
+        "docker-compose.yml",
+        "Makefile"
+      ],
+      "ci": [],
+      "deployment": [
+        "docker-compose (backend + frontend)"
+      ],
+      "license": "Proprietary / confidential (all rights reserved)",
+      "state_config_locations": [
+        ".env (DB, JWT, Stripe, S3)"
+      ],
+      "architecture_role": "Contractor job-management SaaS (clients, jobs, invoices, billing)",
+      "status": "NEEDS_REPAIR",
+      "release_state": "no tags",
+      "checks": [
+        {
+          "check": "pytest backend",
+          "result": "FAIL",
+          "detail": "fails collection: SQLAlchemy asyncio needs greenlet, missing from requirements.txt"
+        },
+        {
+          "check": "pytest backend (+greenlet)",
+          "result": "PASS",
+          "detail": "5 passed"
+        },
+        {
+          "check": "frontend vite build",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "frontend lint",
+          "result": "NOT PRESENT",
+          "detail": "no lint script"
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Missing greenlet dependency",
+        "Test run leaves backend/roughin.db, which is not gitignored",
+        "Source marked 'proprietary and confidential' in a PUBLIC repo"
+      ]
+    },
+    {
+      "name": "termux-background",
+      "path": "~/ov/termux-background",
+      "origin": "git@github.com:Outer-Void/termux-background.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "efa3b3c9632925aba13677c49a4af7c942631192",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 85,
+      "last_commit_date": "2026-10-21",
+      "tags": [
+        "version-1.0.0"
+      ],
+      "languages": [
+        "Java",
+        "Shell",
+        "Gradle"
+      ],
+      "frameworks": [
+        "Android (AGP)",
+        "Termux RUN_COMMAND"
+      ],
+      "packaging": [
+        "Gradle APK",
+        "build-deb.sh (.deb CLI)"
+      ],
+      "ci": [
+        "build.yml"
+      ],
+      "deployment": [
+        "APK artifact from Actions",
+        "Termux .deb"
+      ],
+      "license": "MIT",
+      "state_config_locations": [],
+      "architecture_role": "Android companion + Termux CLI to set Termux:Monet wallpaper",
+      "status": "NEEDS_REPAIR",
+      "release_state": "README: 'v1.0.0 Not Operational'; tag version-1.0.0 is 24 commits behind; device qualification outstanding",
+      "checks": [
+        {
+          "check": "android assemble/lint",
+          "result": "BLOCKED",
+          "detail": "No Android SDK on host (ANDROID_HOME=/opt/android-sdk missing)"
+        },
+        {
+          "check": "bash -n / shellcheck",
+          "result": "PASS",
+          "detail": "0 errors, 1 warning"
+        },
+        {
+          "check": "tests",
+          "result": "NOT RUN",
+          "detail": "3 test files, need Android toolchain"
+        }
+      ],
+      "blockers": [
+        "Self-declared non-operational release",
+        "Device qualification outstanding",
+        "Unremoved remote branch Justadudeinspace-patch-1"
+      ]
+    },
+    {
+      "name": "vigyl",
+      "path": "~/ov/vigyl",
+      "origin": "git@github.com:Outer-Void/vigyl.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "45b2970942abf8d9f2d89c17bda61cf465fe39af",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 3,
+      "last_commit_date": "2026-03-30",
+      "tags": [],
+      "languages": [
+        "Python"
+      ],
+      "frameworks": [
+        "FastAPI",
+        "SQLAlchemy",
+        "pydantic"
+      ],
+      "packaging": [
+        "backend/requirements.txt"
+      ],
+      "ci": [],
+      "deployment": [],
+      "license": "Vigyl Proprietary",
+      "state_config_locations": [],
+      "architecture_role": "Private family caregiving / accountability system (Stage 1 backend; frontend placeholder)",
+      "status": "BASELINED",
+      "release_state": "Stage 1; no tags",
+      "checks": [
+        {
+          "check": "pytest",
+          "result": "NOT PRESENT",
+          "detail": "no tests collected"
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Proprietary, privacy-sensitive product source in a PUBLIC repo",
+        "No tests"
+      ]
+    },
+    {
+      "name": "void.game",
+      "path": "~/ov/void.game",
+      "origin": "git@github.com:Outer-Void/void.game.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "ffb333ae3aa5162a06a8313b613769cd38f7e360",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 10,
+      "last_commit_date": "2026-05-12",
+      "tags": [],
+      "languages": [
+        "Kotlin"
+      ],
+      "frameworks": [
+        "libGDX",
+        "Android"
+      ],
+      "packaging": [
+        "Gradle (android + core modules)",
+        "bundled jniLibs libgdx.so x4"
+      ],
+      "ci": [],
+      "deployment": [
+        "standalone APK; bundled in AXIOM"
+      ],
+      "license": "All rights reserved",
+      "state_config_locations": [],
+      "architecture_role": "Axiom Shooter game module (standalone + source mirrored into void.os)",
+      "status": "TRANSITIONAL",
+      "release_state": "v2.0.0-dev; no tags",
+      "checks": [
+        {
+          "check": "gradle :core:test",
+          "result": "PASS",
+          "detail": "compiles; no test sources"
+        },
+        {
+          "check": "android assemble/lint",
+          "result": "BLOCKED",
+          "detail": "No Android SDK on host (ANDROID_HOME=/opt/android-sdk missing)"
+        },
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Diverged copy in void.os: 22 of 27 Kotlin files differ - no single source of truth",
+        "Proprietary source in a PUBLIC repo"
+      ]
+    },
+    {
+      "name": "void.os",
+      "path": "~/ov/void.os",
+      "origin": "git@github.com:Outer-Void/void.os.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "bd871e2a9110f03b40f75245883edc99e261165d",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 84,
+      "last_commit_date": "2026-10-22",
+      "tags": [],
+      "languages": [
+        "Kotlin",
+        "Python (tools)"
+      ],
+      "frameworks": [
+        "Android / Jetpack Compose"
+      ],
+      "packaging": [
+        "Gradle APK (com.outervoid.axiom)"
+      ],
+      "ci": [
+        "android-ci.yml"
+      ],
+      "deployment": [
+        "paid Android app ($4.99 planned)"
+      ],
+      "license": "All rights reserved",
+      "state_config_locations": [
+        "untracked build.log, app/build/ (gitignored)"
+      ],
+      "architecture_role": "AXIOM Launcher: Android launcher; bundles VOID.SYS icons + Axiom Shooter",
+      "status": "TRANSITIONAL",
+      "release_state": "v2.0.0-dev; no tags",
+      "checks": [
+        {
+          "check": "android assemble/lint",
+          "result": "BLOCKED",
+          "detail": "No Android SDK on host (ANDROID_HOME=/opt/android-sdk missing)"
+        },
+        {
+          "check": "unit tests",
+          "result": "NOT RUN",
+          "detail": "29 test files, require Android Gradle plugin/SDK"
+        },
+        {
+          "check": "ci",
+          "result": "NOT RUN",
+          "detail": ""
+        }
+      ],
+      "blockers": [
+        "Vendored+diverged void.game source",
+        "620 void.sys PNGs duplicated with no sync tool in void.os",
+        "7 local-only branches (all merged, 0 unique commits - safe to prune)",
+        "Proprietary paid product source in a PUBLIC repo"
+      ]
+    },
+    {
+      "name": "void.sys",
+      "path": "~/ov/void.sys",
+      "origin": "git@github.com:Outer-Void/void.sys.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "9765f8f48e18339da50fe5c07783eb11a16bfda4",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 16,
+      "last_commit_date": "2026-05-12",
+      "tags": [],
+      "languages": [
+        "SVG/PNG assets",
+        "Python + Shell tooling",
+        "Kotlin"
+      ],
+      "frameworks": [
+        "Android icon pack (appfilter.xml)"
+      ],
+      "packaging": [
+        "Gradle APK (com.outervoid.voidsys)",
+        "tools/ asset pipeline"
+      ],
+      "ci": [],
+      "deployment": [
+        "standalone $1.99 icon pack; assets bundled in AXIOM"
+      ],
+      "license": "All rights reserved",
+      "state_config_locations": [],
+      "architecture_role": "VOID.SYS icon system: SVG source of truth, generated PNGs, icon_map.json for AXIOM",
+      "status": "BASELINED",
+      "release_state": "no tags",
+      "checks": [
+        {
+          "check": "android assemble/lint",
+          "result": "BLOCKED",
+          "detail": "No Android SDK on host (ANDROID_HOME=/opt/android-sdk missing)"
+        },
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        },
+        {
+          "check": "ci",
+          "result": "NOT PRESENT",
+          "detail": "no .github/workflows"
+        }
+      ],
+      "blockers": [
+        "Proprietary paid asset source in a PUBLIC repo",
+        "Asset export to void.os is manual / undocumented"
+      ]
+    },
+    {
+      "name": "voidforge",
+      "path": "~/ov/voidforge",
+      "origin": "git@github.com:Outer-Void/voidforge.git",
+      "visibility": "public",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "6a1f4d3d73fa2cf0ae11803c5d35bbfb1c6c1e5e",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 3,
+      "last_commit_date": "2026-10-21",
+      "tags": [],
+      "languages": [
+        "Kotlin",
+        "Python (tools)"
+      ],
+      "frameworks": [
+        "Jetpack Compose",
+        "detekt",
+        "spotless",
+        "CycloneDX"
+      ],
+      "packaging": [
+        "Gradle (app, core, build-logic)"
+      ],
+      "ci": [
+        "android.yml"
+      ],
+      "deployment": [
+        "APK (dev preview)"
+      ],
+      "license": "Apache-2.0",
+      "state_config_locations": [],
+      "architecture_role": "Private-first Android device workstation (USB ADB / read-only Fastboot)",
+      "status": "BASELINED",
+      "release_state": "Development preview; no hardware qualification",
+      "checks": [
+        {
+          "check": "gradle :core:test",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "android assemble/lint",
+          "result": "BLOCKED",
+          "detail": "No Android SDK on host (ANDROID_HOME=/opt/android-sdk missing)"
+        },
+        {
+          "check": "ci",
+          "result": "NOT RUN",
+          "detail": ""
+        }
+      ],
+      "blockers": [
+        "Device writes locked by design; future privileged ops must live behind a separately authenticated service (per BLHermes security note)"
+      ]
+    },
+    {
+      "name": "bluxai.app",
+      "path": "~/ov/ov-webpages/bluxai.app",
+      "origin": "git@github.com:Outer-Void/bluxai.app.git",
+      "visibility": "private",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "a3376fdac7d49c5bdf08ab9467739a30766218c5",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 1,
+      "last_commit_date": "2026-10-23",
+      "tags": [],
+      "languages": [],
+      "frameworks": [],
+      "packaging": [],
+      "ci": [],
+      "deployment": [],
+      "license": "Apache-2.0",
+      "state_config_locations": [],
+      "architecture_role": "Placeholder for bluxai.app website",
+      "status": "BASELINED",
+      "release_state": "Initial commit only",
+      "checks": [
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        }
+      ],
+      "blockers": [
+        "Empty"
+      ]
+    },
+    {
+      "name": "ivrp",
+      "path": "~/ov/ov-webpages/ivrp",
+      "origin": "git@github.com:Outer-Void/ivrp.git",
+      "visibility": "private",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "dfaae26cf46fe7f9246f880a5c1c3501d6edc0dd",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 1,
+      "last_commit_date": "2026-04-16",
+      "tags": [],
+      "languages": [],
+      "frameworks": [],
+      "packaging": [],
+      "ci": [],
+      "deployment": [],
+      "license": null,
+      "state_config_locations": [],
+      "architecture_role": "Placeholder for IVRP (Inner Void Recovery Program) website",
+      "status": "BASELINED",
+      "release_state": "README only",
+      "checks": [
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        }
+      ],
+      "blockers": [
+        "Empty",
+        "No LICENSE"
+      ]
+    },
+    {
+      "name": "operationrestore",
+      "path": "~/ov/ov-webpages/operationrestore",
+      "origin": "git@github.com:Outer-Void/operationrestore.git",
+      "visibility": "private",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "17a0d41fd9de1177d05fa969b657ad6fea805d4d",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 4,
+      "last_commit_date": "2026-07-07",
+      "tags": [],
+      "languages": [
+        "HTML/CSS"
+      ],
+      "frameworks": [],
+      "packaging": [],
+      "ci": [],
+      "deployment": [
+        "Cloudflare Pages (_headers, _redirects) for operationrestore.net"
+      ],
+      "license": null,
+      "state_config_locations": [],
+      "architecture_role": "Static single-page site for operationrestore.net",
+      "status": "BASELINED",
+      "release_state": "v1 deployed-ready static",
+      "checks": [
+        {
+          "check": "html parse + local link check",
+          "result": "PASS",
+          "detail": "8 local refs resolve"
+        },
+        {
+          "check": "tests",
+          "result": "NOT PRESENT",
+          "detail": ""
+        }
+      ],
+      "blockers": [
+        "No LICENSE"
+      ]
+    },
+    {
+      "name": "theresolver",
+      "path": "~/ov/ov-webpages/theresolver",
+      "origin": "git@github.com:Outer-Void/theresolver.git",
+      "visibility": "private",
+      "default_branch": "main",
+      "current_branch": "main",
+      "baseline_sha": "e48477618e6bae9fb289131d90f07c165fa8571b",
+      "dirty": false,
+      "ahead_behind_origin": [
+        0,
+        0
+      ],
+      "commit_count": 49,
+      "last_commit_date": "2026-04-16",
+      "tags": [],
+      "languages": [
+        "TypeScript/TSX",
+        "CSS"
+      ],
+      "frameworks": [
+        "Next.js 16.1.6 (static export)",
+        "React 19",
+        "Tailwind 4"
+      ],
+      "packaging": [
+        "package.json + package-lock.json"
+      ],
+      "ci": [],
+      "deployment": [
+        "Cloudflare Pages (out/), functions/_middleware.ts"
+      ],
+      "license": null,
+      "state_config_locations": [],
+      "architecture_role": "Advertising/marketing website for TheResolverBot (theresolverbot.net). NOT a duplicate of resolver.",
+      "status": "NEEDS_REPAIR",
+      "release_state": "no tags",
+      "checks": [
+        {
+          "check": "npm ci",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "next build (static export)",
+          "result": "PASS",
+          "detail": ""
+        },
+        {
+          "check": "tsc --noEmit (after build)",
+          "result": "PASS",
+          "detail": "fails before build only because next-env.d.ts is generated"
+        },
+        {
+          "check": "eslint",
+          "result": "FAIL",
+          "detail": "65 errors (all react/no-unescaped-entities), 6 warnings"
+        },
+        {
+          "check": "npm audit --omit=dev",
+          "result": "FAIL",
+          "detail": "1 critical (next), 4 high (postcss, sharp, nanoid, source-map-js), 1 moderate; fix: next 16.4.3 (non-major)"
+        }
+      ],
+      "blockers": [
+        "next 16.1.6 critical advisory - bump to >=16.4.3",
+        "Lint errors",
+        "functions/_middleware.ts is a no-op pass-through",
+        "No LICENSE"
+      ]
+    }
+  ],
+  "absent_repositories": [
+    {
+      "name": "blux-web",
+      "found": false,
+      "evidence": [
+        "not present under ~/ov or ~/ (maxdepth 4)",
+        "GET api.github.com/repos/Outer-Void/blux-web -> 404; not in public org listing (24 repos)",
+        "git ls-remote git@github.com:Outer-Void/blux-web.git -> 'Repository not found' (same SSH key reads private Outer-Void repos)",
+        "Justadudeinspace/blux-web -> 404 (API) / not found (SSH)",
+        "no reference to 'blux-web' in any tracked file or commit message across all 30 repos"
+      ],
+      "conclusion": "No accessible code, history or contract exists. Nothing to preserve. If it exists under another owner or was deleted, recovery would need GitHub org audit-log access (gh is not authenticated)."
+    }
+  ]
+}

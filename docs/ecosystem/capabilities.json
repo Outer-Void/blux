@@ -1,0 +1,121 @@
+{
+  "stage": "00",
+  "generated_at": "2026-10-24T00:50:00Z",
+  "host": "aarch64 Debian (PRoot on Android kernel 6.17); Python 3.13.5; Node 20.19.2; OpenJDK 21; no Android SDK; gh unauthenticated",
+  "status_values": [
+    "BASELINED",
+    "NEEDS_REPAIR",
+    "READY_FOR_INTEGRATION",
+    "TRANSITIONAL",
+    "DEPRECATED",
+    "RELEASE_CANDIDATE"
+  ],
+  "check_values": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT PRESENT",
+    "NOT RUN"
+  ],
+  "capabilities": {
+    "contracts/engines": {
+      "blux-ca": "deterministic artifact/verdict/report (cA-1.0-pro)",
+      "blux-coga": "deterministic reasoning thought_artifact/reasoning_verdict (CogA-1.0-pro)",
+      "blux-system": "state snapshots, execution receipts, replay verification"
+    },
+    "datasets/regression": {
+      "blux-ca-dataset": "cA fixtures + HF export",
+      "blux-coga-dataset": "CogA drift fixtures + HF export"
+    },
+    "viewers/ui": {
+      "blux-app": "read-only artifact viewer"
+    },
+    "agents/llm": {
+      "blhermes-agent": "full agent runtime, gateways (Telegram/Discord/Slack/WhatsApp/Signal), skills, MCP, cron",
+      "blux-gpt": "multi-provider advisory CLI",
+      "resolver": "Telegram moderation + LLM intelligence layer (OpenAI)"
+    },
+    "dev-tooling": {
+      "dat": "secrets/policy audit",
+      "lrc": "schema-driven repo generation",
+      "god": "global help indexer",
+      "axiom": "terminal cockpit",
+      "blux10k": "dotfiles",
+      "jadis.toolbox": "checklists/guides"
+    },
+    "android": {
+      "void.os": "AXIOM launcher",
+      "void.sys": "icon pack/asset pipeline",
+      "void.game": "Axiom Shooter",
+      "voidforge": "ADB/Fastboot workstation",
+      "termux-background": "Termux:Monet wallpaper companion"
+    },
+    "saas/products": {
+      "roughin": "contractor job management",
+      "vigyl": "caregiving coordination"
+    },
+    "web": {
+      "theresolver": "TheResolverBot marketing site",
+      "operationrestore": "operationrestore.net",
+      "bluxai.app": "placeholder",
+      "ivrp": "placeholder"
+    },
+    "org/docs": {
+      ".github": "public profile + doctrine",
+      ".github-private": "member profile",
+      "docs": "legal/policy",
+      "blux": "ecosystem coordination"
+    }
+  },
+  "duplicated_responsibility": [
+    {
+      "area": "LLM provider access",
+      "repos": [
+        "blhermes-agent",
+        "blux-gpt",
+        "resolver"
+      ],
+      "note": "three independent provider/key/model-selection layers"
+    },
+    {
+      "area": "Axiom Shooter source",
+      "repos": [
+        "void.game",
+        "void.os"
+      ],
+      "note": "two diverged copies"
+    },
+    {
+      "area": "VOID.SYS icon assets",
+      "repos": [
+        "void.sys",
+        "void.os"
+      ],
+      "note": "full PNG duplication without sync tooling"
+    },
+    {
+      "area": "lrc internal modules",
+      "repos": [
+        "lrc"
+      ],
+      "note": "compiler/parser/generator exist as both module and package"
+    },
+    {
+      "area": "release workflows",
+      "repos": [
+        "dat",
+        "lrc"
+      ],
+      "note": "sign-and-release.yml and sign-and-release.yaml both present"
+    }
+  ],
+  "explicitly_not_duplicates": [
+    {
+      "repos": [
+        "resolver",
+        "theresolver"
+      ],
+      "reason": "Telegram bot runtime vs its separate advertising website"
+    }
+  ]
+}

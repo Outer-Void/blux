@@ -1,0 +1,217 @@
+{
+  "stage": "00",
+  "generated_at": "2026-10-24T00:50:00Z",
+  "host": "aarch64 Debian (PRoot on Android kernel 6.17); Python 3.13.5; Node 20.19.2; OpenJDK 21; no Android SDK; gh unauthenticated",
+  "status_values": [
+    "BASELINED",
+    "NEEDS_REPAIR",
+    "READY_FOR_INTEGRATION",
+    "TRANSITIONAL",
+    "DEPRECATED",
+    "RELEASE_CANDIDATE"
+  ],
+  "check_values": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "NOT PRESENT",
+    "NOT RUN"
+  ],
+  "hard_gate": {
+    "rule": "No BLUX contract/integration work begins until every active repository has a recorded baseline and SHA.",
+    "satisfied": true,
+    "repositories_baselined": 30,
+    "repositories_missing_baseline": [],
+    "note": "All 30 repositories under ~/ov and ~/ov/ov-webpages recorded with SHA. blux-web confirmed absent."
+  },
+  "status_counts": {
+    "BASELINED": 12,
+    "NEEDS_REPAIR": 9,
+    "READY_FOR_INTEGRATION": 5,
+    "TRANSITIONAL": 3,
+    "DEPRECATED": 0,
+    "RELEASE_CANDIDATE": 1
+  },
+  "repositories": [
+    {
+      "name": ".github",
+      "baseline_sha": "6fe2eddbcb70b444828289fbfb3e219b9fdc49d6",
+      "status": "NEEDS_REPAIR",
+      "next_action": "docs/ecosystem-diagram.md lists 5 repos that do not exist (blux-core, blux-orbit, blux-design-system, blux-experience-kit, blux-governance)"
+    },
+    {
+      "name": ".github-private",
+      "baseline_sha": "ba6379137a7eb38d97e73e2e479d58c572f8076d",
+      "status": "BASELINED",
+      "next_action": "none"
+    },
+    {
+      "name": "axiom",
+      "baseline_sha": "a0fe69e85c790938d98861f4ce3d8236bbce4100",
+      "status": "NEEDS_REPAIR",
+      "next_action": "2 failing shell tests"
+    },
+    {
+      "name": "blhermes-agent",
+      "baseline_sha": "75624a7a0b5d188b15fc9597c8258ae5970a0e98",
+      "status": "TRANSITIONAL",
+      "next_action": "Upstream hooks: update/source-release/model-catalog/plugin-catalog point at NousResearch/hermes-agent; installer at hermes-agent.nousresearch.com; default sandbox image nousresearch/hermes-sandbox; Nous portal/inference endpoints; opt-in telemetry endpoint telemetry.nousresearch.com"
+    },
+    {
+      "name": "blux",
+      "baseline_sha": "42f4e5e36824d4195c563dc7ebe1ad78030b104c",
+      "status": "BASELINED",
+      "next_action": "none"
+    },
+    {
+      "name": "blux-app",
+      "baseline_sha": "a361cc025c0bfb39e85083eeaaafeb048fbfefda",
+      "status": "READY_FOR_INTEGRATION",
+      "next_action": "Proprietary license on public repo"
+    },
+    {
+      "name": "blux-ca",
+      "baseline_sha": "8817f90289e8de3d9f76925ee82b839b6deb8c69",
+      "status": "READY_FOR_INTEGRATION",
+      "next_action": "No 1.0.0 tag for declared frozen identity"
+    },
+    {
+      "name": "blux-ca-dataset",
+      "baseline_sha": "fbc31fbaf16a597395ed88737b7d8c4e906a4d79",
+      "status": "READY_FOR_INTEGRATION",
+      "next_action": "Several stale remote codex/* branches"
+    },
+    {
+      "name": "blux-coga",
+      "baseline_sha": "a7d88a25ebf4f02a8a14738a6a2bc482a4de63f5",
+      "status": "READY_FOR_INTEGRATION",
+      "next_action": "No 1.0.0 tag"
+    },
+    {
+      "name": "blux-coga-dataset",
+      "baseline_sha": "b3abf26b4f9a5e778119ef8634cf8a3b2d7e20db",
+      "status": "READY_FOR_INTEGRATION",
+      "next_action": "No CI"
+    },
+    {
+      "name": "blux-gpt",
+      "baseline_sha": "cbb08831625d4832041a1fc114b071e1ce28d01e",
+      "status": "BASELINED",
+      "next_action": "Hardcoded model IDs (gpt-5-mini, claude-haiku-4.5, deepseek-*) not verified against current provider catalogs"
+    },
+    {
+      "name": "blux-system",
+      "baseline_sha": "db70f0fd9c3f716b1bfc16d68fab443a11be2645",
+      "status": "NEEDS_REPAIR",
+      "next_action": "Installed package cannot find its JSON schemas (packaging defect)"
+    },
+    {
+      "name": "blux10k",
+      "baseline_sha": "05894b825e9c48d5b3e5bcc5d6f4ba0b1508256e",
+      "status": "BASELINED",
+      "next_action": "No LICENSE file"
+    },
+    {
+      "name": "dat",
+      "baseline_sha": "5fb9de9bddc66ae8d8c831e4ddc2f24455068e49",
+      "status": "NEEDS_REPAIR",
+      "next_action": "CLI/test drift (3 failures)"
+    },
+    {
+      "name": "docs",
+      "baseline_sha": "a604ab04f244450d86c77f5043c87f944f71c2b2",
+      "status": "BASELINED",
+      "next_action": "Covers DevBoard and Grit & Grain, which have no repositories under ~/ov"
+    },
+    {
+      "name": "god",
+      "baseline_sha": "699c1d021b4f3ef7193aa46b91b74027eb44fcfb",
+      "status": "NEEDS_REPAIR",
+      "next_action": "Stale version test"
+    },
+    {
+      "name": "jadis.toolbox",
+      "baseline_sha": "baf97c06d9eb88e50059919b30572b6ae9c61985",
+      "status": "BASELINED",
+      "next_action": "none"
+    },
+    {
+      "name": "lrc",
+      "baseline_sha": "4dbeb99ccdd86efe96ef025a5a01d1e273002059",
+      "status": "NEEDS_REPAIR",
+      "next_action": "Module/package shadowing: compiler.py+compiler/, parser.py+parser/, generator.py+generator/ (dead or duplicated code)"
+    },
+    {
+      "name": "resolver",
+      "baseline_sha": "65c2bf031658863680bf86f48e9446c6fc8dc70a",
+      "status": "RELEASE_CANDIDATE",
+      "next_action": "No tag for current release candidate (v4.0 is 71 commits old)"
+    },
+    {
+      "name": "roughin",
+      "baseline_sha": "d4f2fdbc507c2770c9b82c0c7e05b6c182b7833b",
+      "status": "NEEDS_REPAIR",
+      "next_action": "Missing greenlet dependency"
+    },
+    {
+      "name": "termux-background",
+      "baseline_sha": "efa3b3c9632925aba13677c49a4af7c942631192",
+      "status": "NEEDS_REPAIR",
+      "next_action": "Self-declared non-operational release"
+    },
+    {
+      "name": "vigyl",
+      "baseline_sha": "45b2970942abf8d9f2d89c17bda61cf465fe39af",
+      "status": "BASELINED",
+      "next_action": "Proprietary, privacy-sensitive product source in a PUBLIC repo"
+    },
+    {
+      "name": "void.game",
+      "baseline_sha": "ffb333ae3aa5162a06a8313b613769cd38f7e360",
+      "status": "TRANSITIONAL",
+      "next_action": "Diverged copy in void.os: 22 of 27 Kotlin files differ - no single source of truth"
+    },
+    {
+      "name": "void.os",
+      "baseline_sha": "bd871e2a9110f03b40f75245883edc99e261165d",
+      "status": "TRANSITIONAL",
+      "next_action": "Vendored+diverged void.game source"
+    },
+    {
+      "name": "void.sys",
+      "baseline_sha": "9765f8f48e18339da50fe5c07783eb11a16bfda4",
+      "status": "BASELINED",
+      "next_action": "Proprietary paid asset source in a PUBLIC repo"
+    },
+    {
+      "name": "voidforge",
+      "baseline_sha": "6a1f4d3d73fa2cf0ae11803c5d35bbfb1c6c1e5e",
+      "status": "BASELINED",
+      "next_action": "Device writes locked by design; future privileged ops must live behind a separately authenticated service (per BLHermes security note)"
+    },
+    {
+      "name": "bluxai.app",
+      "baseline_sha": "a3376fdac7d49c5bdf08ab9467739a30766218c5",
+      "status": "BASELINED",
+      "next_action": "Empty"
+    },
+    {
+      "name": "ivrp",
+      "baseline_sha": "dfaae26cf46fe7f9246f880a5c1c3501d6edc0dd",
+      "status": "BASELINED",
+      "next_action": "Empty"
+    },
+    {
+      "name": "operationrestore",
+      "baseline_sha": "17a0d41fd9de1177d05fa969b657ad6fea805d4d",
+      "status": "BASELINED",
+      "next_action": "No LICENSE"
+    },
+    {
+      "name": "theresolver",
+      "baseline_sha": "e48477618e6bae9fb289131d90f07c165fa8571b",
+      "status": "NEEDS_REPAIR",
+      "next_action": "next 16.1.6 critical advisory - bump to >=16.4.3"
+    }
+  ]
+}
