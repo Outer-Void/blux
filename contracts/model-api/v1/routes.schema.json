@@ -1,0 +1,492 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:model-api:v1:routes",
+  "title": "BLUX Model API v1 routing table",
+  "description": "Maps each logical model to ordered provider routes. Operators edit this; callers never see it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "model_api_version",
+    "routes_id",
+    "backends",
+    "models",
+    "defaults"
+  ],
+  "properties": {
+    "contract": {
+      "const": "blux.model-routes"
+    },
+    "model_api_version": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/model_api_version"
+    },
+    "routes_id": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+    },
+    "backends": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "entrypoint"
+        ],
+        "properties": {
+          "kind": {
+            "const": "subprocess"
+          },
+          "entrypoint": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          }
+        }
+      }
+    },
+    "models": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blux-main",
+        "blux-fast",
+        "blux-reason",
+        "blux-code"
+      ],
+      "properties": {
+        "blux-main": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "routes"
+          ],
+          "properties": {
+            "routes": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "route_id",
+                  "backend",
+                  "provider",
+                  "provider_model",
+                  "locality",
+                  "capabilities",
+                  "determinism",
+                  "tier"
+                ],
+                "properties": {
+                  "route_id": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "backend": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "provider": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "provider_model": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/provider_model"
+                  },
+                  "locality": {
+                    "enum": [
+                      "local",
+                      "remote"
+                    ]
+                  },
+                  "capabilities": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/capabilities"
+                  },
+                  "determinism": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "temperature",
+                      "seed"
+                    ],
+                    "properties": {
+                      "temperature": {
+                        "type": "boolean"
+                      },
+                      "seed": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "tier": {
+                    "enum": [
+                      "primary",
+                      "fallback"
+                    ]
+                  },
+                  "context_window_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "max_output_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "timeout_ms": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 600000
+                  },
+                  "base_url": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "pattern": "^https?://"
+                  },
+                  "credential_env": {
+                    "type": "array",
+                    "maxItems": 8,
+                    "uniqueItems": true,
+                    "description": "Names (never values) of environment variables passed to the backend.",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "blux-fast": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "routes"
+          ],
+          "properties": {
+            "routes": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "route_id",
+                  "backend",
+                  "provider",
+                  "provider_model",
+                  "locality",
+                  "capabilities",
+                  "determinism",
+                  "tier"
+                ],
+                "properties": {
+                  "route_id": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "backend": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "provider": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "provider_model": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/provider_model"
+                  },
+                  "locality": {
+                    "enum": [
+                      "local",
+                      "remote"
+                    ]
+                  },
+                  "capabilities": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/capabilities"
+                  },
+                  "determinism": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "temperature",
+                      "seed"
+                    ],
+                    "properties": {
+                      "temperature": {
+                        "type": "boolean"
+                      },
+                      "seed": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "tier": {
+                    "enum": [
+                      "primary",
+                      "fallback"
+                    ]
+                  },
+                  "context_window_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "max_output_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "timeout_ms": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 600000
+                  },
+                  "base_url": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "pattern": "^https?://"
+                  },
+                  "credential_env": {
+                    "type": "array",
+                    "maxItems": 8,
+                    "uniqueItems": true,
+                    "description": "Names (never values) of environment variables passed to the backend.",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "blux-reason": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "routes"
+          ],
+          "properties": {
+            "routes": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "route_id",
+                  "backend",
+                  "provider",
+                  "provider_model",
+                  "locality",
+                  "capabilities",
+                  "determinism",
+                  "tier"
+                ],
+                "properties": {
+                  "route_id": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "backend": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "provider": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "provider_model": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/provider_model"
+                  },
+                  "locality": {
+                    "enum": [
+                      "local",
+                      "remote"
+                    ]
+                  },
+                  "capabilities": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/capabilities"
+                  },
+                  "determinism": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "temperature",
+                      "seed"
+                    ],
+                    "properties": {
+                      "temperature": {
+                        "type": "boolean"
+                      },
+                      "seed": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "tier": {
+                    "enum": [
+                      "primary",
+                      "fallback"
+                    ]
+                  },
+                  "context_window_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "max_output_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "timeout_ms": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 600000
+                  },
+                  "base_url": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "pattern": "^https?://"
+                  },
+                  "credential_env": {
+                    "type": "array",
+                    "maxItems": 8,
+                    "uniqueItems": true,
+                    "description": "Names (never values) of environment variables passed to the backend.",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "blux-code": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "routes"
+          ],
+          "properties": {
+            "routes": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "route_id",
+                  "backend",
+                  "provider",
+                  "provider_model",
+                  "locality",
+                  "capabilities",
+                  "determinism",
+                  "tier"
+                ],
+                "properties": {
+                  "route_id": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "backend": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "provider": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+                  },
+                  "provider_model": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/provider_model"
+                  },
+                  "locality": {
+                    "enum": [
+                      "local",
+                      "remote"
+                    ]
+                  },
+                  "capabilities": {
+                    "$ref": "urn:blux:model-api:v1:common#/$defs/capabilities"
+                  },
+                  "determinism": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "temperature",
+                      "seed"
+                    ],
+                    "properties": {
+                      "temperature": {
+                        "type": "boolean"
+                      },
+                      "seed": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "tier": {
+                    "enum": [
+                      "primary",
+                      "fallback"
+                    ]
+                  },
+                  "context_window_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "max_output_tokens": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "timeout_ms": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 600000
+                  },
+                  "base_url": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "pattern": "^https?://"
+                  },
+                  "credential_env": {
+                    "type": "array",
+                    "maxItems": 8,
+                    "uniqueItems": true,
+                    "description": "Names (never values) of environment variables passed to the backend.",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_attempts",
+        "allow_fallback",
+        "timeout_ms"
+      ],
+      "properties": {
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "allow_fallback": {
+          "type": "boolean"
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 600000
+        }
+      }
+    }
+  }
+}

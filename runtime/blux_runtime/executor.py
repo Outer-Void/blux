@@ -7,8 +7,9 @@ Nothing is raised to the caller for bad requests; failures are data (ADR-0006).
 from __future__ import annotations
 
 import concurrent.futures
+import threading
 import time
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
@@ -29,9 +30,13 @@ ISSUER = {"component": "blux-runtime", "version": __version__}
 class InMemoryReceiptSink:
     def __init__(self) -> None:
         self.receipts: list[dict[str, Any]] = []
+        self.artifacts: list[tuple[dict[str, Any], bytes]] = []
 
     def emit(self, receipt: dict[str, Any]) -> None:
         self.receipts.append(receipt)
+
+    def emit_artifact(self, descriptor: dict[str, Any], data: bytes) -> None:
+        self.artifacts.append((descriptor, data))
 
 
 @dataclass(frozen=True)
@@ -50,6 +55,7 @@ class _Trace:
     policy_decision: dict[str, Any] | None = None
     input_sha256: str | None = None
     output: dict[str, Any] | None = None
+    context: ExecutionContext | None = None
 
 
 class Runtime:
@@ -64,13 +70,21 @@ class Runtime:
         self.policy = PolicyEngine(policy)
         self.receipt_sink: ReceiptSink = receipt_sink or InMemoryReceiptSink()
 
-    def execute(self, request: Mapping[str, Any] | str | bytes) -> Outcome:
+    def execute(
+        self,
+        request: Mapping[str, Any] | str | bytes,
+        *,
+        on_event: Callable[[dict[str, Any]], None] | None = None,
+        cancel: threading.Event | None = None,
+    ) -> Outcome:
+        """Execute one request. `on_event` receives handler progress events; setting `cancel` asks the
+        handler to stop (it then fails with its own code, e.g. a Model API CANCELLED)."""
         started_at = utc_now()
         t0 = time.monotonic()
         trace = _Trace(operation_id=ids.new_operation_id())
         error: BluxError | None = None
         try:
-            self._run(request, trace)
+            self._run(request, trace, on_event, cancel)
         except BluxError as exc:
             error = exc
         except Exception as exc:  # noqa: BLE001 - runtime defect; still answer with a contract document
@@ -81,7 +95,13 @@ class Runtime:
         duration_ms = int((time.monotonic() - t0) * 1000)
         return self._finish(request, trace, error, started_at, finished_at, duration_ms)
 
-    def _run(self, raw: Mapping[str, Any] | str | bytes, trace: _Trace) -> None:
+    def _run(
+        self,
+        raw: Mapping[str, Any] | str | bytes,
+        trace: _Trace,
+        on_event: Callable[[dict[str, Any]], None] | None = None,
+        cancel: threading.Event | None = None,
+    ) -> None:
         doc: Any = loads_json(raw) if isinstance(raw, (str, bytes)) else raw
         if isinstance(doc, Mapping) and ids.is_valid(ids.IdKind.OPERATION, doc.get("operation_id")):
             trace.operation_id = doc["operation_id"]
@@ -121,7 +141,10 @@ class Runtime:
             actor=dict(req["actor"]),
             capability_id=desc.capability_id,
             timeout_ms=timeout_ms,
+            on_event=on_event,
+            cancel=cancel or threading.Event(),
         )
+        trace.context = context
         output = _call_with_timeout(entry, req["input"], context, timeout_ms)
         if not isinstance(output, dict):
             raise BluxError(
@@ -168,6 +191,7 @@ class Runtime:
                 duration_ms=duration_ms,
             )
 
+        artifacts = self._artifacts(trace)
         receipt = envelopes.receipt(
             receipt_id=receipt_id,
             operation_id=trace.operation_id,
@@ -182,18 +206,36 @@ class Runtime:
             policy_decision=trace.policy_decision or dict(NOT_EVALUATED),
             input_sha256=trace.input_sha256 or _raw_sha256(raw),
             output_sha256=sha256_of(trace.output) if trace.output is not None and error is None else None,
-            artifact_ids=[],
+            artifact_ids=[a["artifact_id"] for a, _data in artifacts],
             started_at=started_at,
             finished_at=finished_at,
             issuer=dict(ISSUER),
         )
         sink_error: dict[str, Any] | None = None
         try:
+            emit_artifact = getattr(self.receipt_sink, "emit_artifact", None)
+            if callable(emit_artifact):
+                for descriptor, data in artifacts:
+                    emit_artifact(descriptor, data)
             self.receipt_sink.emit(receipt)
         except Exception as exc:  # noqa: BLE001 - a sink failure must never lose the result
             to_doc = getattr(exc, "to_document", None)
             sink_error = to_doc() if callable(to_doc) else {"exception_type": type(exc).__name__}
         return Outcome(result=result, receipt=receipt, sink_error=sink_error)
+
+    def _artifacts(self, trace: _Trace) -> list[tuple[dict[str, Any], bytes]]:
+        """Artifacts the handler attached that are valid descriptors of this operation's bytes."""
+        if trace.context is None:
+            return []
+        kept = []
+        for descriptor, data in trace.context.artifacts:
+            try:
+                doc = check_envelope(descriptor, "artifact", supported=SUPPORTED_CONTRACT_VERSIONS)
+            except BluxError:
+                continue
+            if doc["operation_id"] == trace.operation_id and doc["sha256"] == sha256_of(data):
+                kept.append((doc, data))
+        return kept
 
 
 def _call_with_timeout(
@@ -204,6 +246,7 @@ def _call_with_timeout(
     try:
         return future.result(timeout=timeout_ms / 1000)
     except concurrent.futures.TimeoutError:
+        context.cancel.set()  # ask the handler to stop (e.g. kill a model backend)
         raise BluxError(
             ErrorCode.TIMEOUT,
             f"Capability exceeded {timeout_ms} ms.",

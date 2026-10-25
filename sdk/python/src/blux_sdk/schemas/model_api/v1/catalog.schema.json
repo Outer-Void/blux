@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:model-api:v1:catalog",
+  "title": "BLUX Model API v1 model catalog",
+  "description": "The logical models a caller can target, and which capabilities the current routes can provide.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "model_api_version",
+    "models"
+  ],
+  "properties": {
+    "contract": {
+      "const": "blux.model-catalog"
+    },
+    "model_api_version": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/model_api_version"
+    },
+    "routes_id": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "purpose",
+          "capabilities",
+          "routes"
+        ],
+        "properties": {
+          "model": {
+            "$ref": "urn:blux:model-api:v1:common#/$defs/logical_model"
+          },
+          "purpose": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "capabilities": {
+            "$ref": "urn:blux:model-api:v1:common#/$defs/capabilities"
+          },
+          "routes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  }
+}

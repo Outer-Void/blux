@@ -4,7 +4,7 @@ BLUX is the contract authority for the Outer-Void ecosystem. It defines the cano
 registry, runtime and model interfaces, and the `blux` command line. Other repositories stay independent and
 integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001).
 
-**Status:** Stage 01. Contract v1 (`1.0`), Python SDK `blux-sdk 0.1.0`, reference runtime + CLI `outervoid-blux 0.1.0`.
+**Status:** Stage 09. Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.2.0`.
 
 ## Layout
 | Path | Contents |

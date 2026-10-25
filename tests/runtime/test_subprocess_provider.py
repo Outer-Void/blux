@@ -229,7 +229,7 @@ def test_cli_run_with_project(tmp_path: Path, provider_bin: Path) -> None:
     assert proc.returncode == 1 and json.loads(proc.stdout)["error"]["details"]["provider_code"] == "TARGET_NOT_FOUND"
     proc = subprocess.run([*base, "capabilities", "--project", str(root)], capture_output=True, cwd=ROOT, env=env)
     ids = [c["capability_id"] for c in json.loads(proc.stdout)["capabilities"]]
-    assert ids == ["echo.test", "fake.run"]
+    assert ids == ["echo.test", "fake.run", "model.catalog", "model.generate"]
     # The project's policy replaces the reference policy: echo.test is no longer allowed.
     proc = subprocess.run(
         [*base, "run", "echo.test", "--project", str(root), "--input", '{"message": "x"}'],

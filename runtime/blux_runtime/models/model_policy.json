@@ -1,0 +1,12 @@
+{
+  "contract": "blux.policy",
+  "contract_version": "1.0",
+  "policy_id": "blux-model-default",
+  "default_effect": "deny",
+  "rules": [
+    {"rule_id": "allow-model-catalog", "effect": "allow", "capabilities": ["model.catalog"],
+     "actor_types": ["user", "service", "agent"], "max_side_effects": "none", "grants": []},
+    {"rule_id": "allow-model-generate", "effect": "allow", "capabilities": ["model.generate"],
+     "actor_types": ["user", "service", "agent"], "max_side_effects": "external", "grants": ["net:model"]}
+  ]
+}

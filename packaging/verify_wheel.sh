@@ -25,3 +25,15 @@ import blux_sdk
 assert "site-packages" in blux_sdk.__file__, blux_sdk.__file__
 print("verify_wheel: OK", file=sys.stderr)
 EOF
+# Model API v1: packaged schemas, default routes and model policy load from the installed wheel.
+"$WORK/venv/bin/blux" models > "$WORK/catalog.json"
+"$WORK/venv/bin/python" - "$WORK/catalog.json" <<'EOF'
+import json, sys
+from blux_sdk import model_api
+from blux_runtime.models import capability
+doc = json.load(open(sys.argv[1]))
+assert model_api.schema_errors("catalog", doc) == [] and [m["model"] for m in doc["models"]] == list(model_api.LOGICAL_MODELS), doc
+assert model_api.schema_errors("routes", capability.default_routes()) == []
+assert capability.model_policy()["policy_id"] == "blux-model-default"
+print("verify_wheel: Model API OK", file=sys.stderr)
+EOF

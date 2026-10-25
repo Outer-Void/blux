@@ -1,0 +1,46 @@
+{
+  "contract": "blux.model-routes",
+  "model_api_version": "1.0",
+  "routes_id": "blux-default-2026-10",
+  "backends": {
+    "bluxgpt": {"kind": "subprocess", "entrypoint": "bluxgpt blux-model-backend"}
+  },
+  "models": {
+    "blux-main": {"routes": [
+      {"route_id": "main.openai", "backend": "bluxgpt", "provider": "openai", "provider_model": "gpt-5-mini",
+       "locality": "remote", "tier": "primary", "capabilities": ["streaming", "tools", "structured_output", "long_context"],
+       "determinism": {"temperature": false, "seed": false}, "credential_env": ["OPENAI_API_KEY"]},
+      {"route_id": "main.anthropic", "backend": "bluxgpt", "provider": "anthropic", "provider_model": "claude-haiku-4-5-20251001",
+       "locality": "remote", "tier": "fallback", "capabilities": ["streaming", "tools", "structured_output", "long_context", "deterministic"],
+       "determinism": {"temperature": true, "seed": false}, "credential_env": ["ANTHROPIC_API_KEY"]},
+      {"route_id": "main.deepseek", "backend": "bluxgpt", "provider": "deepseek", "provider_model": "deepseek-chat",
+       "locality": "remote", "tier": "fallback", "capabilities": ["streaming", "tools", "structured_output", "deterministic"],
+       "determinism": {"temperature": true, "seed": false}, "credential_env": ["DEEPSEEK_API_KEY"]}
+    ]},
+    "blux-fast": {"routes": [
+      {"route_id": "fast.anthropic", "backend": "bluxgpt", "provider": "anthropic", "provider_model": "claude-haiku-4-5-20251001",
+       "locality": "remote", "tier": "primary", "capabilities": ["streaming", "tools", "structured_output", "deterministic"],
+       "determinism": {"temperature": true, "seed": false}, "credential_env": ["ANTHROPIC_API_KEY"]},
+      {"route_id": "fast.deepseek", "backend": "bluxgpt", "provider": "deepseek", "provider_model": "deepseek-chat",
+       "locality": "remote", "tier": "fallback", "capabilities": ["streaming", "tools", "structured_output", "deterministic"],
+       "determinism": {"temperature": true, "seed": false}, "credential_env": ["DEEPSEEK_API_KEY"]}
+    ]},
+    "blux-reason": {"routes": [
+      {"route_id": "reason.deepseek", "backend": "bluxgpt", "provider": "deepseek", "provider_model": "deepseek-reasoner",
+       "locality": "remote", "tier": "primary", "capabilities": ["streaming", "long_context"],
+       "determinism": {"temperature": false, "seed": false}, "credential_env": ["DEEPSEEK_API_KEY"]},
+      {"route_id": "reason.openai", "backend": "bluxgpt", "provider": "openai", "provider_model": "gpt-5-mini",
+       "locality": "remote", "tier": "fallback", "capabilities": ["streaming", "tools", "structured_output", "long_context"],
+       "determinism": {"temperature": false, "seed": false}, "credential_env": ["OPENAI_API_KEY"]}
+    ]},
+    "blux-code": {"routes": [
+      {"route_id": "code.openai", "backend": "bluxgpt", "provider": "openai", "provider_model": "gpt-5-mini",
+       "locality": "remote", "tier": "primary", "capabilities": ["streaming", "tools", "structured_output", "long_context"],
+       "determinism": {"temperature": false, "seed": false}, "credential_env": ["OPENAI_API_KEY"]},
+      {"route_id": "code.anthropic", "backend": "bluxgpt", "provider": "anthropic", "provider_model": "claude-haiku-4-5-20251001",
+       "locality": "remote", "tier": "fallback", "capabilities": ["streaming", "tools", "structured_output", "deterministic"],
+       "determinism": {"temperature": true, "seed": false}, "credential_env": ["ANTHROPIC_API_KEY"]}
+    ]}
+  },
+  "defaults": {"max_attempts": 3, "allow_fallback": true, "timeout_ms": 120000}
+}

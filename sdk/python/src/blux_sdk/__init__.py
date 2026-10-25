@@ -5,7 +5,7 @@ from blux_sdk.errors import BluxError, ErrorCode, normalize_error
 from blux_sdk.schemas import KINDS, check_envelope, validate
 from blux_sdk.versions import CONTRACT_VERSION, SUPPORTED_CONTRACT_VERSIONS, negotiate
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "CONTRACT_VERSION",

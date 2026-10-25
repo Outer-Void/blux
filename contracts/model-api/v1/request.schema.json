@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:model-api:v1:request",
+  "title": "BLUX Model API v1 request",
+  "description": "What a caller asks of a logical BLUX model. Carries no credentials and names no vendor.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "model_api_version",
+    "model",
+    "messages"
+  ],
+  "properties": {
+    "contract": {
+      "const": "blux.model-request"
+    },
+    "model_api_version": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/model_api_version"
+    },
+    "model": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/logical_model"
+    },
+    "system": {
+      "type": "string",
+      "maxLength": 204800,
+      "description": "System instructions."
+    },
+    "context": {
+      "type": "array",
+      "maxItems": 64,
+      "description": "Context supplied alongside the conversation.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "content"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "document",
+              "environment",
+              "note",
+              "retrieval"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 409600
+          }
+        }
+      }
+    },
+    "messages": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "role",
+          "content"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "user",
+              "assistant",
+              "tool"
+            ]
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 1048576
+          },
+          "tool_calls": {
+            "type": "array",
+            "maxItems": 64,
+            "items": {
+              "$ref": "urn:blux:model-api:v1:common#/$defs/tool_call"
+            }
+          },
+          "tool_call_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        }
+      }
+    },
+    "tools": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "description",
+          "input_schema"
+        ],
+        "properties": {
+          "name": {
+            "$ref": "urn:blux:model-api:v1:common#/$defs/tool_name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "input_schema": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "tool_choice": {
+      "oneOf": [
+        {
+          "enum": [
+            "auto",
+            "none",
+            "required"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "$ref": "urn:blux:model-api:v1:common#/$defs/tool_name"
+            }
+          }
+        }
+      ]
+    },
+    "response_format": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "text"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "name",
+            "schema"
+          ],
+          "properties": {
+            "type": {
+              "const": "json_schema"
+            },
+            "name": {
+              "$ref": "urn:blux:model-api:v1:common#/$defs/tool_name"
+            },
+            "schema": {
+              "type": "object"
+            },
+            "strict": {
+              "type": "boolean"
+            }
+          }
+        }
+      ]
+    },
+    "capabilities": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/capabilities",
+      "description": "Hard requirements: a route without one of these is never used."
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_output_tokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200000
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "top_p": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "stop": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          }
+        },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      }
+    },
+    "deterministic": {
+      "type": "boolean",
+      "description": "Ask for temperature 0 and a fixed seed where the provider exposes them."
+    },
+    "stream": {
+      "type": "boolean"
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 600000
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allow_fallback": {
+          "type": "boolean"
+        },
+        "providers": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 16,
+          "items": {
+            "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+          }
+        },
+        "exclude_providers": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 16,
+          "items": {
+            "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+          }
+        }
+      }
+    },
+    "client": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 64
+        }
+      }
+    }
+  }
+}

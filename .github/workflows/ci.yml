@@ -74,6 +74,9 @@ jobs:
           repository: Outer-Void/blux-ca
           ref: 6dcfcd70964d76db0534371f175710c59fb5adbe
           path: _ca
+      # Stage 09: BluxGPT, the reference Model API backend (stdlib only, Python 3.10+, so every matrix entry).
+      - name: Install BluxGPT
+        run: python -m pip install --no-deps "bluxgpt @ git+https://github.com/Outer-Void/blux-gpt.git@dc34f80810a3d1f55ae33ecd5b5aa1e61b4dca93"
       - name: Schema drift and lock
         run: python packaging/sync_schemas.py --check
       - name: Format
@@ -82,7 +85,7 @@ jobs:
         run: ruff check .
       - name: Types
         run: mypy
-      - name: Tests (incl. BLUX System, DAT, LRC, GOD, CogA and cA hard-gate integration)
+      - name: Tests (incl. BLUX System, DAT, LRC, GOD, CogA, cA and Model API hard-gate integration)
         run: pytest
         env:
           BLUX_REQUIRE_SYSTEM: "1"
@@ -90,6 +93,7 @@ jobs:
           BLUX_REQUIRE_LRC: ${{ matrix.python != '3.10' && '1' || '0' }}
           BLUX_REQUIRE_GOD: ${{ matrix.python != '3.10' && '1' || '0' }}
           BLUX_REQUIRE_COGA: "1"
+          BLUX_REQUIRE_BLUXGPT: "1"
           BLUX_REQUIRE_CA: ${{ matrix.python != '3.10' && '1' || '0' }}
           DAT_PROJECT_DIR: ${{ github.workspace }}/_dat
           LRC_PROJECT_DIR: ${{ github.workspace }}/_lrc

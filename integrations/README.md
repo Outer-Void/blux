@@ -138,3 +138,22 @@ blux run artifact.construct --project path/to/blux-ca --actor-type service --act
 | an agent asks to write | `rejected`, `POLICY_DENIED` | `DENIED` |
 
 Tests: `tests/integration/test_ca.py` (CogA plan → cA construct → DAT → bounded cA repair → DAT).
+
+## BluxGPT: Model API backend (Stage 09)
+[BluxGPT](https://github.com/Outer-Void/blux-gpt) is the reference backend for the BLUX Model API v1
+(ADR-0010). BLUX's router runs `bluxgpt blux-model-backend` for each route attempt, and BluxGPT owns provider
+transport, retries, streaming, timeouts and normalization. Callers target logical models and never name a
+provider:
+
+```bash
+blux models
+blux generate blux-main "Summarize this" --system-store ./truth
+```
+
+| Outcome | BLUX result | BLUX System |
+|---|---|---|
+| served (possibly degraded to a fallback route) | `succeeded`, `output` = `blux.model-response` with every attempt | `SUCCESS`, receipt lists a `model-call` artifact |
+| every route failed / content filtered / timeout | `failed`, `EXECUTION_FAILED`, `provider_code` = Model API code | `FAILURE`, with the failure's model-call artifact |
+| request fails the Model API schema | `rejected`, `SCHEMA_VALIDATION_FAILED` | `FAILURE` |
+
+Tests: `tests/integration/test_model_api.py` (mocked provider through the real backend process; one REAL test with `BLUX_REAL_MODELS=1`).

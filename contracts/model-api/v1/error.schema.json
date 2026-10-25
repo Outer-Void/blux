@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:model-api:v1:error",
+  "title": "BLUX Model API v1 error",
+  "description": "A normalized failure. Messages are sanitized; credentials never appear.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "model_api_version",
+    "code",
+    "message",
+    "retryable",
+    "fallback",
+    "provider",
+    "route_id",
+    "attempts",
+    "details"
+  ],
+  "properties": {
+    "contract": {
+      "const": "blux.model-error"
+    },
+    "model_api_version": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/model_api_version"
+    },
+    "code": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/error_code"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 512
+    },
+    "retryable": {
+      "type": "boolean",
+      "description": "Repeating the same request later may succeed."
+    },
+    "fallback": {
+      "type": "boolean",
+      "description": "Another route may succeed now."
+    },
+    "provider": {
+      "oneOf": [
+        {
+          "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "route_id": {
+      "oneOf": [
+        {
+          "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:blux:model-api:v1:common#/$defs/attempt"
+      }
+    },
+    "details": {
+      "type": "object"
+    }
+  }
+}

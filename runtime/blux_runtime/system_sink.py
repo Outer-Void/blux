@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -56,12 +57,12 @@ class BluxSystemSink:
         self.outbox = Path(outbox) if outbox else self.store.with_name(self.store.name + ".outbox.jsonl")
         self.timeout_s = timeout_s
 
-    def _send(self, receipt: dict[str, Any]) -> dict[str, Any]:
+    def _send(self, receipt: dict[str, Any], extra: tuple[str, ...] = ()) -> dict[str, Any]:
         """Return the store's response document, or raise SystemSinkError(spooled=False)."""
         env = {k: v for k, v in os.environ.items() if k != "BLUX_SYSTEM_STORE"}
         try:
             proc = subprocess.run(  # noqa: S603 - fixed argv, no shell
-                [self.executable, "ingest", "--store", str(self.store), "-"],
+                [self.executable, "ingest", "--store", str(self.store), *extra, "-"],
                 input=canonical_json(receipt).encode("utf-8"),
                 capture_output=True,
                 timeout=self.timeout_s,
@@ -99,6 +100,19 @@ class BluxSystemSink:
             fh.write(canonical_json(receipt) + "\n")
             fh.flush()
             os.fsync(fh.fileno())
+
+    def emit_artifact(self, descriptor: dict[str, Any], data: bytes) -> None:
+        """Store an artifact descriptor with its bytes (verified by blux-system against the descriptor's sha256).
+
+        Artifacts are not spooled: the receipt that lists them still is, and its artifact_ids stay valid.
+        """
+        with tempfile.NamedTemporaryFile(prefix="blux-artifact-", delete=False) as fh:
+            fh.write(data)
+            path = fh.name
+        try:
+            self._send(descriptor, ("--kind", "artifact", "--data", path))
+        finally:
+            os.unlink(path)
 
     def emit(self, receipt: dict[str, Any]) -> None:
         try:

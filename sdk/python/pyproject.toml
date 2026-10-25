@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "blux-sdk"
-version = "0.1.0"
-description = "BLUX Contract v1 SDK: schema validation, identifiers, envelopes, errors and version negotiation."
+version = "0.2.0"
+description = "BLUX SDK: Contract v1 and Model API v1 schemas, validation, identifiers, envelopes and errors."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
@@ -23,4 +23,4 @@ Repository = "https://github.com/Outer-Void/blux"
 where = ["src"]
 
 [tool.setuptools.package-data]
-blux_sdk = ["py.typed", "schemas/v1/*.schema.json"]
+blux_sdk = ["py.typed", "schemas/v1/*.schema.json", "schemas/model_api/v1/*.schema.json"]

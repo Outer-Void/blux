@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:model-api:v1:response",
+  "title": "BLUX Model API v1 response",
+  "description": "A normalized model response: the same shape whatever backend and provider served it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "model_api_version",
+    "response_id",
+    "model",
+    "status",
+    "finish_reason",
+    "output",
+    "usage",
+    "provider",
+    "routing",
+    "determinism",
+    "timing",
+    "linkage"
+  ],
+  "properties": {
+    "contract": {
+      "const": "blux.model-response"
+    },
+    "model_api_version": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/model_api_version"
+    },
+    "response_id": {
+      "type": "string",
+      "pattern": "^mresp_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "model": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/logical_model"
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "incomplete",
+        "tool_calls"
+      ]
+    },
+    "finish_reason": {
+      "enum": [
+        "stop",
+        "length",
+        "tool_calls",
+        "content_filter",
+        "other"
+      ]
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "json",
+        "tool_calls"
+      ],
+      "properties": {
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "json": {},
+        "tool_calls": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:blux:model-api:v1:common#/$defs/tool_call"
+          }
+        }
+      }
+    },
+    "usage": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/usage"
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backend",
+        "provider",
+        "provider_model",
+        "route_id",
+        "locality",
+        "request_id"
+      ],
+      "properties": {
+        "backend": {
+          "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+        },
+        "provider": {
+          "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+        },
+        "provider_model": {
+          "$ref": "urn:blux:model-api:v1:common#/$defs/provider_model"
+        },
+        "route_id": {
+          "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+        },
+        "locality": {
+          "enum": [
+            "local",
+            "remote"
+          ]
+        },
+        "request_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 128
+        }
+      }
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route_id",
+        "attempts",
+        "fallback_used",
+        "degraded",
+        "notes"
+      ],
+      "properties": {
+        "route_id": {
+          "$ref": "urn:blux:model-api:v1:common#/$defs/slug"
+        },
+        "attempts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "urn:blux:model-api:v1:common#/$defs/attempt"
+          }
+        },
+        "fallback_used": {
+          "type": "boolean"
+        },
+        "degraded": {
+          "type": "boolean"
+        },
+        "notes": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      }
+    },
+    "determinism": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requested",
+        "supported",
+        "applied"
+      ],
+      "properties": {
+        "requested": {
+          "type": "boolean"
+        },
+        "supported": {
+          "type": "boolean"
+        },
+        "applied": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "temperature",
+            "seed"
+          ],
+          "properties": {
+            "temperature": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "seed": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "latency_ms",
+        "first_token_ms"
+      ],
+      "properties": {
+        "latency_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "first_token_ms": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "linkage": {
+      "$ref": "urn:blux:model-api:v1:common#/$defs/linkage"
+    }
+  }
+}

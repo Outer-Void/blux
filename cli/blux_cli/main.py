@@ -2,12 +2,16 @@
 
 Machine protocol (ADR-0008): stdout carries exactly one JSON document per invocation, newline-terminated.
 Diagnostics go to stderr. Exit codes: 0 ok, 1 contract-level failure (document still on stdout), 2 usage.
+`blux generate --events FILE` writes Model API stream events (JSON Lines) to FILE, never to stdout.
 """
 
 from __future__ import annotations
 
 import argparse
+import os
+import signal
 import sys
+import threading
 from pathlib import Path
 from typing import Any, NoReturn, TextIO
 
@@ -15,10 +19,12 @@ import blux_runtime
 import blux_sdk
 from blux_runtime.builtin import builtin_registry, reference_policy
 from blux_runtime.executor import Outcome, Runtime
+from blux_runtime.models import ModelRouter
+from blux_runtime.models import capability as model_capability
 from blux_runtime.project import register_project
 from blux_runtime.registry import CapabilityRegistry
 from blux_runtime.system_sink import BluxSystemSink
-from blux_sdk import dot_blux, envelopes, ids
+from blux_sdk import dot_blux, envelopes, ids, model_api
 from blux_sdk.errors import BluxError, ErrorCode
 from blux_sdk.schemas import KINDS, check_envelope
 from blux_sdk.serialization import dumps_json, loads_json, loads_yaml
@@ -53,9 +59,16 @@ def _emit(doc: Any, out: TextIO, pretty: bool) -> None:
     out.flush()
 
 
-def _registry(project_dir: str | None) -> tuple[CapabilityRegistry, dict[str, Any] | None]:
-    """Built-ins, plus the project's `.blux/` capabilities and its policy when --project is given."""
+def _routes(path: str | None) -> dict[str, Any]:
+    """The Model API routing table: --routes, else $BLUX_MODEL_ROUTES, else the packaged default."""
+    source = path or os.environ.get("BLUX_MODEL_ROUTES")
+    return _read_document(source, sys.stdin) if source else model_capability.default_routes()
+
+
+def _registry(project_dir: str | None, routes: str | None = None) -> tuple[CapabilityRegistry, dict[str, Any] | None]:
+    """Built-ins and the Model API capabilities, plus the project's `.blux/` capabilities and policy (--project)."""
     registry = builtin_registry()
+    model_capability.register(registry, ModelRouter(_routes(routes)))
     if project_dir is None:
         return registry, None
     project = dot_blux.load(project_dir)
@@ -126,6 +139,29 @@ def build_parser() -> argparse.ArgumentParser:
 
     pr = sub.add_parser("project", help="validate a repository's .blux/ directory")
     pr.add_argument("dir", nargs="?", default=".")
+
+    m = sub.add_parser("models", help="print the blux.model-catalog: logical models and what their routes provide")
+    m.add_argument("--routes", help="blux.model-routes table (default: $BLUX_MODEL_ROUTES or the packaged default)")
+
+    g = sub.add_parser("generate", help="run model.generate for a logical model; prints blux.result")
+    g.add_argument("model", choices=list(model_api.LOGICAL_MODELS))
+    g.add_argument("prompt", nargs="?", help="user message (or use --request)")
+    g.add_argument("--request", help="a full blux.model-request document (path or -)")
+    g.add_argument("--system", help="system instructions")
+    g.add_argument("--json-schema", help="JSON Schema file: ask for structured output matching it")
+    g.add_argument("--max-output-tokens", type=int)
+    g.add_argument("--deterministic", action="store_true", help="temperature 0 / fixed seed where the route allows")
+    g.add_argument("--timeout-ms", type=int)
+    g.add_argument("--no-fallback", action="store_true", help="fail on the first route's error instead of falling back")
+    g.add_argument("--events", help="write stream events (JSON Lines) to this file; - for stderr")
+    g.add_argument("--routes", help="blux.model-routes table")
+    g.add_argument("--policy", help="policy document (default: the built-in model policy)")
+    g.add_argument("--actor-type", default="user", choices=["user", "agent", "service"])
+    g.add_argument("--actor-id", default="cli")
+    g.add_argument("--session-id")
+    g.add_argument("--parent-operation-id")
+    g.add_argument("--receipt-out")
+    g.add_argument("--system-store", help="record the receipt and its model-call artifact in this BLUX System store")
     return p
 
 
@@ -210,4 +246,71 @@ def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
         )
         return EXIT_OK
 
+    if args.command == "models":
+        _emit(ModelRouter(_routes(args.routes)).catalog(), out, args.pretty)
+        return EXIT_OK
+
+    if args.command == "generate":
+        return _generate(args, stdin, out)
+
     raise AssertionError(f"unhandled command {args.command}")  # pragma: no cover
+
+
+def _generate(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
+    if args.request:
+        req = _read_document(args.request, stdin)
+    elif args.prompt is not None:
+        fields: dict[str, Any] = {
+            "system": args.system,
+            "timeout_ms": args.timeout_ms,
+            "deterministic": True if args.deterministic else None,
+        }
+        if args.json_schema:
+            fields["response_format"] = {
+                "type": "json_schema",
+                "name": "output",
+                "schema": _read_document(args.json_schema, stdin),
+            }
+        if args.max_output_tokens:
+            fields["generation"] = {"max_output_tokens": args.max_output_tokens}
+        if args.no_fallback:
+            fields["routing"] = {"allow_fallback": False}
+        req = model_api.request(args.model, args.prompt, client={"name": "blux-cli"}, **fields)
+    else:
+        raise BluxError(ErrorCode.MALFORMED_INPUT, "Give a prompt or --request.", details={"reason": "no_prompt"})
+    if req.get("model") != args.model:
+        req["model"] = args.model
+    registry, _ = _registry(None, args.routes)
+    policy = _read_document(args.policy, stdin) if args.policy else model_capability.model_policy()
+    sink = BluxSystemSink(args.system_store) if args.system_store else None
+    runtime = Runtime(registry, policy, receipt_sink=sink)
+    request = envelopes.execution_request(
+        "model.generate",
+        req,
+        actor={"type": args.actor_type, "id": args.actor_id},
+        session_id=args.session_id,
+        parent_operation_id=args.parent_operation_id,
+    )
+    cancel = threading.Event()
+    events = None
+    if args.events:
+        events = sys.stderr if args.events == "-" else open(args.events, "w", encoding="utf-8")  # noqa: SIM115
+
+    def on_event(event: dict[str, Any]) -> None:
+        if events is not None:
+            events.write(dumps_json(event) + "\n")
+            events.flush()
+
+    previous = (
+        signal.signal(signal.SIGINT, lambda *_: cancel.set())
+        if threading.current_thread() is threading.main_thread()
+        else None
+    )
+    try:
+        outcome = runtime.execute(request, on_event=on_event, cancel=cancel)
+    finally:
+        if previous is not None:
+            signal.signal(signal.SIGINT, previous)
+        if events is not None and events is not sys.stderr:
+            events.close()
+    return _finish(outcome, args, out)

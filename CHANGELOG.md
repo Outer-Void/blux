@@ -2,6 +2,44 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 09
+- **BLUX Model API v1** (ADR-0010, docs/model-api/v1.md, `contracts/model-api/v1/` with its own checksum
+  lock).
+  - **Logical models.** `blux-main`, `blux-fast`, `blux-reason` and `blux-code`. Callers never name a
+    vendor.
+  - **Schemas.** Request, response, error, stream-event, routing table and catalog.
+  - **Request features.** Messages, system and context; streaming; structured output; tools and tool
+    calls; capability requirements; deterministic controls where providers expose them; timeouts;
+    cancellation.
+  - **Normalized errors.** Each code fixes whether a retry later may succeed and whether another route may
+    serve the request now (`retryable`/`fallback`); content filtering never falls back.
+- **SDK 0.2.0.** `blux_sdk.model_api` adds validation, error types and a credential scrubber. Contract v1 is
+  unchanged: same schemas, same lock.
+- **Runtime 0.2.0.**
+  - **Router.** `blux_runtime.models.ModelRouter` handles capability-based route selection, explicit
+    fallback and degradation, structured-output and tool-call validation, deadlines and cancellation.
+  - **Backends.** Subprocess model backends speak a JSON-Lines event protocol; children get a minimal
+    environment plus only the route's `credential_env`.
+  - **Defaults.** A packaged routing table, and a model policy.
+- **Capabilities.** Built-in `model.generate` (`external`, `net:model`) and `model.catalog`. Each
+  `model.generate` receipt lists a `model-call` artifact of safe metadata (provider, route, attempts,
+  usage, timing, determinism) with no prompt, output text or credentials.
+- **Executor (backward compatible).** Handlers may `attach_artifact`, `emit_event` and observe `cancel`;
+  `Runtime.execute(on_event=, cancel=)`; sinks may `emit_artifact` (BluxSystemSink ingests the artifact with
+  its bytes).
+- **CLI.** `blux models`, `blux generate MODEL PROMPT [--events FILE] [--json-schema F] [--deterministic]
+  [--no-fallback] [--system-store S]`.
+- **Hard gate** (`tests/integration/test_model_api.py`, real BluxGPT backend process):
+  - a caller targets a logical model without knowing the provider;
+  - provider failures degrade (with every attempt recorded), route around a missing backend, or fail
+    explicitly (`ALL_ROUTES_FAILED`, `CONTENT_FILTERED`, a hung backend killed at the deadline);
+  - BLUX System holds the receipt and artifact but neither the prompt, the output nor any credential.
+
+  It is mocked by default; `BLUX_REAL_MODELS=1` adds a REAL provider path through the default routes.
+  CI installs BluxGPT at a pinned commit and requires the tests.
+- `blux capabilities` now lists `model.catalog` and `model.generate`; the reference policy still allows
+  only `echo.test`.
+
 ## Unreleased: Stage 08
 - CI pins cA 2.0.1 (6dcfcd7), which fixes a crash on a path through an existing file; the bug was found by the Stage 08 blux-ca-dataset build.
 
