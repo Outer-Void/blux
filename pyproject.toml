@@ -28,7 +28,7 @@ blux_cli = "cli/blux_cli"
 [tool.ruff]
 line-length = 120
 target-version = "py310"
-extend-exclude = ["sdk/python/src/blux_sdk/schemas", "_dat", "_lrc", "_god"]
+extend-exclude = ["sdk/python/src/blux_sdk/schemas", "_dat", "_lrc", "_god", "_coga"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "S", "A", "BLE", "RUF", "SIM", "PL", "C4"]

@@ -225,3 +225,5 @@ _dat/
 _lrc/
 # CI checkout of GOD for its .blux/ (Stage 05)
 _god/
+# CI checkout of CogA for its .blux/ and eval suite (Stage 06)
+_coga/

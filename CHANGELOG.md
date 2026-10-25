@@ -2,6 +2,9 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 06
+- Hard gate: BLUX invokes every CogA `reason.*` capability (analyze, plan, compare, decompose, critique, rank, risk); each artifact validates against the capability's output schema (the schema CogA itself enforces), equals the artifact id standalone CogA pins in its eval suite, and replay-links through BLUX System: `coga replay` recomputes the stored output and `blux-system replay-check` confirms the receipt's input and output hashes (`tests/integration/test_coga.py`). Also: a tampered artifact does not replay, the same request in two operations links by `artifact_id`, and a schema rejection (`rejected`, before CogA runs) stays distinguishable from a CogA failure (`failed`, `provider_code`). CI installs CogA at a pinned commit and requires the tests on every Python version.
+
 ## Unreleased: Stage 05
 - Hard gate: BLUX starts knowing only GOD, asks it (`capability.discover`) who provides `repo.create`, loads the project GOD names, then LRC creates the reproducible fixture and DAT audits it as linked child operations; BLUX System reconstructs the chain (one root, two edges, timeline, verified log, receipts matching each output) (`tests/integration/test_god.py`). Also: GOD's findings (malformed manifests, duplicates) are results while an ambiguous lookup is a recorded FAILURE, and GOD stays read-only (a discovered program is never run). CI installs GOD at a pinned commit.
 

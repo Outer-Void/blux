@@ -90,3 +90,26 @@ blux run repo.create --project "$(jq -r '.output.capabilities[0].project_root' d
 
 Malformed manifests and duplicates come back in `problems`/`duplicates` (a `succeeded` result); an unknown or
 ambiguous capability is `failed` with `provider_code` `NOT_FOUND`/`AMBIGUOUS`. Tests: `tests/integration/test_god.py`.
+
+
+## CogA (Stage 06)
+[CogA](https://github.com/Outer-Void/blux-coga) is `role: standalone`. Its `.blux/` declares seven
+side-effect-free capabilities: `reason.analyze`, `reason.plan`, `reason.compare`, `reason.decompose`,
+`reason.critique`, `reason.rank` and `reason.risk`. Each one's `input_schema`/`output_schema` is the JSON
+Schema CogA enforces itself, so BLUX validates every request and artifact. Artifacts are explicit,
+deterministic reasoning structures (evidence refs, confidence with basis, uncertainty sources, dataset
+links, replay metadata), never model chain-of-thought.
+
+```sh
+blux run reason.compare --project path/to/blux-coga --input "$(cat req.json)" --system-store ./truth > r.json
+jq .output r.json > art.json && coga replay art.json --request req.json -o re.json
+blux-system replay-check "$(jq -r .operation_id r.json)" --store ./truth --input req.json --output re.json
+```
+
+| CogA | BLUX result | BLUX System |
+|---|---|---|
+| artifact | `succeeded`, `output` = `coga.artifact` | `SUCCESS`; `replay-check` reproduces it |
+| request fails the input schema | `rejected`, `SCHEMA_VALIDATION_FAILED` (CogA never runs) | `FAILURE` |
+| CogA cannot reason about it (cycle, unknown reference) | `failed`, `EXECUTION_FAILED`, `provider_code` | `FAILURE` |
+
+Tests: `tests/integration/test_coga.py`.
