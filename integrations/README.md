@@ -113,3 +113,28 @@ blux-system replay-check "$(jq -r .operation_id r.json)" --store ./truth --input
 | CogA cannot reason about it (cycle, unknown reference) | `failed`, `EXECUTION_FAILED`, `provider_code` | `FAILURE` |
 
 Tests: `tests/integration/test_coga.py`.
+
+## cA (Stage 07)
+[cA](https://github.com/Outer-Void/blux-ca) is `role: standalone`, BLUX's construction and repair engine.
+Its `.blux/` declares seven capabilities:
+
+- `artifact.validate` reads only and is open to every actor;
+- `artifact.construct`, `artifact.modify`, `artifact.repair`, `code.patch`, `repo.patch` and
+  `config.generate` write, and are for users and services.
+
+Every write is a `ca.changeset` applied transactionally, with rollback artifacts in the workspace's
+`.ca/`. cA never certifies its own work: results carry `certified: false` and a `validation` block naming
+DAT's `repo.quality`. Repair is bounded (2 attempts by default, counted in the workspace ledger).
+
+```bash
+blux run artifact.construct --project path/to/blux-ca --actor-type service --actor-id ci \
+  --parent-operation-id "$PLAN_OP" --input "$(cat construct.json)" --system-store ./truth
+```
+
+| cA | BLUX result | BLUX System |
+|---|---|---|
+| applied, dry run or no-op | `succeeded`, `output` = `ca.result` / `ca.check` | `SUCCESS` |
+| refused (conflict, unsafe path, repair limit …) | `failed`, `EXECUTION_FAILED`, `provider_code` | `FAILURE` |
+| an agent asks to write | `rejected`, `POLICY_DENIED` | `DENIED` |
+
+Tests: `tests/integration/test_ca.py` (CogA plan → cA construct → DAT → bounded cA repair → DAT).

@@ -227,3 +227,5 @@ _lrc/
 _god/
 # CI checkout of CogA for its .blux/ and eval suite (Stage 06)
 _coga/
+# CI checkout of cA for its .blux/ (Stage 07)
+_ca/

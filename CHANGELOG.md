@@ -2,6 +2,9 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 07
+- Hard gate: CogA `reason.plan` -> cA `artifact.construct` (from the plan artifact, in plan order) -> DAT `repo.quality` fails the build -> cA `artifact.repair` (attempt 1 of the default 2, from DAT's report) -> DAT `repo.quality` passes, all as parent/child operations in one session; BLUX System reconstructs the chain (one root, four edges, every node SUCCESS, verified log of five records, receipts matching each output). cA's results link back: the construction names the plan's operation and the repair names the DAT audit it worked from (`tests/integration/test_ca.py`). Also: a third repair attempt is refused (`REPAIR_LIMIT_REACHED`, recorded as a failure), agents can check (`artifact.validate`) but not write (`POLICY_DENIED`), and cA's preserved rollback artifacts undo the repair afterwards. CI installs cA at a pinned commit and requires the tests (Python 3.11+).
+
 ## Unreleased: Stage 06
 - Hard gate: BLUX invokes every CogA `reason.*` capability (analyze, plan, compare, decompose, critique, rank, risk); each artifact validates against the capability's output schema (the schema CogA itself enforces), equals the artifact id standalone CogA pins in its eval suite, and replay-links through BLUX System: `coga replay` recomputes the stored output and `blux-system replay-check` confirms the receipt's input and output hashes (`tests/integration/test_coga.py`). Also: a tampered artifact does not replay, the same request in two operations links by `artifact_id`, and a schema rejection (`rejected`, before CogA runs) stays distinguishable from a CogA failure (`failed`, `provider_code`). CI installs CogA at a pinned commit and requires the tests on every Python version.
 
