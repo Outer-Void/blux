@@ -30,6 +30,6 @@ Claude Code (Anthropic, Claude Opus 5.5), recorded in `Co-authored-by` trailers 
 ledger). This credit implies no endorsement by Anthropic.
 
 ## Licensing
-This repository's `LICENSE` is currently Apache-2.0, and the package metadata matches. Outer Void is
-proprietary by default. Whether future BLUX versions are relicensed is an open owner decision (`UNR-008`),
-and already-published versions keep Apache-2.0.
+Since 2026-10-25 this repository, including the SDK and runtime packages, is under the BLUX Proprietary License
+(`LicenseRef-BLUX-Proprietary`, see `LICENSE`); the package metadata matches. This was the owner's decision
+on `UNR-008`. Copies and releases obtained before 2026-10-25 keep Apache-2.0.

@@ -10,10 +10,17 @@ licence, traveling notices, unresolved items).
 | Decision | Repositories |
 |---|---|
 | UPSTREAM_LICENSE_RETAINED | blhermes-agent (MIT, Nous Research) |
-| MIXED_WITH_THIRD_PARTY_NOTICES | void.os, void.game, void.sys, roughin, blux10k, theresolver |
-| PUBLIC_SOURCE_PROPRIETARY | .github, blux-app, blux-ca, blux-ca-dataset, blux-coga, blux-coga-dataset, blux-system, vigyl |
-| PRIVATE_PROPRIETARY | .github-private, resolver, ivrp |
-| REVIEW_REQUIRED | axiom, blux, blux-gpt, dat, docs, god, jadis.toolbox, lrc, termux-background, voidforge, bluxai.app (open licence currently designated: owner decision `UNR-008`); operationrestore (ownership `UNR-006`) |
+| MIXED_WITH_THIRD_PARTY_NOTICES | credits, void.os, void.game, void.sys, roughin, blux10k, theresolver, termux-background, voidforge |
+| PUBLIC_SOURCE_PROPRIETARY | .github, axiom, blux, blux-app, blux-ca, blux-ca-dataset, blux-coga, blux-coga-dataset, blux-gpt, blux-system, dat, docs, god, jadis.toolbox, lrc, vigyl |
+| PRIVATE_PROPRIETARY | .github-private, resolver, ivrp, bluxai.app |
+| REVIEW_REQUIRED | operationrestore (ownership `UNR-006`) |
+
+Since 2026-10-25 (owner decision, `UNR-008` resolved) every Outer Void-owned repository carries a
+proprietary licence: the BLUX Proprietary License (`LicenseRef-BLUX-Proprietary`) for BLUX repositories, or
+the Outer-Void Proprietary License (`LicenseRef-OuterVoid-Proprietary`) or a product-named equivalent
+elsewhere. Copyright (c) 2026 Outer-Void / Justadudeinspace (JADIS). Contact: outervoid.blux@gmail.com
+(main), theoutervoid@outlook.com (fallback). Copies and releases published earlier under Apache-2.0, MIT or
+CC BY 4.0 keep that licence.
 
 ## Rules for BLUX contract and integration work
 - An integration must not copy third-party code into BLUX without a lineage record and its traveling notice.
@@ -23,4 +30,4 @@ licence, traveling notices, unresolved items).
   and each repository's notice files.
 
 Human actions pending: see the credits `reports/unresolved-provenance.md`, especially `UNR-002` (fonts),
-`UNR-004` (trademarks), `UNR-008` (relicensing) and `UNR-014` (public visibility of proprietary repositories).
+`UNR-004` (trademarks), `UNR-006` (operationrestore ownership) and `UNR-014` (public visibility of proprietary repositories).

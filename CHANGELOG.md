@@ -3,6 +3,10 @@
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
 ## Unreleased: Stage 09
+- **License.** The BLUX Proprietary License applies from 2026-10-25
+  (Copyright (c) 2026 Outer-Void / Justadudeinspace (JADIS); contact outervoid.blux@gmail.com, fallback
+  theoutervoid@outlook.com). Package metadata declares the matching `LicenseRef`. Copies and releases
+  obtained before that date keep the Apache License 2.0.
 - **BLUX Model API v1** (ADR-0010, docs/model-api/v1.md, `contracts/model-api/v1/` with its own checksum
   lock).
   - **Logical models.** `blux-main`, `blux-fast`, `blux-reason` and `blux-code`. Callers never name a

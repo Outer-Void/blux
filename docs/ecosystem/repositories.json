@@ -45,7 +45,7 @@
         "GitHub org profile (profile/README.md)",
         ".github/FUNDING.yml"
       ],
-      "license": null,
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Org public profile + doctrine docs (mission, ethics charter, brand manifesto, ecosystem diagram)",
       "status": "NEEDS_REPAIR",
@@ -68,10 +68,12 @@
       ],
       "licensing": {
         "decision": "PUBLIC_SOURCE_PROPRIETARY",
-        "current_license": "NONE (all rights reserved by default)",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously CC-BY-4.0 for documentation; copies obtained before then keep it)",
         "credits_record": "credits:repo:dotgithub",
         "unresolved": [],
-        "traveling_notices": []
+        "traveling_notices": [
+          "LICENSE"
+        ]
       }
     },
     {
@@ -99,7 +101,7 @@
       "deployment": [
         "GitHub org member-only profile"
       ],
-      "license": null,
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Org member-facing profile README",
       "status": "BASELINED",
@@ -119,10 +121,12 @@
       "blockers": [],
       "licensing": {
         "decision": "PRIVATE_PROPRIETARY",
-        "current_license": "NONE",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25",
         "credits_record": "credits:repo:dotgithub-private",
         "unresolved": [],
-        "traveling_notices": []
+        "traveling_notices": [
+          "LICENSE"
+        ]
       }
     },
     {
@@ -152,7 +156,7 @@
       "deployment": [
         "local terminal environment (Termux, WSL2, Linux, macOS)"
       ],
-      "license": "Apache-2.0",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [
         "cockpit/config/.env (untracked, gitignored)",
         "cockpit/runs/ (local run logs)"
@@ -188,12 +192,10 @@
         "No CI"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "Apache-2.0",
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously Apache-2.0; copies obtained before then keep it)",
         "credits_record": "credits:repo:axiom",
-        "unresolved": [
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE"
         ]
@@ -312,7 +314,7 @@
       "packaging": [],
       "ci": [],
       "deployment": [],
-      "license": "Apache-2.0",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [],
       "architecture_role": "BLUX umbrella / ecosystem coordination repo (hosts docs/ecosystem baseline)",
       "status": "BASELINED",
@@ -331,12 +333,10 @@
       ],
       "blockers": [],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "Apache-2.0 (LICENSE; sdk/runtime pyproject declare Apache-2.0)",
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary since 2026-10-25 (previously Apache-2.0; copies obtained before then keep it)",
         "credits_record": "credits:repo:blux",
-        "unresolved": [
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE",
           "CREDITS.md"
@@ -371,7 +371,7 @@
       "deployment": [
         "local CLI"
       ],
-      "license": "BLUX Proprietary License",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Read-only viewer of intent / model output / discernment / receipts JSON (no authority)",
       "status": "READY_FOR_INTEGRATION",
@@ -440,7 +440,7 @@
       "deployment": [
         "local CLI (cA.sh, cA.ps1, python -m blux_ca)"
       ],
-      "license": "BLUX Proprietary License",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Deterministic cA engine (cA-1.0-pro): emits artifact.json / verdict.json / report.json; contract_version 0.2, schema_version 1.0",
       "status": "READY_FOR_INTEGRATION",
@@ -472,7 +472,6 @@
         "current_license": "LicenseRef-BLUX-Proprietary",
         "credits_record": "credits:repo:blux-ca",
         "unresolved": [
-          "UNR-013",
           "UNR-014"
         ],
         "traveling_notices": [
@@ -508,7 +507,7 @@
       "deployment": [
         "HuggingFace export (exports/)"
       ],
-      "license": "BLUX Proprietary License",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Fixtures/regression set and export for blux-ca",
       "status": "READY_FOR_INTEGRATION",
@@ -578,7 +577,7 @@
       "deployment": [
         "local CLI (blux-coga run, CogA.sh)"
       ],
-      "license": "BLUX Proprietary License",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Deterministic CogA reasoning engine (CogA-1.0-pro), file-in/file-out; contract 1.0, schema 1.0",
       "status": "READY_FOR_INTEGRATION",
@@ -645,7 +644,7 @@
       "deployment": [
         "HuggingFace export"
       ],
-      "license": "BLUX Proprietary License",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Drift-detection fixtures recorded from real blux-coga outputs",
       "status": "READY_FOR_INTEGRATION",
@@ -717,7 +716,7 @@
       "deployment": [
         "local CLI"
       ],
-      "license": "Apache-2.0",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [
         "config/.env (from .env.example): provider API keys"
       ],
@@ -741,13 +740,10 @@
         "No CI"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "Apache-2.0",
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary since 2026-10-25 (previously Apache-2.0; copies obtained before then keep it)",
         "credits_record": "credits:repo:blux-gpt",
-        "unresolved": [
-          "UNR-008",
-          "UNR-013"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE"
         ]
@@ -783,7 +779,7 @@
       "deployment": [
         "local CLI"
       ],
-      "license": "BLUX Proprietary License",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [],
       "architecture_role": "System state / snapshot / execution-receipt contracts and replay verification (no intelligence)",
       "status": "NEEDS_REPAIR",
@@ -851,7 +847,7 @@
       "deployment": [
         "dotfiles symlink install"
       ],
-      "license": null,
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Portable shell environment / dotfiles; trifecta with axiom + blux-gpt",
       "status": "BASELINED",
@@ -883,10 +879,11 @@
       ],
       "licensing": {
         "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
-        "current_license": "NONE; contains MIT-derived dotfiles/.p10k.zsh",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25; third-party components keep their own licences",
         "credits_record": "credits:repo:blux10k",
         "unresolved": [],
         "traveling_notices": [
+          "LICENSE",
           "THIRD_PARTY_NOTICES.md",
           "licenses/MIT-powerlevel10k.txt"
         ]
@@ -932,7 +929,7 @@
       "deployment": [
         "CLI; signed release workflow"
       ],
-      "license": "MIT",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Developer's Audit Tool: local secrets/policy audit engine; invoked by lrc --audit",
       "status": "NEEDS_REPAIR",
@@ -962,12 +959,10 @@
         "16 stale github.com/Justadudeinspace/ links"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "MIT",
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously MIT; copies obtained before then keep it)",
         "credits_record": "credits:repo:dat",
-        "unresolved": [
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE"
         ]
@@ -996,7 +991,7 @@
       "packaging": [],
       "ci": [],
       "deployment": [],
-      "license": "Apache-2.0",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Legal / policy / trust docs for Outer-Void products (BLUX, IVRP, TheResolverBot, Vigyl, DevBoard, Grit & Grain)",
       "status": "BASELINED",
@@ -1017,12 +1012,10 @@
         "Covers DevBoard and Grit & Grain, which have no repositories under ~/ov"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "Apache-2.0",
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously Apache-2.0; copies obtained before then keep it)",
         "credits_record": "credits:repo:docs",
-        "unresolved": [
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE"
         ]
@@ -1063,7 +1056,7 @@
         "PyPI: god-cli 1.0.1 published",
         "curl|bash installer"
       ],
-      "license": "MIT",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Global help indexer CLI",
       "status": "NEEDS_REPAIR",
@@ -1086,12 +1079,10 @@
         "README 'BLUX integration' claim has no corresponding code coupling"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "MIT (published to PyPI as god-cli 1.0.1)",
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously MIT; god-cli 1.0.1 on PyPI stays MIT; copies obtained before then keep it)",
         "credits_record": "credits:repo:god",
-        "unresolved": [
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE"
         ]
@@ -1121,7 +1112,7 @@
       "packaging": [],
       "ci": [],
       "deployment": [],
-      "license": "MIT",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Operator checklists and setup scripts/guides",
       "status": "BASELINED",
@@ -1150,11 +1141,10 @@
       ],
       "blockers": [],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "MIT",
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously MIT; copies obtained before then keep it)",
         "credits_record": "credits:repo:jadis-toolbox",
         "unresolved": [
-          "UNR-008",
           "UNR-010"
         ],
         "traveling_notices": [
@@ -1195,7 +1185,7 @@
       "deployment": [
         "CLI"
       ],
-      "license": "MIT",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Local Repo Compiler: .lrc schema -> generated repos; optional DAT post-build audit",
       "status": "NEEDS_REPAIR",
@@ -1219,12 +1209,10 @@
         "7 stale Justadudeinspace links"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "MIT",
+        "decision": "PUBLIC_SOURCE_PROPRIETARY",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously MIT; copies obtained before then keep it)",
         "credits_record": "credits:repo:lrc",
-        "unresolved": [
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE"
         ]
@@ -1269,7 +1257,7 @@
         "self-hosted bot + aiohttp webapp",
         "cloudflared tunnel (cloudflared/config.yml; credentials gitignored)"
       ],
-      "license": "Outer-Void Proprietary",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [
         ".env (BOT_TOKEN, OPENAI_API_KEY, INVOICE_SECRET, WEBAPP_TOKEN_SECRET, OWNER_PORTAL_TOKEN, ...)",
         "DB_PATH sqlite under data/"
@@ -1441,7 +1429,7 @@
         "APK artifact from Actions",
         "Termux .deb"
       ],
-      "license": "MIT",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Android companion + Termux CLI to set Termux:Monet wallpaper",
       "status": "NEEDS_REPAIR",
@@ -1469,13 +1457,10 @@
         "Unremoved remote branch Justadudeinspace-patch-1"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "MIT (holder 'Termux Background')",
+        "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously MIT, holder 'Termux Background'; copies obtained before then keep it); third-party components keep their own licences",
         "credits_record": "credits:repo:termux-background",
-        "unresolved": [
-          "UNR-007",
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE",
           "THIRD_PARTY_NOTICES.md"
@@ -1511,7 +1496,7 @@
       ],
       "ci": [],
       "deployment": [],
-      "license": "Vigyl Proprietary",
+      "license": "LicenseRef-Vigyl-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Private family caregiving / accountability system (Stage 1 backend; frontend placeholder)",
       "status": "BASELINED",
@@ -1811,7 +1796,7 @@
       "deployment": [
         "APK (dev preview)"
       ],
-      "license": "Apache-2.0",
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Private-first Android device workstation (USB ADB / read-only Fastboot)",
       "status": "BASELINED",
@@ -1837,12 +1822,10 @@
         "Device writes locked by design; future privileged ops must live behind a separately authenticated service (per BLHermes security note)"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "Apache-2.0 (with THIRD_PARTY_NOTICES)",
+        "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25 (previously Apache-2.0; copies obtained before then keep it); third-party components keep their own licences",
         "credits_record": "credits:repo:voidforge",
-        "unresolved": [
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE",
           "THIRD_PARTY_NOTICES"
@@ -1870,7 +1853,7 @@
       "packaging": [],
       "ci": [],
       "deployment": [],
-      "license": "Apache-2.0",
+      "license": "LicenseRef-BLUX-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Placeholder for bluxai.app website",
       "status": "BASELINED",
@@ -1886,12 +1869,10 @@
         "Empty"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "Apache-2.0 (placeholder)",
+        "decision": "PRIVATE_PROPRIETARY",
+        "current_license": "LicenseRef-BLUX-Proprietary since 2026-10-25 (previously Apache-2.0 placeholder; copies obtained before then keep it)",
         "credits_record": "credits:repo:bluxai-app",
-        "unresolved": [
-          "UNR-008"
-        ],
+        "unresolved": [],
         "traveling_notices": [
           "LICENSE"
         ]
@@ -1918,7 +1899,7 @@
       "packaging": [],
       "ci": [],
       "deployment": [],
-      "license": null,
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Placeholder for IVRP (Inner Void Recovery Program) website",
       "status": "BASELINED",
@@ -1936,10 +1917,12 @@
       ],
       "licensing": {
         "decision": "PRIVATE_PROPRIETARY",
-        "current_license": "NONE",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25",
         "credits_record": "credits:repo:ivrp",
         "unresolved": [],
-        "traveling_notices": []
+        "traveling_notices": [
+          "LICENSE"
+        ]
       }
     },
     {
@@ -2029,7 +2012,7 @@
       "deployment": [
         "Cloudflare Pages (out/), functions/_middleware.ts"
       ],
-      "license": null,
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Advertising/marketing website for TheResolverBot (theresolverbot.net). NOT a duplicate of resolver.",
       "status": "NEEDS_REPAIR",
@@ -2069,12 +2052,13 @@
       ],
       "licensing": {
         "decision": "MIXED_WITH_THIRD_PARTY_NOTICES",
-        "current_license": "NONE; bundles MIT Next.js/React when built",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25; third-party components keep their own licences",
         "credits_record": "credits:repo:theresolver",
         "unresolved": [
           "UNR-005"
         ],
         "traveling_notices": [
+          "LICENSE",
           "THIRD_PARTY_NOTICES.md"
         ]
       }
