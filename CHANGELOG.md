@@ -2,6 +2,9 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 08
+- CI pins cA 2.0.1 (6dcfcd7), which fixes a crash on a path through an existing file; the bug was found by the Stage 08 blux-ca-dataset build.
+
 ## Unreleased: Stage 07
 - Hard gate: CogA `reason.plan` -> cA `artifact.construct` (from the plan artifact, in plan order) -> DAT `repo.quality` fails the build -> cA `artifact.repair` (attempt 1 of the default 2, from DAT's report) -> DAT `repo.quality` passes, all as parent/child operations in one session; BLUX System reconstructs the chain (one root, four edges, every node SUCCESS, verified log of five records, receipts matching each output). cA's results link back: the construction names the plan's operation and the repair names the DAT audit it worked from (`tests/integration/test_ca.py`). Also: a third repair attempt is refused (`REPAIR_LIMIT_REACHED`, recorded as a failure), agents can check (`artifact.validate`) but not write (`POLICY_DENIED`), and cA's preserved rollback artifacts undo the repair afterwards. CI installs cA at a pinned commit and requires the tests (Python 3.11+).
 
