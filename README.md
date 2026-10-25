@@ -4,7 +4,9 @@ BLUX is the contract authority for the Outer-Void ecosystem. It defines the cano
 registry, runtime and model interfaces, and the `blux` command line. Other repositories stay independent and
 integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001).
 
-**Status:** Stage 09. Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.2.0`.
+**Status:** Stage 10. Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
+
+`blux` is direct intelligence; ecosystem orchestration is `ax`.
 
 ## Layout
 | Path | Contents |
@@ -12,8 +14,8 @@ integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001)
 | `contracts/v1/` | Canonical JSON Schemas (locked by `CHECKSUMS.sha256`) |
 | `sdk/python/` | `blux-sdk`: validation, IDs, envelopes, errors, serialization, version negotiation |
 | `runtime/` | `blux_runtime`: capability registry, policy engine, executor, built-in `echo.test` |
-| `cli/` | `blux_cli`: the `blux` command (one JSON document per invocation on stdout) |
-| `intelligence/` | Scope of the direct BLUX intelligence surface (no providers yet) |
+| `cli/` | `blux_cli`: the `blux` command: direct intelligence (`blux "..."`, chat, doctor; [docs/cli.md](docs/cli.md)) and the Contract v1 machine commands |
+| `intelligence/` | Scope of the direct BLUX intelligence surface |
 | `registry/` | Federated capability index |
 | `integrations/` | How repositories integrate |
 | `training/` | Reserved |
@@ -25,6 +27,11 @@ integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001)
 ## Quick start
 ```sh
 make install            # editable sdk + runtime/cli + dev tools
+blux "explain this error"                 # direct intelligence (needs a model backend: BluxGPT)
+cat build.log | blux "diagnose"
+git diff | blux "review"
+blux chat
+blux doctor                               # config, routes, backends, credential presence
 blux run echo.test --input '{"message": "hello", "uppercase": true}'
 blux exec examples/requests/echo.json --receipt-out /tmp/receipt.json
 blux validate execution examples/requests/echo.json
@@ -40,7 +47,10 @@ make ci                 # drift/lock check, format, lint, mypy --strict, tests, 
 [0005](docs/adr/0005-version-negotiation.md) version negotiation ·
 [0006](docs/adr/0006-error-model.md) error model ·
 [0007](docs/adr/0007-authority-authorization-model.md) authority model ·
-[0008](docs/adr/0008-no-arbitrary-stdout-protocol.md) no arbitrary stdout
+[0008](docs/adr/0008-no-arbitrary-stdout-protocol.md) no arbitrary stdout ·
+[0009](docs/adr/0009-subprocess-provider.md) subprocess provider ·
+[0010](docs/adr/0010-model-api.md) Model API v1 ·
+[0011](docs/adr/0011-direct-cli.md) direct `blux` CLI
 
 ## Licensing and credits
 See [CREDITS.md](CREDITS.md) and [docs/ecosystem/licensing.md](docs/ecosystem/licensing.md).

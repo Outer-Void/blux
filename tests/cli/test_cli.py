@@ -99,7 +99,8 @@ def test_project_capabilities_version_id() -> None:
 
 
 def test_usage_errors_exit_2_with_empty_stdout() -> None:
-    proc = subprocess.run([sys.executable, "-m", "blux_cli", "bogus"], capture_output=True, cwd=ROOT)
+    # An unknown first word is a prompt (ADR-0011), so the usage error here is an invalid argument.
+    proc = subprocess.run([sys.executable, "-m", "blux_cli", "validate", "bogus", "-"], capture_output=True, cwd=ROOT)
     assert proc.returncode == 2
     assert proc.stdout == b""
     assert b"usage:" in proc.stderr

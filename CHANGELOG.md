@@ -2,6 +2,27 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 10
+- **Direct `blux` CLI** (ADR-0011, docs/cli.md). `outervoid-blux` 0.3.0; the SDK is unchanged at 0.2.0.
+  - `blux "..."` / `blux ask`: a logical model through the Model API, with piped stdin as the input
+    (`git diff | blux review`).
+  - `blux chat`: interactive on a terminal, one turn per line when piped. Turns share a session, and each
+    links to the previous one.
+  - `blux doctor`: config, routes, backends and credential presence (never values); `--probe` calls
+    every route.
+  - `blux config`: effective settings and their sources.
+  - **Modes.** Human mode streams to a terminal and prints a footer on stderr. Machine mode (`--json`)
+    prints `blux.result` documents.
+  - **Exit codes.** 0 ok, 1 model failure, 2 usage, 3 configuration, 4 timeout, 5 receipt not recorded,
+    130 cancelled. `--timeout`, and Ctrl-C cancels the backend.
+  - **Safety.** Credential-like settings in the config file are refused, and credential-shaped input is
+    redacted before sending (`--no-redact`).
+  - **Boundary.** No project, device or ecosystem commands: that is `ax`.
+  - **Dependencies.** `tomli` on Python 3.10 only.
+  - **Tests.** In-process (`tests/cli/test_direct.py`) and a hard gate against the real BluxGPT process
+    and BLUX System (`tests/integration/test_cli_direct.py`, plus a REAL provider path with
+    `BLUX_REAL_MODELS=1`).
+
 ## Unreleased: Stage 09
 - **License.** The BLUX Proprietary License applies from 2026-10-25
   (Copyright (c) 2026 Outer-Void / Justadudeinspace (JADIS); contact outervoid.blux@gmail.com, fallback

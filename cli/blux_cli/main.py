@@ -1,8 +1,13 @@
 """`blux` command line.
 
-Machine protocol (ADR-0008): stdout carries exactly one JSON document per invocation, newline-terminated.
-Diagnostics go to stderr. Exit codes: 0 ok, 1 contract-level failure (document still on stdout), 2 usage.
-`blux generate --events FILE` writes Model API stream events (JSON Lines) to FILE, never to stdout.
+Direct intelligence (ADR-0011): `blux "..."`, `blux ask`, `blux chat`, `blux doctor`, `blux config`; see
+blux_cli.direct. Any first word that is not a subcommand starts a prompt (`blux -- version` asks about
+the word "version").
+
+Machine protocol (ADR-0008) for the contract subcommands: stdout carries exactly one JSON document per
+invocation, newline-terminated. Diagnostics go to stderr. Exit codes: 0 ok, 1 contract-level failure
+(document still on stdout), 2 usage. `blux generate --events FILE` writes Model API stream events (JSON
+Lines) to FILE, never to stdout.
 """
 
 from __future__ import annotations
@@ -17,6 +22,7 @@ from typing import Any, NoReturn, TextIO
 
 import blux_runtime
 import blux_sdk
+from blux_cli import direct
 from blux_runtime.builtin import builtin_registry, reference_policy
 from blux_runtime.executor import Outcome, Runtime
 from blux_runtime.models import ModelRouter
@@ -101,9 +107,14 @@ def _write_receipt(path: str | None, receipt: dict[str, Any]) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = _Parser(prog="blux", description="BLUX Contract v1 command line. Writes one JSON document to stdout.")
+    p = _Parser(
+        prog="blux",
+        description='BLUX direct intelligence (`blux "..."`, ask, chat, doctor, config) and the Contract v1 '
+        "machine commands. Ecosystem orchestration is `ax`, not `blux`.",
+    )
     p.add_argument("--pretty", action="store_true", help="indent JSON output")
     sub = p.add_subparsers(dest="command", required=True, parser_class=_Parser)
+    direct.add_parsers(sub, _Parser)
 
     sub.add_parser("version", help="SDK/runtime versions and supported contract versions")
 
@@ -165,15 +176,45 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
-def main(argv: list[str] | None = None, *, stdin: TextIO | None = None, stdout: TextIO | None = None) -> int:
+def route_argv(argv: list[str], stdin: TextIO) -> list[str]:
+    """`blux WORDS...` and `blux --model M WORDS...` mean `blux ask ...`; a piped bare `blux` asks about stdin."""
+    i = 0
+    while i < len(argv) and argv[i] == "--pretty":
+        i += 1
+    if i == len(argv):
+        return [*argv, "ask"] if not direct._isatty(stdin) and argv == [] else argv
+    if argv[i] in ("-h", "--help") or argv[i] in _subcommands():
+        return argv
+    return [*argv[:i], "ask", *argv[i:]]
+
+
+def _subcommands() -> set[str]:
+    parser = build_parser()
+    action = next(a for a in parser._actions if isinstance(a, argparse._SubParsersAction))
+    return set(action.choices)
+
+
+def main(
+    argv: list[str] | None = None,
+    *,
+    stdin: TextIO | None = None,
+    stdout: TextIO | None = None,
+    stderr: TextIO | None = None,
+) -> int:
     stdin = stdin or sys.stdin
     out = stdout or sys.stdout
-    args = build_parser().parse_args(argv)
+    err = stderr or sys.stderr
+    args = build_parser().parse_args(route_argv(list(sys.argv[1:] if argv is None else argv), stdin))
     try:
+        if args.command in direct.COMMANDS:
+            return direct.run(args, stdin, out, err)
         return _dispatch(args, stdin, out)
     except BluxError as exc:
         _emit(exc.to_document(), out, args.pretty)
         return EXIT_FAILED
+    except KeyboardInterrupt:
+        print("blux: interrupted", file=err)
+        return direct.CANCELLED
 
 
 def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:

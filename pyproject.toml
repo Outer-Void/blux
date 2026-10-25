@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "outervoid-blux"
-version = "0.2.0"
+version = "0.3.0"
 description = "BLUX reference runtime and the `blux` command line (Contract v1)."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "LicenseRef-BLUX-Proprietary"
 license-files = ["LICENSE"]
 authors = [{ name = "Outer-Void" }]
-dependencies = ["blux-sdk==0.2.0"]
+dependencies = ["blux-sdk==0.2.0", "tomli>=1.1; python_version < \"3.11\""]
 
 [project.scripts]
 blux = "blux_cli.main:main"

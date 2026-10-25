@@ -3,4 +3,5 @@ ruff==0.17.2
 mypy==2.4.0
 types-PyYAML
 types-jsonschema
+tomli>=1.1  # mypy checks the Python 3.10 config path
 build>=1.2
