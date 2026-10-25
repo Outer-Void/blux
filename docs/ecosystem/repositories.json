@@ -1950,7 +1950,7 @@
       "deployment": [
         "Cloudflare Pages (_headers, _redirects) for operationrestore.net"
       ],
-      "license": null,
+      "license": "LicenseRef-OuterVoid-Proprietary",
       "state_config_locations": [],
       "architecture_role": "Static single-page site for operationrestore.net",
       "status": "BASELINED",
@@ -1971,13 +1971,13 @@
         "No LICENSE"
       ],
       "licensing": {
-        "decision": "REVIEW_REQUIRED",
-        "current_license": "NONE",
+        "decision": "PRIVATE_PROPRIETARY",
+        "current_license": "LicenseRef-OuterVoid-Proprietary since 2026-10-25",
         "credits_record": "credits:repo:operationrestore",
-        "unresolved": [
-          "UNR-006"
-        ],
-        "traveling_notices": []
+        "unresolved": [],
+        "traveling_notices": [
+          "LICENSE"
+        ]
       }
     },
     {
