@@ -73,3 +73,20 @@ blux run repo.audit --project path/to/dat --actor-type service --input "$(jq -c 
 
 The fixture is reproducible: its `plan_id` and initial git commit are pinned in LRC's
 `tests/fixtures/hardgate.expected.json`, and the hard-gate test checks them. Tests: `tests/integration/test_lrc.py`.
+
+## GOD (Stage 05)
+[GOD](https://github.com/Outer-Void/god) is `role: integrated`: it reads `.blux/` through blux-sdk (no BLUX
+runtime). Its `.blux/` declares `capability.discover`, `capability.describe`, `capability.compat`,
+`project.describe` and `command.discover` (read-only) and `registry.index` (writes GOD's own cache). GOD owns
+discovery, not orchestration: it never runs a capability or a discovered program and never evaluates policy.
+
+Use it to find a provider, then run the provider through BLUX:
+
+```sh
+blux run capability.discover --project path/to/god --input '{"roots": ["~/src"], "query": "repo.create"}' > d.json
+blux run repo.create --project "$(jq -r '.output.capabilities[0].project_root' d.json)" \
+  --parent-operation-id "$(jq -r .operation_id d.json)" --input '{...}'
+```
+
+Malformed manifests and duplicates come back in `problems`/`duplicates` (a `succeeded` result); an unknown or
+ambiguous capability is `failed` with `provider_code` `NOT_FOUND`/`AMBIGUOUS`. Tests: `tests/integration/test_god.py`.

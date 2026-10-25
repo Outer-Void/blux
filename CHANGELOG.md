@@ -2,6 +2,9 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 05
+- Hard gate: BLUX starts knowing only GOD, asks it (`capability.discover`) who provides `repo.create`, loads the project GOD names, then LRC creates the reproducible fixture and DAT audits it as linked child operations; BLUX System reconstructs the chain (one root, two edges, timeline, verified log, receipts matching each output) (`tests/integration/test_god.py`). Also: GOD's findings (malformed manifests, duplicates) are results while an ambiguous lookup is a recorded FAILURE, and GOD stays read-only (a discovered program is never run). CI installs GOD at a pinned commit.
+
 ## Unreleased: Stage 04
 - Hard gate: BLUX -> LRC `repo.create` builds a reproducible fixture repository -> DAT `repo.audit` runs as its child operation (LRC's result names it in `handoff`) -> BLUX System records the chain (`tests/integration/test_lrc.py`). LRC and DAT load into one registry without capability-id collisions. CI installs LRC at a pinned commit and requires the tests.
 

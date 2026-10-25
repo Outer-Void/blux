@@ -46,6 +46,16 @@ jobs:
           repository: Outer-Void/lrc
           ref: 9b99551678cbc4cff1b127d287a7f9779297fe25
           path: _lrc
+      # Stage 05 integration target (GOD needs Python 3.11+; it uses the editable blux-sdk under test).
+      - name: Install GOD
+        if: matrix.python != '3.10'
+        run: python -m pip install --no-deps "god-cli @ git+https://github.com/Outer-Void/god.git@26fa4153325948021b1e7767f1aa95304b49d52e"
+      - uses: actions/checkout@v4
+        if: matrix.python != '3.10'
+        with:
+          repository: Outer-Void/god
+          ref: 26fa4153325948021b1e7767f1aa95304b49d52e
+          path: _god
       - name: Schema drift and lock
         run: python packaging/sync_schemas.py --check
       - name: Format
@@ -54,13 +64,15 @@ jobs:
         run: ruff check .
       - name: Types
         run: mypy
-      - name: Tests (incl. BLUX System, DAT and LRC -> DAT hard-gate integration)
+      - name: Tests (incl. BLUX System, DAT, LRC -> DAT and GOD -> LRC -> DAT hard-gate integration)
         run: pytest
         env:
           BLUX_REQUIRE_SYSTEM: "1"
           BLUX_REQUIRE_DAT: ${{ matrix.python != '3.10' && '1' || '0' }}
           BLUX_REQUIRE_LRC: ${{ matrix.python != '3.10' && '1' || '0' }}
+          BLUX_REQUIRE_GOD: ${{ matrix.python != '3.10' && '1' || '0' }}
           DAT_PROJECT_DIR: ${{ github.workspace }}/_dat
           LRC_PROJECT_DIR: ${{ github.workspace }}/_lrc
+          GOD_PROJECT_DIR: ${{ github.workspace }}/_god
       - name: Wheel round trip
         run: bash packaging/verify_wheel.sh

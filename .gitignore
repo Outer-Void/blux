@@ -223,3 +223,5 @@ __marimo__/
 _dat/
 # CI checkout of LRC for its .blux/ and hard-gate fixture (Stage 04)
 _lrc/
+# CI checkout of GOD for its .blux/ (Stage 05)
+_god/
