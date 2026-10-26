@@ -4,9 +4,27 @@ BLUX is the contract authority for the Outer-Void ecosystem. It defines the cano
 registry, runtime and model interfaces, and the `blux` command line. Other repositories stay independent and
 integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001).
 
-**Status:** Stage 16 (BLUX proven independent of the BLHermes fork; retirement awaits the Stage 17 human decision, see [docs/migration/blhermes-deletion-readiness.md](docs/migration/blhermes-deletion-readiness.md)). Hook System v1 (`1.0`); runtime + CLI `outervoid-blux 0.4.0` (SDK `blux-sdk 0.2.0` unchanged). Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
+## Status
 
-`blux` is direct intelligence; ecosystem orchestration is `ax`.
+| Component | Version | Source of truth |
+|---|---|---|
+| Runtime + CLI (`outervoid-blux`) | 0.4.0 | `pyproject.toml`, `runtime/blux_runtime/__init__.py`, `blux version` |
+| Python SDK (`blux-sdk`) | 0.2.0 | `sdk/python/pyproject.toml` |
+| Contract v1 / Model API v1 / Hook System v1 | `1.0` each | `contracts/*/CHECKSUMS.sha256` |
+
+- **Development, not released.** There is no release tag or published package. The Termux `.deb` is built
+  and audited in CI-style checks, but on-device installation through Termux APT has not been run
+  ([packaging/termux/ACCEPTANCE.md](packaging/termux/ACCEPTANCE.md)).
+- **Model API:** tested against the deterministic `mock` route and fake transports. Real-provider runs
+  (OpenAI, Anthropic, DeepSeek) are not part of the recorded evidence.
+- **BLHermes:** BLUX is the active replacement. The fork `Outer-Void/blhermes-agent` was **archived** by
+  the owner after the Stage 17 review (final commit `dc8abc1db0`); see
+  [docs/migration/blhermes-deletion-readiness.md](docs/migration/blhermes-deletion-readiness.md).
+- **Devices:** BLUX can ask VoidForge for `device.*` actions; it is never the device authority
+  ([ADR-0016](docs/adr/0016-voidforge-devices.md)).
+
+`blux` is direct intelligence. The developer control plane is `ax` (AXIOM), which routes to BLUX and the
+other engines. Ecosystem map and status matrix: [Outer-Void/docs `ecosystem/`](https://github.com/Outer-Void/docs/tree/main/ecosystem).
 
 ## Layout
 | Path | Contents |
@@ -14,14 +32,14 @@ integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001)
 | `contracts/v1/` | Canonical JSON Schemas (locked by `CHECKSUMS.sha256`) |
 | `contracts/model-api/v1/`, `contracts/hooks/v1/` | Model API v1 and Hook System v1 contracts (each with its own lock) |
 | `sdk/python/` | `blux-sdk`: validation, IDs, envelopes, errors, serialization, version negotiation |
-| `runtime/` | `blux_runtime`: capability registry, policy engine, executor, model router, hook bus (`blux_runtime.hooks`), built-in `echo.test` |
-| `cli/` | `blux_cli`: the `blux` command: direct intelligence (`blux "..."`, chat, doctor; [docs/cli.md](docs/cli.md)) and the Contract v1 machine commands |
+| `runtime/` | `blux_runtime`: capability registry, policy engine, executor, model router, hook bus (`hooks/`), state and sessions, security (approvals, command detection, path confinement), tools (`shell.exec`, `fs.read`, `fs.write`), extensions (skills, plugins, MCP, agents, scheduler, gateway), VoidForge device capabilities (`devices/`), legacy import (`compat/`), built-in `echo.test` |
+| `cli/` | `blux_cli`: the `blux` command: direct intelligence (`blux "..."`, `ask`, `chat`, `doctor`, `config`; [docs/cli.md](docs/cli.md)), `agent`, `migrate`, and the Contract v1 machine commands |
 | `intelligence/` | Scope of the direct BLUX intelligence surface |
 | `registry/` | Federated capability index |
 | `integrations/` | How repositories integrate |
-| `migration/blhermes/` | Stage 11 BLHermes forensic inventory, parity matrix and characterization goldens (MIT-derived data, see its UPSTREAM-NOTICE) |
-| `training/` | Reserved |
-| `packaging/` | Schema sync/lock, wheel verification |
+| `migration/blhermes/` | BLHermes forensic inventory, parity matrix, characterization goldens and decoupling evidence (historical reference; MIT-derived data, see its UPSTREAM-NOTICE) |
+| `training/` | Reserved; no training code yet |
+| `packaging/` | Schema sync/lock, wheel verification, Termux `.deb` build/audit (`packaging/termux/`) |
 | `tests/` | Contract, SDK, runtime, compatibility and CLI tests, plus v1 fixtures |
 | `docs/` | ADRs, contract reference, `.blux/` spec, versioning, ecosystem baseline |
 | `.blux/` | This repository's own BLUX manifest |
@@ -34,6 +52,8 @@ cat build.log | blux "diagnose"
 git diff | blux "review"
 blux chat
 blux doctor                               # config, routes, backends, credential presence
+blux agent "summarize notes.txt" --tools fs.read   # agent loop, tools confined to the workspace
+blux migrate hermes                       # dry run of a legacy BLHermes/Hermes state import (--apply to write)
 blux run echo.test --input '{"message": "hello", "uppercase": true}'
 blux exec examples/requests/echo.json --receipt-out /tmp/receipt.json
 blux validate execution examples/requests/echo.json
@@ -56,15 +76,22 @@ make ci                 # drift/lock check, format, lint, mypy --strict, tests, 
 [0012](docs/adr/0012-hook-system.md) Hook System v1 ·
 [0013](docs/adr/0013-blhermes-core-migration.md) BLHermes core migration ·
 [0014](docs/adr/0014-blhermes-extensions.md) BLHermes extensions ·
-[0015](docs/adr/0015-termux-packaging.md) Termux packaging
+[0015](docs/adr/0015-termux-packaging.md) Termux packaging ·
+[0016](docs/adr/0016-voidforge-devices.md) VoidForge device capabilities
 
 ## Licensing and credits
 See [CREDITS.md](CREDITS.md) and [docs/ecosystem/licensing.md](docs/ecosystem/licensing.md).
 Outer Void is proprietary by default. Third-party rights remain third-party rights.
 
-## Out of scope for Stage 01
-BLHermes is not absorbed. There are no web/UI layers. There is no receipt persistence, because blux-system owns it.
-The PyPI name `blux` belongs to an unrelated project, so the runtime distribution is `outervoid-blux`.
+## Boundaries
+- No web/UI layer here (BLUX App is a separate read-only viewer).
+- No receipt persistence: blux-system owns it.
+- No device authority: VoidForge owns it.
+- The PyPI name `blux` belongs to an unrelated project, so the runtime distribution is `outervoid-blux`.
+
+## Testing
+`make ci` runs the schema lock check, `ruff format --check`, `ruff check`, `mypy`, `pytest` and the wheel
+round trip. Last recorded run: 2026-10-26 at `f491524` (Stage 22), 563 passed and 15 skipped.
 
 ## License
 

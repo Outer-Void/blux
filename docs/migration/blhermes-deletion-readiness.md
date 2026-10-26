@@ -8,6 +8,16 @@
   The decoupling scan is [migration/blhermes/decoupling.py](../../migration/blhermes/decoupling.py), enforced
   in CI by `tests/migration/test_blhermes_decoupling.py`.
 
+## Disposition (added 2026-10-26, after the Stage 17 manual review)
+
+The owner reviewed this report and chose **archival, not deletion**. `Outer-Void/blhermes-agent` is archived
+on GitHub (read-only; the API reports `archived: true`). Its final commit is
+`dc8abc1db051aabc22279aa580bd7fb3cdf86b0c`, the owner's README note on BLHermes and BLUX roles. Upstream MIT
+licensing and Nous Research attribution stay intact in that repository. Lineage is recorded in
+[Outer-Void/credits](https://github.com/Outer-Void/credits) (`LIN-001`, `archival` facts). BLUX is the active
+replacement. The fork remains useful reference material for deferred parity-matrix capabilities. The
+report below is preserved as written at Stage 16.
+
 ## Verdict
 **BLUX does not depend on the fork. Removing it would not break BLUX's build, tests, packaging, runtime,
 docs or CI.** This was proven by doing it: a fresh clone of BLUX and BluxGPT in an isolated directory, with
