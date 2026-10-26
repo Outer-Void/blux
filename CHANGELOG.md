@@ -2,6 +2,20 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 14
+- **BLHermes extensions migrated** (ADR-0014). All are clean-room, run without the fork, and go through
+  capabilities, policy, Hook System v1 and receipts.
+  - **Skills.** SKILL.md compatible; a licence is required; `skill.list` / `skill.get`.
+  - **Plugins.** Out-of-process `blux-plugin.json` capabilities plus granted hook subscriptions.
+  - **MCP.** A stdio MCP client exposes server tools as `mcp.<server>.<tool>` capabilities, with
+    declared credentials only.
+  - **Agents.** An agent loop and bounded subagents: a child gets a subset of its parent's tools.
+  - **Scheduler.** Matches the cron golden; runs unattended and refuses dangerous commands.
+  - **Gateway.** An authenticated loopback execution API.
+  - **TUI.** `blux chat` as the TUI.
+  - **Parity matrix.** It records the evidence and blockers. A new gate requires evidence for the
+    agent, tool, plugin, skills, MCP, subagent, cron, gateway and TUI features.
+
 ## Unreleased: Stage 13
 - **BLHermes runtime core migrated** (ADR-0013). Clean-room implementations, tested against the Stage 11
   goldens.

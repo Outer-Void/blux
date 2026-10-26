@@ -147,6 +147,16 @@ def test_migrated_states_are_backed_by_existing_blux_tests() -> None:
             assert re.search(rf"^def {re.escape(name)}\(", source, re.M), (f["id"], ref)
 
 
+def test_stage14_retained_extensions_are_evidence_backed() -> None:
+    """Agent, tool, plugin, skills, MCP, subagent, cron, gateway and TUI features each cite BLUX tests."""
+    required = {"BLH-001", "BLH-004", "BLH-014", "BLH-015", "BLH-016", "BLH-017", "BLH-020", "BLH-021", "BLH-028"}
+    by_id = {f["id"]: f for f in features()}
+    for fid in sorted(required):
+        f = by_id[fid]
+        assert f["migration_state"] in ("IN_PROGRESS", "MIGRATED") and f["evidence"], fid
+        assert f["migration_state"] == "MIGRATED" or f["blocker"], fid  # what is not done is named
+
+
 def test_characterization_references_point_at_recorded_probes() -> None:
     from tests.migration.test_blhermes_characterization import PROBES
 

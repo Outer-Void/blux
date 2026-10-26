@@ -35,7 +35,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "runtime/blux_runtime/agent/ (capability agent.run)",
+    "module": "runtime/blux_runtime/extensions/agents.py (AgentRunner over model.generate + tool capabilities)",
     "owner": "blux"
    },
    "tests": {
@@ -46,7 +46,7 @@
      "tests/test_model_tools_async_bridge.py"
     ]
    },
-   "migration_state": "NOT_STARTED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -61,13 +61,17 @@
     ],
     "policy": "Model calls go only through model.generate; no direct provider SDK use."
    },
-   "blocker": "No characterization of a full turn yet: needs a scripted model backend (Model API mock) driving run_agent; scheduled before the agent.run port.",
+   "blocker": "Minimal loop migrated (turns, tool dispatch through the runtime, turn limit); compaction, interrupts and streaming turns are not.",
    "evidence_plan": "Record transcripts of scripted turns (tool call, tool error, interrupt, compaction) through a mock Model API backend; replay against agent.run.",
    "inventory_categories": [
     "module",
     "session"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/extensions/test_extensions.py::test_agent_loop_runs_tools_through_the_runtime_and_emits_events",
+    "tests/extensions/test_extensions.py::test_agents_cannot_skip_approvals",
+    "tests/extensions/test_extensions.py::test_agents_cannot_call_tools_they_were_not_given"
+   ]
   },
   {
    "id": "BLH-002",
@@ -677,7 +681,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "runtime/blux_runtime/agent (agent.spawned/completed/failed hooks, Stage 12)",
+    "module": "runtime/blux_runtime/extensions/agents.py (AgentRunner.delegate)",
     "owner": "blux"
    },
    "tests": {
@@ -686,7 +690,7 @@
      "tests/tools/test_delegate*"
     ]
    },
-   "migration_state": "NOT_STARTED",
+   "migration_state": "MIGRATED",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -701,12 +705,15 @@
     ],
     "policy": "Children use the same Model API and policy; delegation never widens permissions."
    },
-   "blocker": "Characterization pending: needs the scripted Model API backend from BLH-001.",
+   "blocker": null,
    "evidence_plan": "Characterize depth limits and child toolset derivation as pure functions first, then end-to-end with the mock backend.",
    "inventory_categories": [
     "subagent"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/extensions/test_extensions.py::test_subagents_are_bounded_and_never_gain_tools",
+    "tests/extensions/test_extensions.py::test_agent_loop_runs_tools_through_the_runtime_and_emits_events"
+   ]
   },
   {
    "id": "BLH-015",
@@ -723,7 +730,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "Stage 12 skill adapter (skills subscribe to BLUX hooks/capabilities)",
+    "module": "runtime/blux_runtime/extensions/skills.py (SkillLibrary; skill.list / skill.get)",
     "owner": "blux"
    },
    "tests": {
@@ -733,7 +740,7 @@
      "tests/tools/test_skills_sync.py"
     ]
    },
-   "migration_state": "NOT_STARTED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -749,12 +756,15 @@
     ],
     "policy": "A skill's network use must be declared before BLUX loads it."
    },
-   "blocker": "Per-skill licence and network review (211 skills).",
+   "blocker": "Loader and admission rules migrated; each upstream skill still needs licence review and a declared network surface before BLUX ships it.",
    "evidence_plan": "Load skills through the adapter one family at a time; each needs a licence check and a declared network surface.",
    "inventory_categories": [
     "skill"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/extensions/test_extensions.py::test_skills_need_a_licence_declare_permissions_and_are_scrubbed",
+    "tests/extensions/test_extensions.py::test_fork_skills_parse_in_the_blux_format"
+   ]
   },
   {
    "id": "BLH-016",
@@ -770,7 +780,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "Stage 12 plugin adapter (out-of-process, ADR-0009)",
+    "module": "runtime/blux_runtime/extensions/plugins.py (blux-plugin.json, out-of-process capabilities and hooks)",
     "owner": "blux"
    },
    "tests": {
@@ -779,7 +789,7 @@
      "tests/plugins/*"
     ]
    },
-   "migration_state": "NOT_STARTED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -796,12 +806,16 @@
     ],
     "policy": "Plugins run out of process with their own capability declarations."
    },
-   "blocker": "Upstream plugins load in process and can read the agent's credentials; BLUX must run them out of process before any is enabled.",
+   "blocker": "The plugin mechanism is migrated (out of process, no credentials, operator grants); upstream in-process plugins must each be re-implemented as blux plugins.",
    "evidence_plan": "Characterize the plugin manifest (plugin.yaml) contract, then implement the adapter; catalogue entries are re-reviewed before BLUX lists them.",
    "inventory_categories": [
     "plugin"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/extensions/test_extensions.py::test_plugin_capabilities_run_out_of_process_without_credentials",
+    "tests/extensions/test_extensions.py::test_plugin_admission_rules",
+    "tests/extensions/test_extensions.py::test_plugin_hooks_need_an_operator_grant"
+   ]
   },
   {
    "id": "BLH-017",
@@ -816,7 +830,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "Stage 12 MCP adapter (MCP tools as BLUX capabilities)",
+    "module": "runtime/blux_runtime/extensions/mcp.py (stdio MCP client; mcp.<server>.<tool> capabilities)",
     "owner": "blux"
    },
    "tests": {
@@ -825,7 +839,7 @@
      "tests/tools/test_mcp*"
     ]
    },
-   "migration_state": "NOT_STARTED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -840,12 +854,15 @@
     ],
     "policy": "Each MCP server is a declared capability provider."
    },
-   "blocker": null,
+   "blocker": "stdio transport migrated; Streamable HTTP/SSE transports and OAuth for remote MCP servers are not.",
    "evidence_plan": "Characterize config parsing and the tool-name mapping before porting the transport.",
    "inventory_categories": [
     "mcp"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/extensions/test_extensions.py::test_mcp_tools_become_permissioned_capabilities",
+    "tests/extensions/test_extensions.py::test_mcp_servers_get_only_declared_credentials_and_recover_from_hangs"
+   ]
   },
   {
    "id": "BLH-018",
@@ -946,9 +963,9 @@
     "cron/jobs.py"
    ],
    "target": {
-    "repository": "Outer-Void/axiom",
-    "module": "ax scheduler invoking BLUX capabilities (orchestration is ax, ADR-0011)",
-    "owner": "ax"
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/extensions/scheduler.py (parsing, JobStore, run_due); driven by ax",
+    "owner": "blux"
    },
    "tests": {
     "characterization": [
@@ -958,7 +975,7 @@
      "tests/cron/*"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -974,12 +991,15 @@
     ],
     "policy": "Scheduled runs are ordinary BLUX executions with receipts."
    },
-   "blocker": null,
+   "blocker": "BLUX side migrated; the ax command that drives run_due arrives with the ax control plane (Stage 18).",
    "evidence_plan": "ax owns scheduling; the cron_schedules golden fixes schedule parsing for the port.",
    "inventory_categories": [
     "cron"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/extensions/test_extensions.py::test_schedule_parsing_matches_the_cron_golden",
+    "tests/extensions/test_extensions.py::test_scheduled_jobs_run_unattended_without_approvals_and_are_isolated"
+   ]
   },
   {
    "id": "BLH-021",
@@ -995,7 +1015,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "integrations/gateway (adapter over BLUX sessions); service lifecycle in ax",
+    "module": "runtime/blux_runtime/extensions/gateway.py (authenticated loopback execution API)",
     "owner": "blux"
    },
    "tests": {
@@ -1004,7 +1024,7 @@
      "tests/gateway/*"
     ]
    },
-   "migration_state": "NOT_STARTED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -1020,12 +1040,14 @@
     ],
     "policy": "Every adapter requires configured authorization (upstream SECURITY.md posture retained)."
    },
-   "blocker": "Largest subsystem (1688 upstream tests); needs its own stage and characterization of the authorization path.",
+   "blocker": "The authenticated execution surface is migrated; messaging session routing, delivery and webhooks are not.",
    "evidence_plan": "Characterize inbound authorization and session routing first; port adapters behind it.",
    "inventory_categories": [
     "gateway"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/extensions/test_extensions.py::test_gateway_authenticates_and_never_lets_callers_choose_an_identity"
+   ]
   },
   {
    "id": "BLH-022",
@@ -1314,7 +1336,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "future BLUX TUI over the capability runtime (stage TBD)",
+    "module": "cli/blux_cli/direct.py (blux chat) as the terminal UI",
     "owner": "blux"
    },
    "tests": {
@@ -1324,7 +1346,7 @@
      "tests-js/*"
     ]
    },
-   "migration_state": "DEFERRED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -1339,12 +1361,16 @@
     ],
     "policy": ""
    },
-   "blocker": "Owner decision: which TUI ships with BLUX.",
+   "blocker": "Interactive terminal chat is migrated (blux chat); the full-screen Ink TUI is not (owner decision on which TUI ships).",
    "evidence_plan": "Keep the JSON-RPC method contract as the characterization target when the TUI is scheduled.",
    "inventory_categories": [
     "tui"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/cli/test_direct.py::test_chat_keeps_history_and_links_turns",
+    "tests/cli/test_direct.py::test_chat_commands_and_failed_turns",
+    "tests/integration/test_cli_direct.py::test_hard_gate_direct_use_against_the_model_api"
+   ]
   },
   {
    "id": "BLH-029",
