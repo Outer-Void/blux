@@ -1,0 +1,71 @@
+{
+ "contract": "blux.install-validation",
+ "environment": "Real Android kernel (aarch64); Termux python3.14 (Bionic) invoked from a PRoot Debian session; package payload installed by dpkg --root into a throwaway root under $PREFIX/tmp; python-rpds-py 2026.9.1 from the Termux repository extracted (not installed)",
+ "exit_code": 0,
+ "interpreter": "/data/data/com.termux/files/usr/bin/python3.14",
+ "machine": "aarch64",
+ "pass": true,
+ "platform": "android",
+ "prefix": "/data/data/com.termux/files/usr/tmp/blux-acceptance-<tmp>/root/data/data/com.termux/files/usr",
+ "python": "3.14.8",
+ "recorded": "2026-10-26",
+ "results": {
+  "cli": {
+   "detail": "version 0.4.0",
+   "status": "PASS"
+  },
+  "cron": {
+   "detail": "scheduled job ran unattended with a receipt",
+   "status": "PASS"
+  },
+  "gateway": {
+   "detail": "loopback gateway: health ok, unauthenticated request refused",
+   "status": "PASS"
+  },
+  "launcher": {
+   "detail": "SKIP: native dependency provided via --extra-site (test root)",
+   "status": "SKIP"
+  },
+  "legacy_migration": {
+   "detail": "legacy session imported without hidden reasoning",
+   "status": "PASS"
+  },
+  "mcp": {
+   "detail": "stdio MCP server tool listed and called",
+   "status": "PASS"
+  },
+  "payload": {
+   "detail": "BLUX, the SDK and BluxGPT import from the installed package",
+   "status": "PASS"
+  },
+  "plugins": {
+   "detail": "out-of-process plugin capability ran without credentials",
+   "status": "PASS"
+  },
+  "providers": {
+   "detail": "Model API -> bundled BluxGPT (mock provider) answered",
+   "status": "PASS"
+  },
+  "skills": {
+   "detail": "SKILL.md loaded with licence check",
+   "status": "PASS"
+  },
+  "state_paths": {
+   "detail": "$HOME/.local/state/blux",
+   "status": "PASS"
+  },
+  "subagents": {
+   "detail": "subagent answered through the real backend; tool widening refused",
+   "status": "PASS"
+  },
+  "tools": {
+   "detail": "shell.exec safe run without credentials; dangerous command held for approval",
+   "status": "PASS"
+  },
+  "tui": {
+   "detail": "blux chat (piped) two turns",
+   "status": "PASS"
+  }
+ },
+ "scope": "Bionic RUNTIME layer of the package payload. NOT an installation through Termux's own APT/dpkg."
+}

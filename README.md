@@ -4,7 +4,7 @@ BLUX is the contract authority for the Outer-Void ecosystem. It defines the cano
 registry, runtime and model interfaces, and the `blux` command line. Other repositories stay independent and
 integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001).
 
-**Status:** Stage 14 (BLHermes core and extensions migrated onto BLUX capabilities and hooks). Hook System v1 (`1.0`); runtime + CLI `outervoid-blux 0.4.0` (SDK `blux-sdk 0.2.0` unchanged). Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
+**Status:** Stage 15 (BLUX-owned Termux package; Bionic runtime qualified, device install pending owner acceptance). Hook System v1 (`1.0`); runtime + CLI `outervoid-blux 0.4.0` (SDK `blux-sdk 0.2.0` unchanged). Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
 
 `blux` is direct intelligence; ecosystem orchestration is `ax`.
 
@@ -55,7 +55,8 @@ make ci                 # drift/lock check, format, lint, mypy --strict, tests, 
 [0011](docs/adr/0011-direct-cli.md) direct `blux` CLI ·
 [0012](docs/adr/0012-hook-system.md) Hook System v1 ·
 [0013](docs/adr/0013-blhermes-core-migration.md) BLHermes core migration ·
-[0014](docs/adr/0014-blhermes-extensions.md) BLHermes extensions
+[0014](docs/adr/0014-blhermes-extensions.md) BLHermes extensions ·
+[0015](docs/adr/0015-termux-packaging.md) Termux packaging
 
 ## Licensing and credits
 See [CREDITS.md](CREDITS.md) and [docs/ecosystem/licensing.md](docs/ecosystem/licensing.md).

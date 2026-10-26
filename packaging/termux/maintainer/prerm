@@ -1,0 +1,13 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# BLUX prerm: no daemons to stop. Remove the bytecode caches Python wrote inside the package's own
+# directory (they are not package files, so dpkg would leave the directory behind). Never touches user state.
+set -e
+case "$1" in
+  remove|upgrade|deconfigure)
+    site="${DPKG_ROOT:-}/data/data/com.termux/files/usr/lib/blux/site"
+    if [ -d "$site" ]; then
+      find "$site" -type d -name __pycache__ -prune -exec rm -r {} +
+    fi
+    ;;
+esac
+exit 0

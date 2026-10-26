@@ -1,0 +1,72 @@
+{
+ "contract": "blux.termux-vendor-lock",
+ "python": [
+  {
+   "name": "jsonschema",
+   "version": "4.26.0",
+   "file": "jsonschema-4.26.0-py3-none-any.whl",
+   "sha256": "d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce",
+   "packages": [
+    "jsonschema"
+   ],
+   "license": "MIT"
+  },
+  {
+   "name": "referencing",
+   "version": "0.37.0",
+   "file": "referencing-0.37.0-py3-none-any.whl",
+   "sha256": "381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231",
+   "packages": [
+    "referencing"
+   ],
+   "license": "MIT"
+  },
+  {
+   "name": "jsonschema-specifications",
+   "version": "2025.9.1",
+   "file": "jsonschema_specifications-2025.9.1-py3-none-any.whl",
+   "sha256": "98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe",
+   "packages": [
+    "jsonschema_specifications"
+   ],
+   "license": "MIT"
+  },
+  {
+   "name": "attrs",
+   "version": "26.1.0",
+   "file": "attrs-26.1.0-py3-none-any.whl",
+   "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+   "packages": [
+    "attr",
+    "attrs"
+   ],
+   "license": "MIT"
+  },
+  {
+   "name": "PyYAML",
+   "version": "6.0.3",
+   "file": "pyyaml-6.0.3.tar.gz",
+   "sha256": "d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f",
+   "packages": [
+    "yaml"
+   ],
+   "license": "MIT"
+  }
+ ],
+ "bluxgpt": {
+  "repository": "Outer-Void/blux-gpt",
+  "commit": "4609cd987508ea6dd0c27218b623b02b74dfb5d4"
+ },
+ "termux_depends": {
+  "python": ">= 3.14",
+  "python-rpds-py": "any (Termux main repository)"
+ },
+ "termux_test_fixtures": {
+  "python-rpds-py": {
+   "version": "2026.9.1",
+   "url": "https://packages.termux.dev/apt/termux-main/pool/main/p/python-rpds-py/python-rpds-py_2026.9.1_aarch64.deb",
+   "sha256": "72fcecf2f33aba808080629cc6664381eb31e879956372420e1953e3a7cd66e9",
+   "use": "Bionic runtime acceptance only: extracted into a temporary directory, never installed"
+  }
+ }
+}

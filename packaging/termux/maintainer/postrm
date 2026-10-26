@@ -1,0 +1,10 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# BLUX postrm: user state is never deleted, not even on purge (state preservation policy, ADR-0015).
+set -e
+case "$1" in
+  purge)
+    echo "blux: package files removed. Your BLUX state is kept: \$HOME/.local/state/blux and \$HOME/.config/blux."
+    echo "blux: delete them yourself if you no longer want them."
+    ;;
+esac
+exit 0

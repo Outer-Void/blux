@@ -1,0 +1,12 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# BLUX postinst: no network, no state changes, no automatic migration.
+set -e
+case "$1" in
+  configure)
+    echo "blux: installed. Run 'blux doctor' to check the model backend and credentials."
+    if [ -n "${HOME:-}" ] && { [ -d "${HERMES_HOME:-$HOME/.hermes}" ]; }; then
+      echo "blux: legacy BLHermes state found. To review an import: blux migrate hermes (dry run)."
+    fi
+    ;;
+esac
+exit 0

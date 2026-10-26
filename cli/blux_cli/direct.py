@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import json
 import os
 import re
 import shutil
@@ -593,6 +594,10 @@ def _doctor(settings: cfg.Settings, args: argparse.Namespace, out: TextIO, err: 
         checks.append({"check": name, "status": status, "detail": detail, **extra})
 
     check("config", "ok", f"{settings.path} ({'found' if settings.found else 'not present; defaults'})")
+    release = Path(__file__).resolve().parents[3] / "share" / "blux" / "release.json"
+    if release.is_file():  # installed from the BLUX Termux package
+        rel = json.loads(release.read_text(encoding="utf-8"))
+        check("package", "ok", f"{rel['package']} {rel['version']} (updates: {rel['update']['owner']}, no self-update)")
     try:
         routes = load_routes(settings)
         check("routes", "ok", f"{routes['routes_id']} ({settings.routes or 'packaged default'})")

@@ -1226,7 +1226,7 @@
     ],
     "policy": "BLUX installs from its own sources."
    },
-   "blocker": null,
+   "blocker": "Superseded by BLUX-owned packaging (ADR-0015); nothing upstream is used.",
    "evidence_plan": "BLUX writes its own installer; the upstream install tests describe the state the importer must recognize.",
    "inventory_categories": [
     "install",
@@ -1562,7 +1562,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "packaging/termux (BLUX .deb)",
+    "module": "packaging/termux (build_deb.py, audit_deb.py, validate_installed.py, maintainer/)",
     "owner": "blux"
    },
    "tests": {
@@ -1572,7 +1572,7 @@
      "tests/hermes_cli/test_*termux*"
     ]
    },
-   "migration_state": "NOT_STARTED",
+   "migration_state": "MIGRATED",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -1589,14 +1589,19 @@
     ],
     "policy": "Build-time only; the installed package runs offline."
    },
-   "blocker": "Device acceptance still unproven (BLHERMES_PRE_DEVICE_COMPLETE.md).",
+   "blocker": "Installation through Termux APT on a device is BLOCKED until the owner runs packaging/termux/ACCEPTANCE.md; no BLUX APT repository is published yet.",
    "evidence_plan": "Reuse scripts/termux/validate_installed.py as the installed-bundle check for the BLUX package.",
    "inventory_categories": [
     "termux",
     "android",
     "url"
    ],
-   "evidence": []
+   "evidence": [
+    "tests/packaging/test_termux_package.py::test_artifact_exists_is_reproducible_and_passes_the_audit",
+    "tests/packaging/test_termux_package.py::test_lifecycle_install_reinstall_upgrade_remove_purge",
+    "tests/packaging/test_termux_package.py::test_damaged_install_is_detected_and_repaired_by_reinstall",
+    "tests/packaging/test_termux_package.py::test_bionic_runtime_acceptance"
+   ]
   },
   {
    "id": "BLH-034",
@@ -1635,7 +1640,7 @@
     ],
     "policy": ""
    },
-   "blocker": null,
+   "blocker": "Superseded by BLUX-owned packaging (ADR-0015); nothing upstream is used.",
    "evidence_plan": "BLUX keeps exact pins; PM behaviour is not reproduced.",
    "inventory_categories": [
     "package_id"
@@ -1685,7 +1690,7 @@
     ],
     "policy": ""
    },
-   "blocker": null,
+   "blocker": "Superseded by BLUX-owned packaging (ADR-0015); nothing upstream is used.",
    "evidence_plan": "Rewritten for BLUX; nothing upstream ships.",
    "inventory_categories": [
     "package_id"

@@ -77,6 +77,13 @@ jobs:
       # Stage 09: BluxGPT, the reference Model API backend (stdlib only, Python 3.10+, so every matrix entry).
       - name: Install BluxGPT
         run: python -m pip install --no-deps "bluxgpt @ git+https://github.com/Outer-Void/blux-gpt.git@dc34f80810a3d1f55ae33ecd5b5aa1e61b4dca93"
+      # Stage 15: the Termux .deb is built from the pinned BluxGPT commit (packaging/termux/vendor.lock.json).
+      - uses: actions/checkout@v4
+        with:
+          repository: Outer-Void/blux-gpt
+          ref: 4609cd987508ea6dd0c27218b623b02b74dfb5d4
+          path: _bluxgpt
+          fetch-depth: 0
       - name: Schema drift and lock
         run: python packaging/sync_schemas.py --check
       - name: Format
@@ -88,6 +95,7 @@ jobs:
       - name: Tests (incl. BLUX System, DAT, LRC, GOD, CogA, cA and Model API hard-gate integration)
         run: pytest
         env:
+          BLUX_BLUXGPT_SRC: ${{ github.workspace }}/_bluxgpt
           BLUX_REQUIRE_SYSTEM: "1"
           BLUX_REQUIRE_DAT: ${{ matrix.python != '3.10' && '1' || '0' }}
           BLUX_REQUIRE_LRC: ${{ matrix.python != '3.10' && '1' || '0' }}

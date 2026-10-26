@@ -2,6 +2,24 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 15
+- **BLUX-owned Termux package** (ADR-0015, packaging/termux/).
+  - **Package.** `blux_<version>-<rev>_aarch64.deb` depends on Termux `python` and `python-rpds-py`, and
+    bundles BLUX, BluxGPT and sha256-pinned pure-Python dependencies, each with its licence.
+  - **Build.** Reproducible; `release.json` says APT owns updates and there is no self-update.
+  - **Maintainer scripts.** No network, no automatic migration, and user state is never deleted (prerm
+    cleans only package bytecode caches).
+  - **Tools.** `audit_deb.py` audits the artifact. `validate_installed.py` checks every runtime area of an
+    installed prefix.
+  - **`blux doctor`.** Shows the installed package's identity.
+  - **Tests.** Audit, reproducibility, and the dpkg lifecycle (install, reinstall, upgrade, remove, purge,
+    damage and repair) in a throwaway root. The Bionic runtime is validated under Termux python 3.14
+    (evidence in `packaging/termux/acceptance/`).
+  - **Device install.** Installing through Termux APT on a device is BLOCKED pending owner acceptance
+    (`packaging/termux/ACCEPTANCE.md`).
+- **Parity matrix.** BLH-033 is MIGRATED (with the device blocker). BLH-025/034/035 are superseded by BLUX
+  packaging.
+
 ## Unreleased: Stage 14
 - **BLHermes extensions migrated** (ADR-0014). All are clean-room, run without the fork, and go through
   capabilities, policy, Hook System v1 and receipts.
