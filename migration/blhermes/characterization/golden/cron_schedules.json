@@ -1,0 +1,50 @@
+[
+ {
+  "input": "every 30m",
+  "parsed": {
+   "display": "every 30m",
+   "kind": "interval",
+   "minutes": 30
+  }
+ },
+ {
+  "input": "every 2h",
+  "parsed": {
+   "display": "every 120m",
+   "kind": "interval",
+   "minutes": 120
+  }
+ },
+ {
+  "input": "30m",
+  "parsed": {
+   "display": "every 30m",
+   "kind": "interval",
+   "minutes": 30
+  }
+ },
+ {
+  "input": "0 9 * * *",
+  "parsed": {
+   "display": "0 9 * * *",
+   "expr": "0 9 * * *",
+   "kind": "cron"
+  }
+ },
+ {
+  "input": "*/15 * * * *",
+  "parsed": {
+   "display": "*/15 * * * *",
+   "expr": "*/15 * * * *",
+   "kind": "cron"
+  }
+ },
+ {
+  "input": "2026-12-01T09:00:00",
+  "parsed": {
+   "display": "once at 2026-12-01 09:00",
+   "kind": "once",
+   "run_at": "2026-12-01T09:00:00+00:00"
+  }
+ }
+]

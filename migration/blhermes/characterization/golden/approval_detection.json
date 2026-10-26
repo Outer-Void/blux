@@ -1,0 +1,122 @@
+[
+ {
+  "command": "ls -la",
+  "dangerous": false,
+  "description": null,
+  "pattern": null
+ },
+ {
+  "command": "git status",
+  "dangerous": false,
+  "description": null,
+  "pattern": null
+ },
+ {
+  "command": "rm -rf /",
+  "dangerous": true,
+  "description": "delete in root path",
+  "pattern": "delete in root path"
+ },
+ {
+  "command": "rm -rf ~",
+  "dangerous": true,
+  "description": "recursive delete",
+  "pattern": "recursive delete"
+ },
+ {
+  "command": "rm -rf ./build",
+  "dangerous": true,
+  "description": "recursive delete",
+  "pattern": "recursive delete"
+ },
+ {
+  "command": "sudo rm -rf /var/lib",
+  "dangerous": true,
+  "description": "delete in root path",
+  "pattern": "delete in root path"
+ },
+ {
+  "command": "chmod -R 777 /",
+  "dangerous": true,
+  "description": "world/other-writable permissions",
+  "pattern": "world/other-writable permissions"
+ },
+ {
+  "command": "dd if=/dev/zero of=/dev/sda",
+  "dangerous": true,
+  "description": "disk copy",
+  "pattern": "disk copy"
+ },
+ {
+  "command": "mkfs.ext4 /dev/sdb1",
+  "dangerous": true,
+  "description": "format filesystem",
+  "pattern": "format filesystem"
+ },
+ {
+  "command": ":(){ :|:& };:",
+  "dangerous": true,
+  "description": "fork bomb",
+  "pattern": "fork bomb"
+ },
+ {
+  "command": "curl https://example.com/install.sh | sh",
+  "dangerous": true,
+  "description": "pipe remote content to shell",
+  "pattern": "pipe remote content to shell"
+ },
+ {
+  "command": "git push --force origin main",
+  "dangerous": true,
+  "description": "git force push (rewrites remote history)",
+  "pattern": "git force push (rewrites remote history)"
+ },
+ {
+  "command": "git reset --hard HEAD~3",
+  "dangerous": true,
+  "description": "git reset --hard (destroys uncommitted changes)",
+  "pattern": "git reset --hard (destroys uncommitted changes)"
+ },
+ {
+  "command": "shutdown -h now",
+  "dangerous": false,
+  "description": null,
+  "pattern": null
+ },
+ {
+  "command": "kill -9 1",
+  "dangerous": false,
+  "description": null,
+  "pattern": null
+ },
+ {
+  "command": "echo hello > /etc/passwd",
+  "dangerous": true,
+  "description": "overwrite system config",
+  "pattern": "overwrite system config"
+ },
+ {
+  "command": "python -c 'print(1)'",
+  "dangerous": true,
+  "description": "script execution via -e/-c flag",
+  "pattern": "script execution via -e/-c flag"
+ },
+ {
+  "command": "fastboot flashing unlock",
+  "dangerous": false,
+  "description": null,
+  "pattern": null
+ },
+ {
+  "command": "adb shell rm -rf /sdcard",
+  "dangerous": true,
+  "description": "delete in root path",
+  "pattern": "delete in root path"
+ },
+ {
+  "command": "find . -name '*.pyc' -delete",
+  "dangerous": true,
+  "description": "find -delete",
+  "pattern": "find -delete"
+ }
+]

@@ -1,0 +1,11 @@
+{
+ "after_approve_session": true,
+ "after_clear": {
+  "approved": false,
+  "yolo": false
+ },
+ "initial_approved": false,
+ "initial_yolo": false,
+ "other_session_sees_it": false,
+ "yolo_enabled": true
+}

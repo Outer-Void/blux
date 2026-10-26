@@ -2,6 +2,23 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 11
+- **BLHermes forensic inventory and parity matrix** (`migration/blhermes/`). No runtime change.
+  - **Scanner and inventory.** `inventory.py` is a read-only scanner. `inventory.json` holds 9,574
+    classified references across 26 categories (modules, packages, commands, env vars, paths, URLs,
+    updaters, network hooks, providers, tools, skills, plugins, MCP, cron, gateway, TUI, sessions, memory,
+    subagents, approval, credentials, Termux, Android, install and attribution), each with the rule that
+    classified it.
+  - **Parity matrix.** `parity-matrix.json` (with its schema) maps 44 features to their target, tests,
+    state, provenance, network dependency, blocker and evidence plan.
+  - **Characterization.** 12 probes of retained behaviour, with goldens recorded from the fork at
+    `ac51a44f1f` (`tests/migration/test_blhermes_characterization.py`).
+  - **Gate tests.** `tests/migration/test_blhermes_matrix.py` checks that every retained feature has a
+    target and an evidence plan, that every network hook is owned by a networked feature, that no
+    personal data is published, that the fork has no deletions, and that BLUX sources never contact the
+    removed Nous services.
+  - **Notice.** The upstream MIT notice for the derived data is in `migration/blhermes/UPSTREAM-NOTICE.md`.
+
 ## Unreleased: Stage 10
 - **Direct `blux` CLI** (ADR-0011, docs/cli.md). `outervoid-blux` 0.3.0; the SDK is unchanged at 0.2.0.
   - `blux "..."` / `blux ask`: a logical model through the Model API, with piped stdin as the input

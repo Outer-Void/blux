@@ -1,0 +1,573 @@
+[
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "start"
+ },
+ {
+  "aliases": [
+   "reset"
+  ],
+  "category": "Session",
+  "name": "new"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "topic"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "clear"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "redraw"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "history"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "save"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "retry"
+ },
+ {
+  "aliases": [
+   "compose"
+  ],
+  "category": "Session",
+  "name": "prompt"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "undo"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "title"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "handoff"
+ },
+ {
+  "aliases": [
+   "fork"
+  ],
+  "category": "Session",
+  "name": "branch"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "worktree"
+ },
+ {
+  "aliases": [
+   "compact"
+  ],
+  "category": "Session",
+  "name": "compress"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "rollback"
+ },
+ {
+  "aliases": [
+   "snap"
+  ],
+  "category": "Session",
+  "name": "snapshot"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "export"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "import"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "stop"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "discard"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "pause"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "approve"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "deny"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "bg"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "btw"
+ },
+ {
+  "aliases": [
+   "tasks"
+  ],
+  "category": "Session",
+  "name": "agents"
+ },
+ {
+  "aliases": [
+   "learning",
+   "memory-graph"
+  ],
+  "category": "Session",
+  "name": "journey"
+ },
+ {
+  "aliases": [
+   "q"
+  ],
+  "category": "Session",
+  "name": "queue"
+ },
+ {
+  "aliases": [
+   "s"
+  ],
+  "category": "Session",
+  "name": "steer"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "goal"
+ },
+ {
+  "aliases": [
+   "hb"
+  ],
+  "category": "Session",
+  "name": "heartbeat"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "refine"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "review"
+ },
+ {
+  "aliases": [
+   "proactive"
+  ],
+  "category": "Session",
+  "name": "loop"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "plan"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "moa"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "subgoal"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "status"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "egress"
+ },
+ {
+  "aliases": [
+   "ctx"
+  ],
+  "category": "Session",
+  "name": "context"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "whoami"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "profile"
+ },
+ {
+  "aliases": [
+   "set-home"
+  ],
+  "category": "Session",
+  "name": "sethome"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "resume"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "sessions"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "config"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "model"
+ },
+ {
+  "aliases": [
+   "codex_runtime"
+  ],
+  "category": "Configuration",
+  "name": "codex-runtime"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "personality"
+ },
+ {
+  "aliases": [
+   "sb"
+  ],
+  "category": "Configuration",
+  "name": "statusbar"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "battery"
+ },
+ {
+  "aliases": [
+   "ts"
+  ],
+  "category": "Configuration",
+  "name": "timestamps"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "diff"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "verbose"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "focus"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "footer"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "yolo"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "approvals"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "reasoning"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "fast"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "skin"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "indicator"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "voice"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "wake"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "busy"
+ },
+ {
+  "aliases": [],
+  "category": "Configuration",
+  "name": "autoprune"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "tools"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "toolsets"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "skills"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "memory"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "bundles"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "pet"
+ },
+ {
+  "aliases": [
+   "generate-pet"
+  ],
+  "category": "Tools & Skills",
+  "name": "hatch"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "learn"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "init"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "cron"
+ },
+ {
+  "aliases": [
+   "suggest"
+  ],
+  "category": "Tools & Skills",
+  "name": "suggestions"
+ },
+ {
+  "aliases": [
+   "bp"
+  ],
+  "category": "Tools & Skills",
+  "name": "blueprint"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "curator"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "kanban"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "reload"
+ },
+ {
+  "aliases": [
+   "reload_mcp"
+  ],
+  "category": "Tools & Skills",
+  "name": "reload-mcp"
+ },
+ {
+  "aliases": [
+   "reload_skills"
+  ],
+  "category": "Tools & Skills",
+  "name": "reload-skills"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "browser"
+ },
+ {
+  "aliases": [],
+  "category": "Tools & Skills",
+  "name": "plugins"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "commands"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "help"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "palette"
+ },
+ {
+  "aliases": [],
+  "category": "Session",
+  "name": "restart"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "usage"
+ },
+ {
+  "aliases": [
+   "upgrade"
+  ],
+  "category": "Info",
+  "name": "subscription"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "login"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "topup"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "insights"
+ },
+ {
+  "aliases": [
+   "gateway"
+  ],
+  "category": "Info",
+  "name": "platforms"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "platform"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "copy"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "paste"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "image"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "update"
+ },
+ {
+  "aliases": [
+   "v"
+  ],
+  "category": "Info",
+  "name": "version"
+ },
+ {
+  "aliases": [],
+  "category": "Info",
+  "name": "debug"
+ },
+ {
+  "aliases": [
+   "exit"
+  ],
+  "category": "Exit",
+  "name": "quit"
+ }
+]

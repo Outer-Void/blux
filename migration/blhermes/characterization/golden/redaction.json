@@ -1,0 +1,14 @@
+{
+ "mask_secret": "sk-p...0000",
+ "redact_sensitive_text(force)": [
+  "OPENAI_API_KEY=***",
+  "Authorization: Bearer abcdef...6789",
+  "export ANTHROPIC_API_KEY=***",
+  "token ghp_AB...89ab in log",
+  "postgres://admin:***@db.internal:5432/app",
+  "AWS key AKIAIO...MPLE here",
+  "{\"password\": \"correc...aple\"}",
+  "nothing secret here"
+ ],
+ "redact_url_credentials": "postgres://***:***@db.internal:5432/app"
+}

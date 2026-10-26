@@ -1,0 +1,1981 @@
+{
+ "contract": "blux.blhermes-parity-matrix",
+ "matrix_version": 1,
+ "inventory": "migration/blhermes/inventory.json",
+ "states": [
+  "NOT_STARTED",
+  "CHARACTERIZED",
+  "IN_PROGRESS",
+  "MIGRATED",
+  "PLANNED_REMOVAL",
+  "KEPT_AS_ATTRIBUTION",
+  "DEFERRED"
+ ],
+ "network_dependencies": [
+  "none",
+  "local",
+  "optional",
+  "required",
+  "build_time"
+ ],
+ "features": [
+  {
+   "id": "BLH-001",
+   "feature": "Agent conversation loop (turns, tool dispatch, compaction, interrupts)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "agent.core",
+    "tools.registry_glue"
+   ],
+   "source_locations": [
+    "run_agent.py",
+    "model_tools.py",
+    "agent/agent_init.py",
+    "agent/turn_facade.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/agent/ (capability agent.run)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/agent/test_run_agent*",
+     "tests/test_agent_close_lifecycle.py",
+     "tests/test_model_tools_async_bridge.py"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Clean-room BLUX implementation against the characterization goldens; upstream is cited in credits (LIN-001). If upstream code is copied, the MIT notice travels with it."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "Model API (blux-gpt backend)"
+    ],
+    "policy": "Model calls go only through model.generate; no direct provider SDK use."
+   },
+   "blocker": "No characterization of a full turn yet: needs a scripted model backend (Model API mock) driving run_agent; scheduled before the agent.run port.",
+   "evidence_plan": "Record transcripts of scripted turns (tool call, tool error, interrupt, compaction) through a mock Model API backend; replay against agent.run.",
+   "inventory_categories": [
+    "module",
+    "session"
+   ]
+  },
+  {
+   "id": "BLH-002",
+   "feature": "Model provider transport and provider catalogue",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "providers.core",
+    "providers.plugins"
+   ],
+   "source_locations": [
+    "providers",
+    "hermes_cli/auth.py",
+    "agent/provider_registry.py",
+    "plugins/model-providers"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux-gpt",
+    "module": "bluxgpt/providers/ + routes (logical models)",
+    "owner": "blux-gpt"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[provider_registry]"
+    ],
+    "upstream": [
+     "tests/providers/*",
+     "tests/hermes_cli/test_auth*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Clean-room BLUX implementation against the characterization goldens; upstream is cited in credits (LIN-001). If upstream code is copied, the MIT notice travels with it."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "provider APIs listed in the provider_registry golden"
+    ],
+    "policy": "Provider transport lives only in the BluxGPT backend; BLUX never calls a provider."
+   },
+   "blocker": null,
+   "evidence_plan": "Each retained provider becomes a BluxGPT route; compare base URL and credential-variable mapping with the provider_registry golden.",
+   "inventory_categories": [
+    "provider",
+    "url",
+    "env_var"
+   ]
+  },
+  {
+   "id": "BLH-003",
+   "feature": "Nous Portal account, billing and inference (device-code login, subscriptions, invoke JWT)",
+   "classification": "REMOVE",
+   "subsystems": [
+    "cli"
+   ],
+   "source_locations": [
+    "hermes_cli/auth_nous.py",
+    "hermes_cli/nous_account.py",
+    "hermes_cli/nous_billing.py"
+   ],
+   "target": null,
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/hermes_cli/test_nous*"
+    ]
+   },
+   "migration_state": "PLANNED_REMOVAL",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Nothing is ported. The upstream code stays in the fork under MIT; credits keeps the lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "portal.nousresearch.com",
+     "inference-api.nousresearch.com",
+     "welcome-api.nousresearch.com"
+    ],
+    "policy": "Removed in BLUX; no Nous endpoint is contacted."
+   },
+   "blocker": null,
+   "evidence_plan": "Removal is verified by the inventory: no REMOVE-classified Nous URL or NOUS_* variable may appear in BLUX sources.",
+   "inventory_categories": [
+    "url",
+    "env_var",
+    "identifier",
+    "provider"
+   ]
+  },
+  {
+   "id": "BLH-004",
+   "feature": "Tool registry and built-in tools",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "tools.builtin"
+   ],
+   "source_locations": [
+    "tools/registry.py",
+    "tools/terminal_tool.py",
+    "tools/memory_tool.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/capabilities/tools/ (one capability descriptor per tool)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[tool_registry]"
+    ],
+    "upstream": [
+     "tests/tools/test_registry*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "optional",
+    "endpoints": [
+     "per-tool third-party services (see inventory network_hook items under tools.builtin)"
+    ],
+    "policy": "Each tool capability declares side_effects: external and its endpoints; policy decides."
+   },
+   "blocker": null,
+   "evidence_plan": "Port tools one by one as capabilities; the tool_registry golden lists the names that need a target or an explicit retirement.",
+   "inventory_categories": [
+    "tool"
+   ]
+  },
+  {
+   "id": "BLH-005",
+   "feature": "Toolsets (named tool bundles and resolution)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "tools.toolsets"
+   ],
+   "source_locations": [
+    "toolsets.py",
+    "toolset_distributions.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/policy (toolset -> capability grants)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[toolsets]"
+    ],
+    "upstream": [
+     "tests/agent/test_background_review_toolset_restriction.py",
+     "tests/gateway/test_api_server_toolset.py"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Clean-room BLUX implementation against the characterization goldens; upstream is cited in credits (LIN-001). If upstream code is copied, the MIT notice travels with it."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Toolsets become policy grant bundles; the toolsets golden fixes the resolved membership BLUX must reproduce.",
+   "inventory_categories": [
+    "toolset"
+   ]
+  },
+  {
+   "id": "BLH-006",
+   "feature": "Terminal execution environments and child-process environment scrubbing",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "tools.environments"
+   ],
+   "source_locations": [
+    "tools/environments/local.py",
+    "tools/terminal_tool.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/capabilities/shell (subprocess provider, ADR-0009)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[child_env_scrub]"
+    ],
+    "upstream": [
+     "tests/tools/test_local_env*",
+     "tests/tools/test_*subprocess_env*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "optional",
+    "endpoints": [
+     "remote sandbox backends (ssh, docker, modal) when selected"
+    ],
+    "policy": "Remote backends are separate capabilities with their own declarations."
+   },
+   "blocker": "Characterized gap: the upstream scrub passes AWS_SECRET_ACCESS_KEY and DATABASE_URL to children. BLUX must not reproduce this; its minimal_env allow-list is the target behaviour.",
+   "evidence_plan": "Port backends behind the subprocess provider; the child_env_scrub golden documents upstream behaviour, and the BLUX test asserts the stricter allow-list instead.",
+   "inventory_categories": [
+    "credential",
+    "env_var"
+   ]
+  },
+  {
+   "id": "BLH-007",
+   "feature": "Dangerous-command approval, session approvals and YOLO",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "tools.approval"
+   ],
+   "source_locations": [
+    "tools/approval.py",
+    "tools/approval_detection.py",
+    "tools/approval_context.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/policy (approval decisions as receipts) + Stage 12 hooks",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[approval_detection]",
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[approval_session_state]"
+    ],
+    "upstream": [
+     "tests/tools/test_approval*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Detection patterns port with provenance headers; approvals become policy decisions recorded in receipts. YOLO never authorizes destructive device operations (Stage 12 rule).",
+   "inventory_categories": [
+    "approval"
+   ]
+  },
+  {
+   "id": "BLH-008",
+   "feature": "File-write safety (credential paths, profile roots, approval-required paths)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "agent.core"
+   ],
+   "source_locations": [
+    "agent/file_safety.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/policy/paths",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[file_safety]"
+    ],
+    "upstream": [
+     "tests/agent/test_file_safety*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Port the classification table; the file_safety golden is the acceptance test.",
+   "inventory_categories": [
+    "path",
+    "credential"
+   ]
+  },
+  {
+   "id": "BLH-009",
+   "feature": "Secret redaction for logs, outputs and egress",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "agent.core"
+   ],
+   "source_locations": [
+    "agent/redact.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "sdk/python/src/blux_sdk/model_api.py scrub + blux-system redaction",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[redaction]"
+    ],
+    "upstream": [
+     "tests/agent/test_redact*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Extend BLUX scrub patterns until every redaction golden sample is at least as redacted.",
+   "inventory_categories": [
+    "credential"
+   ]
+  },
+  {
+   "id": "BLH-010",
+   "feature": "Credential storage, pools and routing (.env, auth.json, credential pool, secret scope)",
+   "classification": "TEMPORARY_COMPATIBILITY",
+   "subsystems": [
+    "agent.core",
+    "cli"
+   ],
+   "source_locations": [
+    "agent/credential_pool.py",
+    "agent/secret_scope.py",
+    "hermes_cli/auth.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux-gpt",
+    "module": "bluxgpt/config.py (provider keys); BLUX credential.requested hook (Stage 12)",
+    "owner": "blux-gpt"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[provider_registry]",
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[child_env_scrub]"
+    ],
+    "upstream": [
+     "tests/agent/test_credential*",
+     "tests/test_credential_file_permissions.py"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Clean-room BLUX implementation against the characterization goldens; upstream is cited in credits (LIN-001). If upstream code is copied, the MIT notice travels with it."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": "Import of an existing ~/.hermes/.env must be explicit and owner-confirmed; BLUX itself never stores provider keys (ADR-0011).",
+   "evidence_plan": "Offer a one-time import of ~/.hermes/.env provider keys into BluxGPT's config; afterwards the Hermes paths are ignored.",
+   "inventory_categories": [
+    "credential",
+    "env_var",
+    "path"
+   ]
+  },
+  {
+   "id": "BLH-011",
+   "feature": "Session store (SQLite sessions, messages, FTS search, lineage, compression)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "state.sessions"
+   ],
+   "source_locations": [
+    "hermes_state.py",
+    "hermes_state_sessions.py",
+    "hermes_state_messages.py",
+    "hermes_state_search.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/sessions (+ blux-system receipts for execution truth)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[session_store]"
+    ],
+    "upstream": [
+     "tests/hermes_state/*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Port the session schema with a migration from state.db; the session_store golden plus upstream hermes_state tests are the acceptance set.",
+   "inventory_categories": [
+    "session",
+    "module"
+   ]
+  },
+  {
+   "id": "BLH-012",
+   "feature": "State root, HERMES_HOME and profiles",
+   "classification": "TEMPORARY_COMPATIBILITY",
+   "subsystems": [
+    "state.paths"
+   ],
+   "source_locations": [
+    "hermes_constants.py",
+    "hermes_dir_acl.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "cli/blux_cli/config.py state root (BLUX_HOME) with HERMES_HOME read as a fallback",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[paths]"
+    ],
+    "upstream": [
+     "tests/test_hermes_constants.py",
+     "tests/test_hermes_home_key_cache.py"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "BLUX reads HERMES_HOME/~/.hermes only to import; the paths golden fixes profile resolution for the importer.",
+   "inventory_categories": [
+    "path",
+    "env_var"
+   ]
+  },
+  {
+   "id": "BLH-013",
+   "feature": "Memory (built-in memory tool and memory-provider plugins)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "memory.providers"
+   ],
+   "source_locations": [
+    "tools/memory_tool.py",
+    "agent/memory_provider.py",
+    "plugins/memory"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/capabilities/memory",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/tools/test_memory*",
+     "tests/plugins/memory/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "optional",
+    "endpoints": [
+     "remote memory providers (byterover, retaindb)"
+    ],
+    "policy": "Remote providers are opt-in capabilities with declared endpoints."
+   },
+   "blocker": "Characterization pending: needs a temp-home probe of the memory tool's add/replace/remove file format.",
+   "evidence_plan": "Add a memory probe (MEMORY.md/USER.md format) before porting; providers follow as plugin-adapter capabilities.",
+   "inventory_categories": [
+    "memory"
+   ]
+  },
+  {
+   "id": "BLH-014",
+   "feature": "Subagents and delegation (depth limits, toolset derivation, child sessions)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "tools.subagents"
+   ],
+   "source_locations": [
+    "tools/delegate_tool.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/agent (agent.spawned/completed/failed hooks, Stage 12)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/tools/test_delegate*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "Model API"
+    ],
+    "policy": "Children use the same Model API and policy; delegation never widens permissions."
+   },
+   "blocker": "Characterization pending: needs the scripted Model API backend from BLH-001.",
+   "evidence_plan": "Characterize depth limits and child toolset derivation as pure functions first, then end-to-end with the mock backend.",
+   "inventory_categories": [
+    "subagent"
+   ]
+  },
+  {
+   "id": "BLH-015",
+   "feature": "Skills (bundled and optional)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "skills.bundled",
+    "skills.optional"
+   ],
+   "source_locations": [
+    "skills",
+    "optional-skills",
+    "tools/skills_sync.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "Stage 12 skill adapter (skills subscribe to BLUX hooks/capabilities)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/skills/*",
+     "tests/tools/test_skills_sync.py"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage.",
+    "third_party": "some skills vendor third-party scripts; per-skill licence review"
+   },
+   "network": {
+    "dependency": "optional",
+    "endpoints": [
+     "services called by individual skills (see inventory network_hook items under skills.*)"
+    ],
+    "policy": "A skill's network use must be declared before BLUX loads it."
+   },
+   "blocker": "Per-skill licence and network review (211 skills).",
+   "evidence_plan": "Load skills through the adapter one family at a time; each needs a licence check and a declared network surface.",
+   "inventory_categories": [
+    "skill"
+   ]
+  },
+  {
+   "id": "BLH-016",
+   "feature": "Plugins, plugin loader and plugin catalogue",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "plugins",
+    "plugins.catalog"
+   ],
+   "source_locations": [
+    "plugins/plugin_loader.py",
+    "plugin-catalog"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "Stage 12 plugin adapter (out-of-process, ADR-0009)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/plugins/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage.",
+    "third_party": "catalogue entries describe third-party plugins under their own licences"
+   },
+   "network": {
+    "dependency": "optional",
+    "endpoints": [
+     "plugin install sources (registries, GitHub)",
+     "plugin service endpoints"
+    ],
+    "policy": "Plugins run out of process with their own capability declarations."
+   },
+   "blocker": "Upstream plugins load in process and can read the agent's credentials; BLUX must run them out of process before any is enabled.",
+   "evidence_plan": "Characterize the plugin manifest (plugin.yaml) contract, then implement the adapter; catalogue entries are re-reviewed before BLUX lists them.",
+   "inventory_categories": [
+    "plugin"
+   ]
+  },
+  {
+   "id": "BLH-017",
+   "feature": "MCP client (connecting to MCP servers, tool discovery)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "mcp.client"
+   ],
+   "source_locations": [
+    "tools/mcp_tool.py",
+    "tools/mcp_tool_discovery.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "Stage 12 MCP adapter (MCP tools as BLUX capabilities)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/tools/test_mcp*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "optional",
+    "endpoints": [
+     "configured MCP servers (stdio or HTTP)"
+    ],
+    "policy": "Each MCP server is a declared capability provider."
+   },
+   "blocker": null,
+   "evidence_plan": "Characterize config parsing and the tool-name mapping before porting the transport.",
+   "inventory_categories": [
+    "mcp"
+   ]
+  },
+  {
+   "id": "BLH-018",
+   "feature": "MCP server (exposing agent tools over MCP)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "mcp.server"
+   ],
+   "source_locations": [
+    "mcp_serve.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "integrations/mcp (BLUX capabilities served over MCP)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/test_mcp_serve.py"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "local",
+    "endpoints": [
+     "stdio"
+    ],
+    "policy": "Serves only declared capabilities under policy."
+   },
+   "blocker": null,
+   "evidence_plan": "Port after the capability set stabilizes; the upstream test defines the protocol surface.",
+   "inventory_categories": [
+    "mcp"
+   ]
+  },
+  {
+   "id": "BLH-019",
+   "feature": "Optional MCP server definitions (third-party services)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "mcp.optional"
+   ],
+   "source_locations": [
+    "optional-mcps"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "registry/ (reviewed MCP catalogue)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/tools/test_mcp*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage.",
+    "third_party": "definitions reference third-party services and packages"
+   },
+   "network": {
+    "dependency": "optional",
+    "endpoints": [
+     "third-party SaaS MCP endpoints"
+    ],
+    "policy": "Listed only after review; never enabled by default."
+   },
+   "blocker": null,
+   "evidence_plan": "Re-review each definition (licence, endpoint, credential needs) before listing.",
+   "inventory_categories": [
+    "mcp"
+   ]
+  },
+  {
+   "id": "BLH-020",
+   "feature": "Cron/scheduled agent jobs",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "cron"
+   ],
+   "source_locations": [
+    "cron/scheduler.py",
+    "cron/jobs.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/axiom",
+    "module": "ax scheduler invoking BLUX capabilities (orchestration is ax, ADR-0011)",
+    "owner": "ax"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[cron_schedules]"
+    ],
+    "upstream": [
+     "tests/cron/*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "Model API",
+     "delivery targets (gateway)"
+    ],
+    "policy": "Scheduled runs are ordinary BLUX executions with receipts."
+   },
+   "blocker": null,
+   "evidence_plan": "ax owns scheduling; the cron_schedules golden fixes schedule parsing for the port.",
+   "inventory_categories": [
+    "cron"
+   ]
+  },
+  {
+   "id": "BLH-021",
+   "feature": "Messaging gateway core (routing, sessions, delivery, webhooks, API server)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "gateway.core"
+   ],
+   "source_locations": [
+    "gateway/run.py",
+    "gateway/config.py",
+    "gateway/delivery.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "integrations/gateway (adapter over BLUX sessions); service lifecycle in ax",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/gateway/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "messaging platforms",
+     "inbound webhooks"
+    ],
+    "policy": "Every adapter requires configured authorization (upstream SECURITY.md posture retained)."
+   },
+   "blocker": "Largest subsystem (1688 upstream tests); needs its own stage and characterization of the authorization path.",
+   "evidence_plan": "Characterize inbound authorization and session routing first; port adapters behind it.",
+   "inventory_categories": [
+    "gateway"
+   ]
+  },
+  {
+   "id": "BLH-022",
+   "feature": "Gateway platform adapters (Telegram, Discord, Slack, Matrix, WhatsApp, ...)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "gateway.platforms",
+    "gateway.platform_plugins"
+   ],
+   "source_locations": [
+    "gateway/platforms",
+    "plugins/platforms"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "integrations/gateway/platforms",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/gateway/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage.",
+    "third_party": "platform SDK dependencies under their own licences"
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "platform APIs (see inventory network_hook items under gateway.*)"
+    ],
+    "policy": "One declared endpoint set per adapter."
+   },
+   "blocker": "Per-platform SDK licence review; adapters move only after BLH-021.",
+   "evidence_plan": "Port adapters individually with their upstream tests.",
+   "inventory_categories": [
+    "gateway"
+   ]
+  },
+  {
+   "id": "BLH-023",
+   "feature": "Interactive CLI and slash commands",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "cli"
+   ],
+   "source_locations": [
+    "hermes_cli/main.py",
+    "hermes_cli/commands.py",
+    "cli.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "cli/blux_cli (blux chat for direct use); management commands in ax",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [
+     "tests/migration/test_blhermes_characterization.py::test_probe_matches_golden[slash_commands]"
+    ],
+    "upstream": [
+     "tests/hermes_cli/test_commands*"
+    ]
+   },
+   "migration_state": "CHARACTERIZED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "provider setup and model listing (moves to BluxGPT)",
+     "local runtime supervisor and web routers (localhost)",
+     "dashboard auth"
+    ],
+    "policy": "CLI network use moves behind capabilities; provider calls go to BluxGPT."
+   },
+   "blocker": null,
+   "evidence_plan": "Map every slash command in the golden to blux chat, ax or retirement.",
+   "inventory_categories": [
+    "command"
+   ]
+  },
+  {
+   "id": "BLH-024",
+   "feature": "Entry points hermes / hermes-agent / hermes-acp",
+   "classification": "TEMPORARY_COMPATIBILITY",
+   "subsystems": [
+    "cli",
+    "acp"
+   ],
+   "source_locations": [
+    "pyproject.toml"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "compatibility shims forwarding to blux / ax",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/test_old_updater_compat_surface.py"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Ship forwarding shims with a deprecation notice; retire after one release.",
+   "inventory_categories": [
+    "command"
+   ]
+  },
+  {
+   "id": "BLH-025",
+   "feature": "Install, setup and uninstall",
+   "classification": "REPLACE",
+   "subsystems": [
+    "install",
+    "cli"
+   ],
+   "source_locations": [
+    "setup-hermes.sh",
+    "setup-hermes.ps1",
+    "hermes_cli/uninstall.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "packaging/ (BLUX install) with an optional Hermes state import",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/install/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Nothing is ported. The upstream code stays in the fork under MIT; credits keeps the lineage."
+   },
+   "network": {
+    "dependency": "build_time",
+    "endpoints": [
+     "hermes-agent.nousresearch.com/install.sh (removed)",
+     "package registries"
+    ],
+    "policy": "BLUX installs from its own sources."
+   },
+   "blocker": null,
+   "evidence_plan": "BLUX writes its own installer; the upstream install tests describe the state the importer must recognize.",
+   "inventory_categories": [
+    "install",
+    "url"
+   ]
+  },
+  {
+   "id": "BLH-026",
+   "feature": "Upstream self-update, release channels and update feeds",
+   "classification": "REMOVE",
+   "subsystems": [
+    "cli",
+    "desktop.app"
+   ],
+   "source_locations": [
+    "hermes_cli/update_cmd.py",
+    "hermes_cli/release_channels.py",
+    "hermes_cli/source_releases.py",
+    "apps/desktop/electron/updater"
+   ],
+   "target": null,
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/hermes_cli/test_update*"
+    ]
+   },
+   "migration_state": "PLANNED_REMOVAL",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Nothing is ported. The upstream code stays in the fork under MIT; credits keeps the lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "GitHub releases of NousResearch/hermes-agent",
+     "hermes-agent.nousresearch.com update feeds"
+    ],
+    "policy": "Removed; BLUX/APT own updates."
+   },
+   "blocker": null,
+   "evidence_plan": "The inventory's updater items are all REMOVE except reviewed plugin updates (R-UPDATER-PLUGIN).",
+   "inventory_categories": [
+    "updater",
+    "network_hook"
+   ]
+  },
+  {
+   "id": "BLH-027",
+   "feature": "Telemetry, shared metrics and OTLP export",
+   "classification": "REMOVE",
+   "subsystems": [
+    "agent.telemetry",
+    "cli"
+   ],
+   "source_locations": [
+    "agent/monitoring",
+    "hermes_cli/observability"
+   ],
+   "target": null,
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/monitoring/*",
+     "tests/hermes_cli/test_shared_metrics*"
+    ]
+   },
+   "migration_state": "PLANNED_REMOVAL",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Nothing is ported. The upstream code stays in the fork under MIT; credits keeps the lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "shared-metrics and OTLP endpoints"
+    ],
+    "policy": "Removed; BLUX exports nothing by default and keeps receipts local."
+   },
+   "blocker": null,
+   "evidence_plan": "Every network_hook item ':: telemetry-export' is REMOVE; a BLUX test will forbid exporters in BLUX sources.",
+   "inventory_categories": [
+    "network_hook",
+    "env_var"
+   ]
+  },
+  {
+   "id": "BLH-028",
+   "feature": "TUI (Ink UI) and TUI gateway (JSON-RPC methods)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "tui.ink",
+    "tui.gateway"
+   ],
+   "source_locations": [
+    "ui-tui",
+    "tui_gateway"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "future BLUX TUI over the capability runtime (stage TBD)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/tui_gateway/*",
+     "tests-js/*"
+    ]
+   },
+   "migration_state": "DEFERRED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "local",
+    "endpoints": [
+     "local JSON-RPC socket"
+    ],
+    "policy": ""
+   },
+   "blocker": "Owner decision: which TUI ships with BLUX.",
+   "evidence_plan": "Keep the JSON-RPC method contract as the characterization target when the TUI is scheduled.",
+   "inventory_categories": [
+    "tui"
+   ]
+  },
+  {
+   "id": "BLH-029",
+   "feature": "ACP adapter (editor integration)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "acp"
+   ],
+   "source_locations": [
+    "acp_adapter"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "integrations/acp",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/acp_adapter/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "local",
+    "endpoints": [
+     "stdio"
+    ],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Port after agent.run; upstream ACP tests are the acceptance set.",
+   "inventory_categories": [
+    "command"
+   ]
+  },
+  {
+   "id": "BLH-030",
+   "feature": "Desktop application (Electron) and bootstrap installer",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "desktop.app",
+    "desktop.installer",
+    "desktop.shared"
+   ],
+   "source_locations": [
+    "apps/desktop",
+    "apps/bootstrap-installer",
+    "apps/shared"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "undecided (owner decision)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/desktop/*",
+     "tests/e2e/*"
+    ]
+   },
+   "migration_state": "DEFERRED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "local gateway",
+     "removed: update feeds and metrics"
+    ],
+    "policy": "Its update and metrics hooks are REMOVE (BLH-026, BLH-027)."
+   },
+   "blocker": "Owner decision: whether BLUX keeps a desktop app (4,212 files).",
+   "evidence_plan": "If kept, characterize via its e2e suite before any port.",
+   "inventory_categories": [
+    "network_hook",
+    "updater"
+   ]
+  },
+  {
+   "id": "BLH-031",
+   "feature": "Web dashboard",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "web.dashboard"
+   ],
+   "source_locations": [
+    "web"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "undecided (owner decision)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/dashboard/*"
+    ]
+   },
+   "migration_state": "DEFERRED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "local",
+    "endpoints": [
+     "local API server"
+    ],
+    "policy": ""
+   },
+   "blocker": "Owner decision: whether BLUX keeps the web dashboard.",
+   "evidence_plan": "If kept, characterize via web/src tests and tests/dashboard.",
+   "inventory_categories": [
+    "network_hook"
+   ]
+  },
+  {
+   "id": "BLH-032",
+   "feature": "Platform detection (OS, Android/Bionic, executables)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "platform"
+   ],
+   "source_locations": [
+    "hermes_platform"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/platform",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/hermes_platform/*",
+     "tests/test_os_marker_gating.py"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Port with provenance headers; Android detection must use sys.platform of the actual interpreter (baseline finding).",
+   "inventory_categories": [
+    "android"
+   ]
+  },
+  {
+   "id": "BLH-033",
+   "feature": "Termux packaging (bionic CPython/Node/uv, native wheels, .deb)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "packaging.termux"
+   ],
+   "source_locations": [
+    "scripts/termux"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "packaging/termux (BLUX .deb)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/scripts/*termux*",
+     "tests/hermes_cli/test_*termux*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage.",
+    "third_party": "bundled CPython, Node, uv and native wheels carry their own licences"
+   },
+   "network": {
+    "dependency": "build_time",
+    "endpoints": [
+     "packages.termux.dev",
+     "PyPI/npm registries"
+    ],
+    "policy": "Build-time only; the installed package runs offline."
+   },
+   "blocker": "Device acceptance still unproven (BLHERMES_PRE_DEVICE_COMPLETE.md).",
+   "evidence_plan": "Reuse scripts/termux/validate_installed.py as the installed-bundle check for the BLUX package.",
+   "inventory_categories": [
+    "termux",
+    "android",
+    "url"
+   ]
+  },
+  {
+   "id": "BLH-034",
+   "feature": "Package manager (PM: locks, extras, platform gates)",
+   "classification": "REPLACE",
+   "subsystems": [
+    "packaging.pm"
+   ],
+   "source_locations": [
+    "pm"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "packaging/ (pinned locks per BLUX distribution)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/pm/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Nothing is ported. The upstream code stays in the fork under MIT; credits keeps the lineage."
+   },
+   "network": {
+    "dependency": "build_time",
+    "endpoints": [
+     "PyPI",
+     "GitHub"
+    ],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "BLUX keeps exact pins; PM behaviour is not reproduced.",
+   "inventory_categories": [
+    "package_id"
+   ]
+  },
+  {
+   "id": "BLH-035",
+   "feature": "Nix, Docker, build scripts and CI",
+   "classification": "REPLACE",
+   "subsystems": [
+    "packaging.nix",
+    "packaging.docker",
+    "packaging.scripts",
+    "ci"
+   ],
+   "source_locations": [
+    "nix",
+    "Dockerfile",
+    "scripts",
+    ".github"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "packaging/ and .github/ of BLUX",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/docker/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Nothing is ported. The upstream code stays in the fork under MIT; credits keeps the lineage."
+   },
+   "network": {
+    "dependency": "build_time",
+    "endpoints": [
+     "container registries",
+     "package registries"
+    ],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Rewritten for BLUX; nothing upstream ships.",
+   "inventory_categories": [
+    "package_id"
+   ]
+  },
+  {
+   "id": "BLH-036",
+   "feature": "LSP integration",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "agent.lsp"
+   ],
+   "source_locations": [
+    "agent/lsp"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/capabilities/lsp (blux-code)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/agent/lsp/*"
+    ]
+   },
+   "migration_state": "DEFERRED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "local",
+    "endpoints": [
+     "language servers (local processes)"
+    ],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Characterize server selection when blux-code needs it.",
+   "inventory_categories": [
+    "module"
+   ]
+  },
+  {
+   "id": "BLH-037",
+   "feature": "Browser automation and computer use",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "tools.browser"
+   ],
+   "source_locations": [
+    "tools/browser_tool.py",
+    "tools/computer_use"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "runtime/blux_runtime/capabilities/browser",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/tools/test_browser*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage.",
+    "third_party": "browser-harness and provider SDKs"
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "browsed sites",
+     "optional browser providers (browserbase, browser-use)"
+    ],
+    "policy": "URL/redirect policy retained; providers opt-in."
+   },
+   "blocker": "Session-scoped permissions must map onto BLUX policy before porting.",
+   "evidence_plan": "Characterize the URL policy (allowed/blocked redirects) as a probe before porting.",
+   "inventory_categories": [
+    "tool"
+   ]
+  },
+  {
+   "id": "BLH-038",
+   "feature": "Localization (locales)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "i18n"
+   ],
+   "source_locations": [
+    "locales"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "cli/blux_cli/locales",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/agent/test_i18n*"
+    ]
+   },
+   "migration_state": "DEFERRED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Port string tables that BLUX surfaces still use; keep the MIT notice.",
+   "inventory_categories": []
+  },
+  {
+   "id": "BLH-039",
+   "feature": "Documentation website and docs",
+   "classification": "REPLACE",
+   "subsystems": [
+    "docs.website",
+    "docs"
+   ],
+   "source_locations": [
+    "website",
+    "docs"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "docs/ (BLUX documentation)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": []
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Nothing is ported. The upstream code stays in the fork under MIT; credits keeps the lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "BLUX writes its own docs; upstream docs links are REPLACE or UPSTREAM_ATTRIBUTION per inventory.",
+   "inventory_categories": [
+    "url"
+   ]
+  },
+  {
+   "id": "BLH-040",
+   "feature": "Upstream test suites and evals (characterization sources)",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "tests",
+    "evals"
+   ],
+   "source_locations": [
+    "tests",
+    "evals",
+    "tests-js"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "tests/migration (ported characterization tests)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/evals/*"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Upstream tests are ported per feature together with the feature, with provenance headers.",
+   "inventory_categories": [
+    "module"
+   ]
+  },
+  {
+   "id": "BLH-041",
+   "feature": "Upstream licence, notices and contributor records",
+   "classification": "UPSTREAM_ATTRIBUTION",
+   "subsystems": [
+    "attribution.license",
+    "attribution.contributors"
+   ],
+   "source_locations": [
+    "LICENSE",
+    "contributors"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "LICENSE/THIRD_PARTY_NOTICES of every BLUX distribution containing ported code; credits LIN-001",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": []
+   },
+   "migration_state": "KEPT_AS_ATTRIBUTION",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "The MIT licence text and 'Copyright (c) 2025 Nous Research' travel with every distribution containing Hermes-derived code; nested upstream licences travel with the files they cover. Contributor records stay in the fork (personal data is not copied)."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": null,
+   "evidence_plan": "Distribution check: any BLUX artifact with a provenance header pointing at LIN-001 must ship the notice.",
+   "inventory_categories": [
+    "attribution"
+   ]
+  },
+  {
+   "id": "BLH-042",
+   "feature": "Core root modules (time, YAML, logging, utils, runners, trajectory tools)",
+   "classification": "REPLACE",
+   "subsystems": [
+    "core"
+   ],
+   "source_locations": [
+    "hermes_time.py",
+    "hermes_yaml.py",
+    "utils.py",
+    "batch_runner.py",
+    "trajectory_compressor.py"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "re-homed helpers inside the modules that need them",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/test_hermes_yaml.py",
+     "tests/test_utils_truthy_values.py",
+     "tests/test_trajectory_compressor.py"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "required",
+    "endpoints": [
+     "provider APIs via the OpenAI SDK (mini_swe_runner.py, trajectory_compressor.py)",
+     "bootstrap connectivity probe (hermes_bootstrap.py)"
+    ],
+    "policy": "Direct SDK calls are not ported; any retained runner calls model.generate."
+   },
+   "blocker": "Batch/trajectory runners generate training data: any use must pass the dataset rules (no private data, no hidden chain-of-thought).",
+   "evidence_plan": "Re-home helpers only when a ported feature needs them.",
+   "inventory_categories": [
+    "module"
+   ]
+  },
+  {
+   "id": "BLH-043",
+   "feature": "Native helpers",
+   "classification": "MIGRATE",
+   "subsystems": [
+    "native"
+   ],
+   "source_locations": [
+    "native"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "undecided (review)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/agent/test_copilot_native_vision_headers.py"
+    ]
+   },
+   "migration_state": "DEFERRED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Any ported code keeps the upstream MIT notice (LICENSE text + Nous Research copyright) in the BLUX distribution and a per-file provenance header; credits records the file lineage."
+   },
+   "network": {
+    "dependency": "none",
+    "endpoints": [],
+    "policy": ""
+   },
+   "blocker": "Review what native/ builds and its licences.",
+   "evidence_plan": "Review before any port.",
+   "inventory_categories": []
+  },
+  {
+   "id": "BLH-044",
+   "feature": "Hermes-branded identifiers, env vars, paths and package names",
+   "classification": "REPLACE",
+   "subsystems": [
+    "repository"
+   ],
+   "source_locations": [
+    "pyproject.toml",
+    "package.json"
+   ],
+   "target": {
+    "repository": "Outer-Void/blux",
+    "module": "BLUX_* names; HERMES_* read only as fallbacks (BLH-012)",
+    "owner": "blux"
+   },
+   "tests": {
+    "characterization": [],
+    "upstream": [
+     "tests/test_display_hermes_home.py"
+    ]
+   },
+   "migration_state": "NOT_STARTED",
+   "provenance": {
+    "license": "MIT",
+    "holder": "Nous Research",
+    "notice": "Copyright (c) 2025 Nous Research",
+    "lineage": "credits:LIN-001",
+    "requirement": "Nothing is ported. The upstream code stays in the fork under MIT; credits keeps the lineage."
+   },
+   "network": {
+    "dependency": "build_time",
+    "endpoints": [
+     "pyproject.toml declares a telemetry extra (REMOVE)"
+    ],
+    "policy": "No BLUX package declares a telemetry dependency."
+   },
+   "blocker": null,
+   "evidence_plan": "Inventory categories env_var/identifier/path/package_id carry per-item classes; REPLACE items get BLUX names when their feature migrates.",
+   "inventory_categories": [
+    "env_var",
+    "identifier",
+    "path",
+    "package_id",
+    "module"
+   ]
+  }
+ ]
+}

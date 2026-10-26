@@ -4,7 +4,7 @@ BLUX is the contract authority for the Outer-Void ecosystem. It defines the cano
 registry, runtime and model interfaces, and the `blux` command line. Other repositories stay independent and
 integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001).
 
-**Status:** Stage 10. Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
+**Status:** Stage 11 (BLHermes inventory; runtime unchanged since Stage 10). Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
 
 `blux` is direct intelligence; ecosystem orchestration is `ax`.
 
@@ -18,6 +18,7 @@ integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001)
 | `intelligence/` | Scope of the direct BLUX intelligence surface |
 | `registry/` | Federated capability index |
 | `integrations/` | How repositories integrate |
+| `migration/blhermes/` | Stage 11 BLHermes forensic inventory, parity matrix and characterization goldens (MIT-derived data, see its UPSTREAM-NOTICE) |
 | `training/` | Reserved |
 | `packaging/` | Schema sync/lock, wheel verification |
 | `tests/` | Contract, SDK, runtime, compatibility and CLI tests, plus v1 fixtures |

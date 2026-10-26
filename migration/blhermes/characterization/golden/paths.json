@@ -1,0 +1,8 @@
+{
+ "default_root": "<HOME>",
+ "default_without_HERMES_HOME": "<HERMES_HOME>",
+ "named_profile_home(work)": "<HERMES_HOME>/profiles/work",
+ "profile_name_for_home(root)": "default",
+ "profile_name_for_home(work)": "work",
+ "with_HERMES_HOME": "<HERMES_HOME>"
+}

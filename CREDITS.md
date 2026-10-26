@@ -19,10 +19,15 @@ Development tooling: pytest, ruff, mypy, build, setuptools, and GitHub Actions.
 
 `.gitignore` comes from the github/gitignore Python template (CC0-1.0).
 
-## Influence
+## Influence and derived data
 Hermes Agent (Nous Research) informed BLUX planning around agents and skills (`insp:hermes-agent-architecture`).
-**No Hermes/BLHERMES code is in this repository.** Any future migration is tracked as lineage `LIN-001` in
-the credits ledger and must carry the upstream MIT notice.
+**No Hermes/BLHERMES code is in this repository.**
+
+Since Stage 11, `migration/blhermes/` holds data derived from Hermes Agent: an inventory of upstream
+identifiers and paths, and recorded outputs of upstream code. That data is used under the Hermes Agent MIT
+License, which is reproduced in [migration/blhermes/UPSTREAM-NOTICE.md](migration/blhermes/UPSTREAM-NOTICE.md)
+(Copyright (c) 2025 Nous Research; lineage `LIN-008`, fork lineage `LIN-001`). Any code migrated later must
+carry the same notice.
 
 ## AI assistance
 The Stage 00 baseline and the Stage 01 contracts, SDK, runtime, CLI, tests and docs were produced with

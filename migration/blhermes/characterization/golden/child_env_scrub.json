@@ -1,0 +1,19 @@
+{
+ "added_keys": [
+  "HERMES_REAL_HOME",
+  "HERMES_SCRATCH_DIR",
+  "TEMP",
+  "TMP",
+  "TMPDIR"
+ ],
+ "fake_key_leaks": false,
+ "scrubbed_keys": [
+  "AWS_SECRET_ACCESS_KEY",
+  "DATABASE_URL",
+  "HOME",
+  "LANG",
+  "MY_APP_SETTING",
+  "PATH"
+ ],
+ "unscrubbed_keeps_all": true
+}

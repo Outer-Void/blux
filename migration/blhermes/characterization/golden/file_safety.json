@@ -1,0 +1,67 @@
+[
+ {
+  "approval_required": false,
+  "target": "~/project/main.py",
+  "write_denied": false
+ },
+ {
+  "approval_required": false,
+  "target": "~/.ssh/id_rsa",
+  "write_denied": true
+ },
+ {
+  "approval_required": false,
+  "target": "~/.ssh/authorized_keys",
+  "write_denied": true
+ },
+ {
+  "approval_required": false,
+  "target": "~/.aws/credentials",
+  "write_denied": true
+ },
+ {
+  "approval_required": false,
+  "target": "~/.netrc",
+  "write_denied": true
+ },
+ {
+  "approval_required": false,
+  "target": "~/.bashrc",
+  "write_denied": false
+ },
+ {
+  "approval_required": false,
+  "target": "~/.gitconfig",
+  "write_denied": false
+ },
+ {
+  "approval_required": false,
+  "target": "$HERMES_HOME/.env",
+  "write_denied": true
+ },
+ {
+  "approval_required": false,
+  "target": "$HERMES_HOME/auth.json",
+  "write_denied": false
+ },
+ {
+  "approval_required": false,
+  "target": "$HERMES_HOME/config.yaml",
+  "write_denied": false
+ },
+ {
+  "approval_required": false,
+  "target": "$HERMES_HOME/memories/MEMORY.md",
+  "write_denied": false
+ },
+ {
+  "approval_required": false,
+  "target": "/etc/passwd",
+  "write_denied": true
+ },
+ {
+  "approval_required": false,
+  "target": "/tmp/scratch.txt",
+  "write_denied": false
+ }
+]
