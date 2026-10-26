@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:hooks:v1:receipt",
+  "title": "BLUX Hook System v1 audit receipt",
+  "description": "One receipt per emission: who ran, in what order, with what outcome. Payload values never appear; only hashes and field names.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "hooks_version",
+    "receipt_id",
+    "event_id",
+    "name",
+    "sequence",
+    "depth",
+    "context",
+    "payload_sha256",
+    "final_payload_sha256",
+    "handlers",
+    "proceed",
+    "vetoed_by",
+    "veto_reason",
+    "cancelled",
+    "recursion_limited",
+    "emitted_at",
+    "duration_ms"
+  ],
+  "properties": {
+    "contract": {
+      "const": "blux.hook-receipt"
+    },
+    "hooks_version": {
+      "const": "1.0"
+    },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^hrc_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "depth": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "context": {
+      "type": "object"
+    },
+    "payload_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "final_payload_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "handlers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "hook_id",
+          "source",
+          "priority",
+          "outcome",
+          "duration_ms",
+          "mutations",
+          "detail"
+        ],
+        "properties": {
+          "hook_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,127}$"
+          },
+          "source": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "outcome": {
+            "enum": [
+              "ok",
+              "veto",
+              "mutated",
+              "error",
+              "timeout",
+              "rejected",
+              "skipped",
+              "cancelled",
+              "quarantined",
+              "not_permitted"
+            ]
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "mutations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "detail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          }
+        }
+      }
+    },
+    "proceed": {
+      "type": "boolean"
+    },
+    "vetoed_by": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "veto_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 256
+    },
+    "cancelled": {
+      "type": "boolean"
+    },
+    "recursion_limited": {
+      "type": "boolean"
+    },
+    "emitted_at": {
+      "type": "string"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

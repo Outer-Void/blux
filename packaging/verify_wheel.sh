@@ -37,3 +37,16 @@ assert model_api.schema_errors("routes", capability.default_routes()) == []
 assert capability.model_policy()["policy_id"] == "blux-model-default"
 print("verify_wheel: Model API OK", file=sys.stderr)
 EOF
+# Hook System v1: the contract ships as package data and the catalog loads from the installed wheel.
+"$WORK/venv/bin/python" - <<'PYEOF'
+import sys
+from blux_runtime.hooks import HookBus, HookSource, event_catalog
+import blux_runtime
+assert "site-packages" in blux_runtime.__file__, blux_runtime.__file__
+assert len(event_catalog()) == 37, sorted(event_catalog())
+seen = []
+bus = HookBus(receipt_sink=seen.append)
+bus.register("session.created", lambda e: None, source=HookSource("builtin", "wheel"))
+assert bus.emit("session.created", {"session_id": "s", "client": None}).proceed and len(seen) == 1
+print("verify_wheel: Hook System OK", file=sys.stderr)
+PYEOF

@@ -2,6 +2,31 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 12
+- **BLUX Hook System v1** (ADR-0012, docs/hooks/v1.md). `outervoid-blux` 0.4.0; `blux-sdk` is unchanged.
+  - **Contract.** `contracts/hooks/v1/` (own checksum lock, packaged with the runtime) defines 37 typed,
+    versioned events in 13 families, plus the audit receipt and subscriber registration schemas.
+  - **Bus.** `blux_runtime.hooks.HookBus` runs handlers in a deterministic order (priority, then
+    registration), sync or async, each with its own timeout. It isolates failures (quarantine after
+    repeated failures), cancels safely (an interrupted guard never approves) and limits recursion
+    (depth, re-entry, emit permission).
+  - **Permissions.** Permissions are granted per source identity (`builtin`, `project`, `plugin`,
+    `skill`, `mcp`). Payloads are secret-scrubbed and sensitive fields masked unless granted. Core
+    metadata and payloads are immutable.
+  - **Mutation surface.** The only mutable fields are `exclude_providers`, which may only grow, and a
+    tool's `timeout_ms`, which may only decrease.
+  - **Authorization.** There is no allow result: hooks can veto, never authorize. Policy always decides.
+    Device operations accept no hook mutation, and elevation attempts are `security.violation` events.
+  - **Receipts.** One `blux.hook-receipt` per emission. An operation's hook receipts are attached to it
+    as an artifact and reach BLUX System.
+  - **Emitters.** The executor emits the runtime, request, capability, tool, reason, artifact and receipt
+    events. The model router emits the `model.*` events and `credential.requested` (names only).
+  - **Adapters.** Plugins, skills and MCP servers subscribe through `ExternalSubscribers` (callable or
+    credential-free subprocess transport) and never touch the bus.
+  - **Tests.** `tests/hooks/` covers unit, ordering, timeout, recursion, permission, failure isolation,
+    redaction, receipts, adapters and runtime/router integration. Wheel verification checks the
+    packaged hook catalog.
+
 ## Unreleased: Stage 11
 - **BLHermes forensic inventory and parity matrix** (`migration/blhermes/`). No runtime change.
   - **Scanner and inventory.** `inventory.py` is a read-only scanner. `inventory.json` holds 9,574

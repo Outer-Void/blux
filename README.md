@@ -4,7 +4,7 @@ BLUX is the contract authority for the Outer-Void ecosystem. It defines the cano
 registry, runtime and model interfaces, and the `blux` command line. Other repositories stay independent and
 integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001).
 
-**Status:** Stage 11 (BLHermes inventory; runtime unchanged since Stage 10). Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
+**Status:** Stage 12. Hook System v1 (`1.0`); runtime + CLI `outervoid-blux 0.4.0` (SDK `blux-sdk 0.2.0` unchanged). Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
 
 `blux` is direct intelligence; ecosystem orchestration is `ax`.
 
@@ -12,8 +12,9 @@ integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001)
 | Path | Contents |
 |---|---|
 | `contracts/v1/` | Canonical JSON Schemas (locked by `CHECKSUMS.sha256`) |
+| `contracts/model-api/v1/`, `contracts/hooks/v1/` | Model API v1 and Hook System v1 contracts (each with its own lock) |
 | `sdk/python/` | `blux-sdk`: validation, IDs, envelopes, errors, serialization, version negotiation |
-| `runtime/` | `blux_runtime`: capability registry, policy engine, executor, built-in `echo.test` |
+| `runtime/` | `blux_runtime`: capability registry, policy engine, executor, model router, hook bus (`blux_runtime.hooks`), built-in `echo.test` |
 | `cli/` | `blux_cli`: the `blux` command: direct intelligence (`blux "..."`, chat, doctor; [docs/cli.md](docs/cli.md)) and the Contract v1 machine commands |
 | `intelligence/` | Scope of the direct BLUX intelligence surface |
 | `registry/` | Federated capability index |
@@ -51,7 +52,8 @@ make ci                 # drift/lock check, format, lint, mypy --strict, tests, 
 [0008](docs/adr/0008-no-arbitrary-stdout-protocol.md) no arbitrary stdout ·
 [0009](docs/adr/0009-subprocess-provider.md) subprocess provider ·
 [0010](docs/adr/0010-model-api.md) Model API v1 ·
-[0011](docs/adr/0011-direct-cli.md) direct `blux` CLI
+[0011](docs/adr/0011-direct-cli.md) direct `blux` CLI ·
+[0012](docs/adr/0012-hook-system.md) Hook System v1
 
 ## Licensing and credits
 See [CREDITS.md](CREDITS.md) and [docs/ecosystem/licensing.md](docs/ecosystem/licensing.md).

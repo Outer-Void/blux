@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:hooks:v1:registration",
+  "title": "BLUX Hook System v1 subscriber registration",
+  "description": "How an external subscriber (plugin, skill, MCP server) asks to receive hook events. BLUX's hook policy decides what is granted; a registration can never grant itself permissions, emit events or authorize anything.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "hooks_version",
+    "hook_id",
+    "source",
+    "events",
+    "permissions"
+  ],
+  "properties": {
+    "contract": {
+      "const": "blux.hook-registration"
+    },
+    "hooks_version": {
+      "const": "1.0"
+    },
+    "hook_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,127}$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "plugin",
+            "skill",
+            "mcp"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_.-]{0,127}$"
+        },
+        "version": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z*][a-z_.*]*$"
+      }
+    },
+    "permissions": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "string",
+        "pattern": "^(observe|veto|read_sensitive):[a-z*][a-z_.*]*$|^mutate:[a-z]+\\.[a-z_]+\\.[a-z_]+$"
+      }
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": -100,
+      "maximum": 100
+    },
+    "timeout_ms": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 30000
+    },
+    "failure_policy": {
+      "enum": [
+        "ignore",
+        "deny"
+      ]
+    }
+  }
+}

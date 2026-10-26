@@ -16,6 +16,10 @@ For each request the router:
 `degraded` is true when the serving route is not the model's first route or is marked `tier: fallback`.
 It is never silent: the response says which route served it and every attempt before it. When no route
 succeeds, the error is ALL_ROUTES_FAILED (or the first non-fallback error) with every attempt attached.
+
+With a hook bus (ADR-0012) the router emits model.before_route (vetoable; hooks may only exclude more
+providers), model.after_route, and for each attempt model.before_call (a veto skips that route),
+credential.requested (variable names only, never values) and model.after_call.
 """
 
 from __future__ import annotations
@@ -25,6 +29,7 @@ import time
 from collections.abc import Callable, Mapping
 from typing import Any
 
+from blux_runtime.hooks.bus import Emission, EventContext, HookBus, HookError
 from blux_runtime.models.backends import ModelBackend, SubprocessModelBackend
 from blux_sdk import model_api
 from blux_sdk.model_api import ModelApiError
@@ -39,7 +44,9 @@ class ModelRouter:
         backends: Mapping[str, ModelBackend] | None = None,
         *,
         env: Mapping[str, str] | None = None,
+        hooks: HookBus | None = None,
     ) -> None:
+        self.hooks = hooks
         self.routes = model_api.validate("routes", routes, error_code="INVALID_REQUEST")
         ids = [r["route_id"] for m in self.routes["models"].values() for r in m["routes"]]
         if len(ids) != len(set(ids)):
@@ -85,9 +92,25 @@ class ModelRouter:
         defaults = self.routes["defaults"]
         timeout_ms = min(req.get("timeout_ms", defaults["timeout_ms"]), defaults["timeout_ms"])
         deadline = t0 + timeout_ms / 1000
-        routing = req.get("routing") or {}
+        routing = dict(req.get("routing") or {})
         allow_fallback = routing.get("allow_fallback", defaults["allow_fallback"])
         needed = model_api.required_capabilities(req)
+        hook_ctx = _hook_context(linkage)
+        before = self._hook(
+            "model.before_route",
+            {"model": req["model"], "required_capabilities": needed, "allow_fallback": bool(allow_fallback),
+             "exclude_providers": list(routing.get("exclude_providers") or []), "messages": req["messages"]},
+            hook_ctx,
+        )  # fmt: skip
+        if before is not None:
+            if not before.proceed:
+                raise ModelApiError(
+                    "INVALID_REQUEST",
+                    "A hook refused this model request before routing.",
+                    details={"denied_by": "hook", "hook_id": before.vetoed_by, "reason": before.veto_reason},
+                )
+            if before.payload["exclude_providers"]:
+                routing["exclude_providers"] = list(before.payload["exclude_providers"])  # hooks only add exclusions
         all_routes = self.routes["models"][req["model"]]["routes"]
         attempts: list[dict[str, Any]] = []
         candidates = []
@@ -97,6 +120,12 @@ class ModelRouter:
                 attempts.append(_attempt(route, "skipped", reason=reason))
             else:
                 candidates.append(route)
+        self._hook(
+            "model.after_route",
+            {"model": req["model"], "candidates": [r["route_id"] for r in candidates],
+             "skipped": [a["route_id"] for a in attempts]},
+            hook_ctx,
+        )  # fmt: skip
         emit("start", {"model": req["model"]})
         if not candidates:
             error = ModelApiError(
@@ -123,6 +152,21 @@ class ModelRouter:
             if clock() >= deadline:
                 last_error = ModelApiError("TIMEOUT", f"No route finished within {timeout_ms} ms.", attempts=attempts)
                 break
+            gate = self._hook(
+                "model.before_call",
+                {"model": req["model"], "route_id": route["route_id"], "provider": route["provider"],
+                 "provider_model": route["provider_model"], "attempt": tried + 1},
+                hook_ctx,
+            )  # fmt: skip
+            if gate is not None and not gate.proceed:
+                attempts.append(_attempt(route, "skipped", reason=f"vetoed by hook {gate.vetoed_by}"))
+                continue
+            if route.get("credential_env"):
+                self._hook(
+                    "credential.requested",
+                    {"names": list(route["credential_env"]), "purpose": "model backend", "route_id": route["route_id"]},
+                    hook_ctx,
+                )
             tried += 1
             emit(
                 "route",
@@ -149,6 +193,7 @@ class ModelRouter:
             except ModelApiError as exc:
                 exc.provider = exc.provider or route["provider"]
                 exc.route_id = exc.route_id or route["route_id"]
+                self._after_call(req["model"], route, "failed", exc.code, _ms(clock() - started), None, hook_ctx)
                 attempts.append(
                     _attempt(
                         route,
@@ -171,6 +216,9 @@ class ModelRouter:
                     last_error.attempts = attempts
                     break
                 continue
+            self._after_call(
+                req["model"], route, "succeeded", None, _ms(clock() - started), response.get("usage"), hook_ctx
+            )
             backend_attempt = (response.get("routing") or {}).get("attempts") or [{}]
             attempts.append(
                 _attempt(
@@ -223,6 +271,34 @@ class ModelRouter:
             error.attempts = attempts
         emit("error", {"error": error.to_document()})
         raise error
+
+    def _hook(self, name: str, payload: dict[str, Any], context: EventContext) -> Emission | None:
+        if self.hooks is None:
+            return None
+        try:
+            return self.hooks.emit(name, payload, context=context)
+        except HookError:
+            if name in ("model.before_route", "model.before_call"):
+                raise ModelApiError("INTERNAL_ERROR", f"Hook emission failed ({name}).") from None
+            return None
+
+    def _after_call(
+        self,
+        model: str,
+        route: Mapping[str, Any],
+        outcome: str,
+        error_code: str | None,
+        latency_ms: int,
+        usage: Mapping[str, Any] | None,
+        context: EventContext,
+    ) -> None:
+        self._hook(
+            "model.after_call",
+            {"model": model, "route_id": route["route_id"], "provider": route["provider"], "outcome": outcome,
+             "error_code": error_code, "latency_ms": latency_ms,
+             "input_tokens": (usage or {}).get("input_tokens"), "output_tokens": (usage or {}).get("output_tokens")},
+            context,
+        )  # fmt: skip
 
     def _check_response(self, req: Mapping[str, Any], route: Mapping[str, Any], response: Any) -> dict[str, Any]:
         if not isinstance(response, dict):
@@ -339,6 +415,17 @@ def _attempt(
         "latency_ms": latency_ms,
         "retries": retries,
     }
+
+
+def _hook_context(linkage: Mapping[str, Any] | None) -> EventContext:
+    link = linkage or {}
+    return EventContext(
+        operation_id=link.get("operation_id"),
+        parent_operation_id=link.get("parent_operation_id"),
+        session_id=link.get("session_id"),
+        project_id=link.get("project_id"),
+        capability_id=link.get("capability_id"),
+    )
 
 
 def _linkage(linkage: Mapping[str, Any] | None) -> dict[str, Any] | None:

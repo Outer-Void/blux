@@ -1,7 +1,8 @@
 """Copy the canonical schema trees into the SDK package, or verify they match (--check).
 
-Trees: Contract v1 (contracts/v1) and Model API v1 (contracts/model-api/v1). Each tree has its own
-CHECKSUMS.sha256 lock; editing a schema without a reviewed lock update fails --check.
+Trees: Contract v1 (contracts/v1) and Model API v1 (contracts/model-api/v1) into the SDK, and Hook System v1
+(contracts/hooks/v1) into the runtime package. Each tree has its own CHECKSUMS.sha256 lock; editing a schema
+without a reviewed lock update fails --check.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ PKG = ROOT / "sdk" / "python" / "src" / "blux_sdk" / "schemas"
 TREES = (
     (ROOT / "contracts" / "v1", PKG / "v1", "ADR-0005"),
     (ROOT / "contracts" / "model-api" / "v1", PKG / "model_api" / "v1", "ADR-0010"),
+    (ROOT / "contracts" / "hooks" / "v1", ROOT / "runtime" / "blux_runtime" / "hooks" / "schemas" / "v1", "ADR-0012"),
 )
 
 

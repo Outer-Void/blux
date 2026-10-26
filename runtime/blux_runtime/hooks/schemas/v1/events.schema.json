@@ -1,0 +1,2278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:hooks:v1:events",
+  "title": "BLUX Hook System v1 events",
+  "description": "Typed, versioned hook events. Each $defs.<event> describes one event's payload and carries the x-blux-hook catalog annotation (family, phase, vetoable, mutable fields and how they may change, sensitive fields, emitters).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract",
+    "hooks_version",
+    "event_id",
+    "name",
+    "version",
+    "sequence",
+    "emitted_at",
+    "depth",
+    "context",
+    "payload"
+  ],
+  "properties": {
+    "contract": {
+      "const": "blux.hook-event"
+    },
+    "hooks_version": {
+      "const": "1.0"
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^evt_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "name": {
+      "enum": [
+        "agent.completed",
+        "agent.failed",
+        "agent.spawned",
+        "artifact.created",
+        "artifact.modified",
+        "artifact.validated",
+        "capability.after_execute",
+        "capability.before_execute",
+        "capability.discovered",
+        "credential.requested",
+        "model.after_call",
+        "model.after_route",
+        "model.before_call",
+        "model.before_route",
+        "reason.after",
+        "reason.before",
+        "receipt.created",
+        "request.completed",
+        "request.failed",
+        "request.normalized",
+        "request.received",
+        "runtime.started",
+        "runtime.starting",
+        "runtime.stopped",
+        "runtime.stopping",
+        "security.violation",
+        "session.closed",
+        "session.created",
+        "session.loaded",
+        "tool.after_execute",
+        "tool.authorized",
+        "tool.before_authorize",
+        "tool.before_execute",
+        "tool.denied",
+        "tool.failed",
+        "training.eligible",
+        "training.rejected"
+      ]
+    },
+    "version": {
+      "const": "1.0"
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "emitted_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "depth": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 16
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "parent_operation_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "session_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "project_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "capability_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "actor_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "actor_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      }
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "agent.completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/agent__completed"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "agent.failed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/agent__failed"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "agent.spawned"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/agent__spawned"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "artifact.created"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/artifact__created"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "artifact.modified"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/artifact__modified"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "artifact.validated"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/artifact__validated"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "capability.after_execute"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/capability__after_execute"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "capability.before_execute"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/capability__before_execute"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "capability.discovered"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/capability__discovered"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "credential.requested"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/credential__requested"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "model.after_call"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/model__after_call"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "model.after_route"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/model__after_route"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "model.before_call"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/model__before_call"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "model.before_route"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/model__before_route"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "reason.after"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/reason__after"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "reason.before"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/reason__before"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "receipt.created"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/receipt__created"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "request.completed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/request__completed"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "request.failed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/request__failed"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "request.normalized"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/request__normalized"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "request.received"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/request__received"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "runtime.started"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/runtime__started"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "runtime.starting"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/runtime__starting"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "runtime.stopped"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/runtime__stopped"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "runtime.stopping"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/runtime__stopping"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "security.violation"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/security__violation"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "session.closed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/session__closed"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "session.created"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/session__created"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "session.loaded"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/session__loaded"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "tool.after_execute"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/tool__after_execute"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "tool.authorized"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/tool__authorized"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "tool.before_authorize"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/tool__before_authorize"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "tool.before_execute"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/tool__before_execute"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "tool.denied"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/tool__denied"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "tool.failed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/tool__failed"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "training.eligible"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/training__eligible"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "name": {
+            "const": "training.rejected"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "payload": {
+            "$ref": "#/$defs/training__rejected"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "agent__completed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "turns"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "agent.completed",
+        "family": "agent",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "owner",
+        "summary": "An agent run finished."
+      }
+    },
+    "agent__failed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "error_code"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "error_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "agent.failed",
+        "family": "agent",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "owner",
+        "summary": "An agent run failed."
+      }
+    },
+    "agent__spawned": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "parent_agent_id",
+        "depth",
+        "model"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "parent_agent_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "agent.spawned",
+        "family": "agent",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "owner",
+        "summary": "An agent run started."
+      }
+    },
+    "artifact__created": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "name",
+        "media_type",
+        "sha256",
+        "size_bytes"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "artifact.created",
+        "family": "artifact",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "An operation produced an artifact."
+      }
+    },
+    "artifact__modified": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "previous_artifact_id",
+        "media_type",
+        "sha256"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "previous_artifact_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "x-blux-hook": {
+        "name": "artifact.modified",
+        "family": "artifact",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "owner",
+        "summary": "An artifact was revised (new artifact id)."
+      }
+    },
+    "artifact__validated": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id",
+        "validator",
+        "verdict"
+      ],
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "validator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "verdict": {
+          "enum": [
+            "pass",
+            "fail",
+            "warn"
+          ]
+        }
+      },
+      "x-blux-hook": {
+        "name": "artifact.validated",
+        "family": "artifact",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "owner",
+        "summary": "A validator reported on an artifact."
+      }
+    },
+    "capability__after_execute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "status",
+        "duration_ms",
+        "output_sha256"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "failed",
+            "rejected",
+            "cancelled"
+          ]
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "x-blux-hook": {
+        "name": "capability.after_execute",
+        "family": "capability",
+        "phase": "after",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The capability finished."
+      }
+    },
+    "capability__before_execute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "version",
+        "side_effects",
+        "input_sha256"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "side_effects": {
+          "enum": [
+            "none",
+            "read",
+            "write",
+            "external",
+            "destructive"
+          ]
+        },
+        "input_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "x-blux-hook": {
+        "name": "capability.before_execute",
+        "family": "capability",
+        "phase": "before",
+        "vetoable": true,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "Before an authorized capability runs."
+      }
+    },
+    "capability__discovered": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "version",
+        "side_effects",
+        "provider_kind"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "side_effects": {
+          "enum": [
+            "none",
+            "read",
+            "write",
+            "external",
+            "destructive"
+          ]
+        },
+        "provider_kind": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "capability.discovered",
+        "family": "capability",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "registry",
+        "summary": "A capability was registered."
+      }
+    },
+    "credential__requested": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "names",
+        "purpose",
+        "route_id"
+      ],
+      "properties": {
+        "names": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "route_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "credential.requested",
+        "family": "credential",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "router",
+        "summary": "A component asked for credentials by name. Values are never part of any event."
+      }
+    },
+    "model__after_call": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "route_id",
+        "provider",
+        "outcome",
+        "error_code",
+        "latency_ms"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "route_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "outcome": {
+          "enum": [
+            "succeeded",
+            "failed"
+          ]
+        },
+        "error_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "latency_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_tokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "output_tokens": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "model.after_call",
+        "family": "model",
+        "phase": "after",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "router",
+        "summary": "One route attempt finished."
+      }
+    },
+    "model__after_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "candidates",
+        "skipped"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "candidates": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        },
+        "skipped": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        }
+      },
+      "x-blux-hook": {
+        "name": "model.after_route",
+        "family": "model",
+        "phase": "after",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "router",
+        "summary": "Candidate routes are known."
+      }
+    },
+    "model__before_call": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "route_id",
+        "provider",
+        "provider_model",
+        "attempt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "route_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "provider_model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "attempt": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "model.before_call",
+        "family": "model",
+        "phase": "before",
+        "vetoable": true,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "router",
+        "summary": "Before one route attempt. A veto skips this route."
+      }
+    },
+    "model__before_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model",
+        "required_capabilities",
+        "allow_fallback",
+        "exclude_providers",
+        "messages"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "required_capabilities": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        },
+        "allow_fallback": {
+          "type": "boolean"
+        },
+        "exclude_providers": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "maxLength": 256
+          }
+        },
+        "messages": {}
+      },
+      "x-blux-hook": {
+        "name": "model.before_route",
+        "family": "model",
+        "phase": "before",
+        "vetoable": true,
+        "mutable": {
+          "exclude_providers": "superset"
+        },
+        "sensitive": [
+          "messages"
+        ],
+        "emitters": "router",
+        "summary": "Before routing a logical-model request. Hooks may only exclude more providers."
+      }
+    },
+    "reason__after": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "status",
+        "output_sha256"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "failed",
+            "rejected",
+            "cancelled"
+          ]
+        },
+        "output_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "x-blux-hook": {
+        "name": "reason.after",
+        "family": "reason",
+        "phase": "after",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "A reasoning capability finished."
+      }
+    },
+    "reason__before": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "input_sha256"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "input_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "x-blux-hook": {
+        "name": "reason.before",
+        "family": "reason",
+        "phase": "before",
+        "vetoable": true,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "Before a reasoning capability (labels.kind = reason) runs."
+      }
+    },
+    "receipt__created": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt_id",
+        "operation_id",
+        "status",
+        "error_code",
+        "artifacts"
+      ],
+      "properties": {
+        "receipt_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "operation_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "failed",
+            "rejected",
+            "cancelled"
+          ]
+        },
+        "error_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "artifacts": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "receipt.created",
+        "family": "receipt",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "An operation receipt was issued."
+      }
+    },
+    "request__completed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "status",
+        "duration_ms",
+        "output_sha256"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "failed",
+            "rejected",
+            "cancelled"
+          ]
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "x-blux-hook": {
+        "name": "request.completed",
+        "family": "request",
+        "phase": "after",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The execution succeeded."
+      }
+    },
+    "request__failed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "status",
+        "error_code",
+        "duration_ms"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "failed",
+            "rejected",
+            "cancelled"
+          ]
+        },
+        "error_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "request.failed",
+        "family": "request",
+        "phase": "after",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The execution failed or was rejected."
+      }
+    },
+    "request__normalized": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "capability_version",
+        "contract_version",
+        "input_sha256"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "capability_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "contract_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "input_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "x-blux-hook": {
+        "name": "request.normalized",
+        "family": "request",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The request passed envelope, version and input validation."
+      }
+    },
+    "request__received": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "input_sha256",
+        "size_bytes"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "input_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "size_bytes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "request.received",
+        "family": "request",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "An execution request arrived (not yet validated)."
+      }
+    },
+    "runtime__started": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_version",
+        "capabilities"
+      ],
+      "properties": {
+        "runtime_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "capabilities": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "runtime.started",
+        "family": "runtime",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The runtime accepts executions."
+      }
+    },
+    "runtime__starting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_version"
+      ],
+      "properties": {
+        "runtime_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "runtime.starting",
+        "family": "runtime",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The runtime is about to accept executions."
+      }
+    },
+    "runtime__stopped": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_version",
+        "executions"
+      ],
+      "properties": {
+        "runtime_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "executions": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "runtime.stopped",
+        "family": "runtime",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The runtime has stopped."
+      }
+    },
+    "runtime__stopping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_version",
+        "reason"
+      ],
+      "properties": {
+        "runtime_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "runtime.stopping",
+        "family": "runtime",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The runtime stops accepting executions."
+      }
+    },
+    "security__violation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "hook_id",
+        "source",
+        "event",
+        "detail"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "permission",
+            "mutation",
+            "protocol",
+            "recursion",
+            "registration",
+            "elevation",
+            "device"
+          ]
+        },
+        "hook_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "security.violation",
+        "family": "security",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "bus",
+        "summary": "A hook or subscriber broke the hook contract. Emitted by the bus only."
+      }
+    },
+    "session__closed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_id",
+        "reason"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "session.closed",
+        "family": "session",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "A session ended."
+      }
+    },
+    "session__created": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_id",
+        "client"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "client": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "session.created",
+        "family": "session",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "A new session started."
+      }
+    },
+    "session__loaded": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "session_id",
+        "client"
+      ],
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "client": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "session.loaded",
+        "family": "session",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "An existing session was resumed."
+      }
+    },
+    "tool__after_execute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "status",
+        "duration_ms",
+        "output_sha256"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "failed",
+            "rejected",
+            "cancelled"
+          ]
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "x-blux-hook": {
+        "name": "tool.after_execute",
+        "family": "tool",
+        "phase": "after",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The tool finished."
+      }
+    },
+    "tool__authorized": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "policy_id",
+        "rule_id"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "policy_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "rule_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "tool.authorized",
+        "family": "tool",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "Policy allowed the tool call."
+      }
+    },
+    "tool__before_authorize": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "capability_id",
+        "side_effects",
+        "device_operation",
+        "arguments"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "capability_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "side_effects": {
+          "enum": [
+            "none",
+            "read",
+            "write",
+            "external",
+            "destructive"
+          ]
+        },
+        "device_operation": {
+          "type": "boolean"
+        },
+        "arguments": {}
+      },
+      "x-blux-hook": {
+        "name": "tool.before_authorize",
+        "family": "tool",
+        "phase": "before",
+        "vetoable": true,
+        "mutable": {},
+        "sensitive": [
+          "arguments"
+        ],
+        "emitters": "runtime",
+        "summary": "Before policy evaluates a tool call. Hooks can only veto."
+      }
+    },
+    "tool__before_execute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "side_effects",
+        "device_operation",
+        "timeout_ms",
+        "arguments"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "side_effects": {
+          "enum": [
+            "none",
+            "read",
+            "write",
+            "external",
+            "destructive"
+          ]
+        },
+        "device_operation": {
+          "type": "boolean"
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "arguments": {}
+      },
+      "x-blux-hook": {
+        "name": "tool.before_execute",
+        "family": "tool",
+        "phase": "before",
+        "vetoable": true,
+        "mutable": {
+          "timeout_ms": "decrease"
+        },
+        "sensitive": [
+          "arguments"
+        ],
+        "emitters": "runtime",
+        "summary": "Before an authorized tool runs. Hooks may only shorten its timeout."
+      }
+    },
+    "tool__denied": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "denied_by",
+        "rule_id",
+        "reason"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "denied_by": {
+          "enum": [
+            "policy",
+            "hook"
+          ]
+        },
+        "rule_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "tool.denied",
+        "family": "tool",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "Policy or a hook denied the tool call."
+      }
+    },
+    "tool__failed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool",
+        "error_code",
+        "duration_ms"
+      ],
+      "properties": {
+        "tool": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "error_code": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "x-blux-hook": {
+        "name": "tool.failed",
+        "family": "tool",
+        "phase": "after",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "runtime",
+        "summary": "The tool failed."
+      }
+    },
+    "training__eligible": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "dataset",
+        "reason"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "dataset": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "training.eligible",
+        "family": "training",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "owner",
+        "summary": "A record passed the dataset admission rules."
+      }
+    },
+    "training__rejected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "dataset",
+        "reason"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "dataset": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      },
+      "x-blux-hook": {
+        "name": "training.rejected",
+        "family": "training",
+        "phase": "notify",
+        "vetoable": false,
+        "mutable": {},
+        "sensitive": [],
+        "emitters": "owner",
+        "summary": "A record was refused by the dataset admission rules."
+      }
+    }
+  }
+}
