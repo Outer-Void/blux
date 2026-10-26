@@ -19,7 +19,7 @@ blux = "blux_cli.main:main"
 [tool.setuptools]
 packages = [
   "blux_runtime", "blux_runtime.builtin", "blux_runtime.models", "blux_runtime.hooks", "blux_runtime.compat",
-  "blux_runtime.security", "blux_runtime.tools", "blux_runtime.extensions", "blux_cli",
+  "blux_runtime.security", "blux_runtime.tools", "blux_runtime.extensions", "blux_runtime.devices", "blux_cli",
 ]
 
 [tool.setuptools.package-dir]
@@ -31,6 +31,7 @@ blux_cli = "cli/blux_cli"
 "blux_runtime.models" = ["default_routes.json", "model_policy.json"]
 "blux_runtime.hooks" = ["schemas/v1/*.schema.json"]
 "blux_runtime.tools" = ["tool_policy.json"]
+"blux_runtime.devices" = ["voidforge_capabilities.json"]
 
 [tool.ruff]
 line-length = 120

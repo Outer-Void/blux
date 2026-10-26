@@ -17,6 +17,7 @@ from typing import Any, TextIO
 from blux_cli import config as cfg
 from blux_cli import direct
 from blux_runtime.builtin import builtin_registry
+from blux_runtime.devices import voidforge
 from blux_runtime.executor import Runtime
 from blux_runtime.extensions.agents import AgentError, AgentRunner
 from blux_runtime.models import capability as model_capability
@@ -25,12 +26,18 @@ from blux_sdk import ids, model_api
 from blux_sdk.serialization import dumps_json
 
 TOOLS = ("fs.read", "fs.write", "shell.exec")
+# VoidForge device tools (Stage 22). Writes still need the person at the VoidForge device to confirm there.
+DEVICE_TOOLS = tuple(c["id"] for c in voidforge.catalog()["capabilities"])
 
 
 def add_parser(sub: Any) -> None:
     a = sub.add_parser("agent", help="run a task with the BLUX agent loop (tools confined to a workspace)")
     a.add_argument("task", nargs="+")
-    a.add_argument("--tools", default="fs.read", help=f"comma-separated subset of {', '.join(TOOLS)} (default fs.read)")
+    a.add_argument(
+        "--tools",
+        default="fs.read",
+        help=f"comma-separated subset of {', '.join(TOOLS)} or VoidForge device.* tools (default fs.read)",
+    )
     a.add_argument("--workspace", default=".", help="directory the tools are confined to (default: .)")
     a.add_argument("-m", "--model", choices=list(model_api.LOGICAL_MODELS))
     a.add_argument("--max-turns", type=int, default=8)
@@ -40,7 +47,7 @@ def add_parser(sub: Any) -> None:
 
 def run(args: argparse.Namespace, out: TextIO, err: TextIO) -> int:
     chosen = [t.strip() for t in args.tools.split(",") if t.strip()]
-    unknown = sorted(set(chosen) - set(TOOLS))
+    unknown = sorted(set(chosen) - set(TOOLS) - set(DEVICE_TOOLS))
     if unknown or not 1 <= args.max_turns <= 50:
         print(f"blux: unknown tools {unknown}" if unknown else "blux: --max-turns must be 1..50", file=err)
         return direct.USAGE
@@ -63,6 +70,9 @@ def run(args: argparse.Namespace, out: TextIO, err: TextIO) -> int:
     tools.register(registry, workspace=workspace)
     policy = tools.tool_policy()
     policy["rules"] = [*policy["rules"], *model_capability.model_policy()["rules"]]
+    if any(t in DEVICE_TOOLS for t in chosen):
+        voidforge.register(registry)
+        policy["rules"] = [*policy["rules"], *voidforge.device_policy()["rules"]]
     runner = AgentRunner(Runtime(registry, policy), model=settings.model, max_turns=args.max_turns)
     try:
         result = runner.run(" ".join(args.task), tools=chosen, session_id=ids.new_session_id())

@@ -11,7 +11,8 @@ To integrate a repository:
 4. Validate with `blux project <repo>` in that repository's CI.
 5. Register its capabilities in `registry/capabilities.yaml` here.
 
-Integrated so far: **blux-system** (Stage 02, receipts) and **DAT** (Stage 03, seven capabilities). BLHermes
+Integrated so far: **blux-system** (Stage 02, receipts), **DAT** (Stage 03, seven capabilities) and
+**VoidForge** (Stage 22, seventeen `device.*` capabilities; see below). BLHermes
 remains explicitly deferred.
 
 ## BLUX System (Stage 02)
@@ -157,3 +158,22 @@ blux generate blux-main "Summarize this" --system-store ./truth
 | request fails the Model API schema | `rejected`, `SCHEMA_VALIDATION_FAILED` | `FAILURE` |
 
 Tests: `tests/integration/test_model_api.py` (mocked provider through the real backend process; one REAL test with `BLUX_REAL_MODELS=1`).
+
+## VoidForge (Stage 22)
+
+Android device work belongs to [VoidForge](https://github.com/Outer-Void/voidforge), which runs standalone.
+`blux_runtime.devices.voidforge` exposes its `device.*` capabilities as BLUX tools. BLUX only **asks**;
+VoidForge applies its own policy and the person at the VoidForge device confirms every write
+([ADR-0016](../docs/adr/0016-voidforge-devices.md)).
+
+```sh
+# In VoidForge: Settings → Local integrations (off at every launch)
+blux agent "what device is connected?" --tools device.list,device.inspect
+```
+
+| Situation | Behaviour |
+|---|---|
+| VoidForge not running or integration off | `failed`, `reason: voidforge_unavailable` |
+| Write declined, or no local confirmation | `failed`, `reason: voidforge_authorization_declined` |
+| Production write barrier | `failed`, `reason: voidforge_blocked` |
+| Request carries grant or approval fields | rejected by schema, refused by the handler and by VoidForge |

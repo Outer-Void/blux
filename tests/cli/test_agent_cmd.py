@@ -57,5 +57,11 @@ def test_agent_refuses_dangerous_commands_and_bad_usage(monkeypatch: pytest.Monk
     assert cli("agent", "--workspace", str(tmp_path), "--tools", "shell.exec", "clean")[0] == 0
     assert (tmp_path / "build").exists()
     assert "approval_required" in next(m for m in script.seen[1][1]["messages"] if m["role"] == "tool")["content"]
-    assert cli("agent", "--tools", "device.flash", "x")[0] == direct.USAGE
+    assert cli("agent", "--tools", "device.format", "x")[0] == direct.USAGE  # not a VoidForge capability
+    # Stage 22: device.* tools are VoidForge's. An agent may ask for reads; BLUX policy denies it destructive
+    # device capabilities outright, and VoidForge would still need the person at the device.
+    from blux_runtime.devices import voidforge
+
+    destructive = next(r for r in voidforge.device_policy()["rules"] if r["max_side_effects"] == "destructive")
+    assert "device.flash" in destructive["capabilities"] and destructive["actor_types"] == ["user"]
     assert cli("agent", "--workspace", str(tmp_path / "missing"), "x")[0] == direct.USAGE
