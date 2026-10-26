@@ -1,0 +1,96 @@
+{
+ "contract": "dat.policy",
+ "version": 1,
+ "policy_id": "blux-release",
+ "description": "BLUX release gate. Suppressions are exact fingerprints of deliberately fake credential-shaped test constants; anything else stays blocking.",
+ "gate": {
+  "fail_on": "high",
+  "min_confidence": "medium"
+ },
+ "suppress": [
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "migration/blhermes/characterization/probe.py",
+   "fingerprint": "90741e2cb0ccd2a2d5e218fa73fc7d0c02b67d897026173914ad57c2a27cfde7",
+   "reason": "deliberately fake credential samples fed to the BLHermes redaction probe"
+  },
+  {
+   "rule_id": "secrets.anthropic-key",
+   "path": "migration/blhermes/characterization/probe.py",
+   "fingerprint": "e4d0e7ede343519c929d2d4e09eccbc989324ab30f3975a5befe2e40ec97f548",
+   "reason": "deliberately fake credential samples fed to the BLHermes redaction probe"
+  },
+  {
+   "rule_id": "secrets.github-token",
+   "path": "migration/blhermes/characterization/probe.py",
+   "fingerprint": "f729f596e98fdb2e5b452a44dbcdc9ffd3014f90644938152ba8e86f871d2bc8",
+   "reason": "deliberately fake credential samples fed to the BLHermes redaction probe"
+  },
+  {
+   "rule_id": "secrets.url-credentials",
+   "path": "migration/blhermes/characterization/probe.py",
+   "fingerprint": "3d8cc4f56ff1e81f10dd625deecfdcdcb7ca01996b7911c77ac2857d471c3317",
+   "reason": "deliberately fake credential samples fed to the BLHermes redaction probe"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "packaging/termux/audit_deb.py",
+   "fingerprint": "4fe97d24435efce2c3d3ac4b5f55e395a65a1176a404bcd04ca1b3b6d38a0d7d",
+   "reason": "the documented fake (BluxGPT mock) the artifact audit allow-lists"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "packaging/termux/validate_installed.py",
+   "fingerprint": "d9e4f099075864fd1bcca7d88f7b6b051992d851f44d22c5bb906ed4c5e680a3",
+   "reason": "fake key proving installed BLUX never leaks credentials to children"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "tests/core/test_core_migration.py",
+   "fingerprint": "8984df12e6e37ebb01e6110b54585b9f16cd0db1050fd08f2ee217901ce0b1ef",
+   "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  },
+  {
+   "rule_id": "secrets.github-token",
+   "path": "tests/core/test_core_migration.py",
+   "fingerprint": "dbbc5a4bb9f3df91f501b2c919b539f23f43b1655a5d4634080d3b85760ccd57",
+   "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "tests/extensions/test_extensions.py",
+   "fingerprint": "10cb70180b22b7725d15bc503a1698478206463eb8386ba0b255d45260990d3f",
+   "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "tests/hooks/test_bus.py",
+   "fingerprint": "bc61dbe14ce8bdc9efcef1be7ff0d86dc886a76fcb41f37ab4b7d22d792bae0c",
+   "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "tests/hooks/test_runtime_hooks.py",
+   "fingerprint": "263a54f632c7331a0f4ec0c87e7e0512785d8ea969234ffba6991e40a99637ba",
+   "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "tests/integration/test_model_api.py",
+   "fingerprint": "1501f99531fd414fe189611a78c18f1ebe2a7104eeb67f70f579e4273d8ff6c2",
+   "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "tests/integration/test_model_api.py",
+   "fingerprint": "376d32cce8e1c43a93aaf8e0fe89cbf1b50e9ff1de47d89ff5e04b0fef3a0d53",
+   "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  },
+  {
+   "rule_id": "secrets.openai-key",
+   "path": "tests/models/test_model_api.py",
+   "fingerprint": "9960892cfed86f7feda2b1587d599357f5fea8d2ac746f4e195f28e780cf058d",
+   "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  }
+ ]
+}

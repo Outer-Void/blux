@@ -2,6 +2,22 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 16
+- **BLHermes decoupling and retirement gate.**
+  - **Scan.** `migration/blhermes/decoupling.py` scans every tracked file for source imports, build, CI
+    and packaging dependencies, Nous/Hermes URLs, feeds, telemetry, `HERMES_HOME` requirements, command
+    identity and stale branding. It finds 0 violations and is enforced in CI by
+    `tests/migration/test_blhermes_decoupling.py`, which also checks that docs never link outside the
+    repository.
+  - **Proof.** An isolated clone with no fork passes everything: 543 passed, 0 failed; wheel, `.deb`
+    build and audit, scan, and the DAT release gate (evidence:
+    `migration/blhermes/decoupling-evidence.json`).
+  - **DAT gate.** `.dat/policy.json` is the BLUX release gate. Its only suppressions are exact
+    fingerprints of deliberately fake test credentials.
+  - **Report.** `docs/migration/blhermes-deletion-readiness.md` recommends archiving the fork rather
+    than deleting it. Nothing was deleted, and the fork is unchanged.
+  - **Fixture.** The contract fixture's actor id was renamed `blhermes` → `blux-agent`.
+
 ## Unreleased: Stage 15
 - **BLUX-owned Termux package** (ADR-0015, packaging/termux/).
   - **Package.** `blux_<version>-<rev>_aarch64.deb` depends on Termux `python` and `python-rpds-py`, and

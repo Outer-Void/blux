@@ -1,0 +1,39 @@
+{
+ "contract": "blux.blhermes-decoupling-evidence",
+ "recorded": "2026-10-26",
+ "method": "Fresh clone of blux (branch stage-16/decoupling) and blux-gpt in an isolated directory with NO blhermes-agent beside them; fresh Python 3.13 venv built from the clone (pip install -e sdk/python -e . -r requirements-dev.txt; ecosystem packages with --no-deps, as CI); BLHERMES_SOURCE/BLHERMES_PYTHON unset.",
+ "fork_present": false,
+ "fork_head_untouched": "ac51a44f1f73452446ddea8e51c58e9e5e9098fc",
+ "results": {
+  "schema_lock": "PASS",
+  "format": "PASS",
+  "lint": "PASS",
+  "types": "PASS",
+  "tests": {
+   "passed": 543,
+   "skipped": 20,
+   "failed": 0,
+   "skips": "16 fork-dependent reference checks (Stage 11 characterization/matrix-location/no-deletion/rescan, optional SKILL.md format check) skip cleanly; 2 REAL-provider tests need credentials; CogA/cA integration re-run with their project dirs: 9 passed"
+  },
+  "wheel": "PASS (verify_wheel: OK, Model API OK, Hook System OK)",
+  "termux_deb": {
+   "build": "PASS",
+   "audit": "PASS",
+   "sha256": "8881ee39162adb05767bb5b4c8dc05c92f068c274a75b57b2bf73382b2e01585"
+  },
+  "decoupling_scan": {
+   "violations": 0,
+   "files_scanned": 365
+  },
+  "dat_release": {
+   "verdict": "pass",
+   "blocking": 0,
+   "suppressed": 14,
+   "remaining": [
+    "medium release.untagged-version",
+    "info package.unversioned-requirement",
+    "info package.unversioned-requirement"
+   ]
+  }
+ }
+}

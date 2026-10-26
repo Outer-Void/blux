@@ -1,6 +1,6 @@
 {
   "actor": {
-    "id": "blhermes",
+    "id": "blux-agent",
     "type": "agent"
   },
   "capability_id": "echo.test",
