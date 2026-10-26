@@ -2,6 +2,26 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 13
+- **BLHermes runtime core migrated** (ADR-0013). Clean-room implementations, tested against the Stage 11
+  goldens.
+  - **State.** `blux_runtime.state` provides `BLUX_HOME`/`BLUX_PROFILE` with profiles under
+    `profiles/<name>`.
+  - **Compatibility.** `blux_runtime.compat.hermes` (with `blux migrate hermes`) imports legacy sessions
+    and, on request, provider keys. It is opt-in, never touches the legacy home, never takes hidden
+    reasoning, and expires 2027-04-30.
+  - **Tools.** `shell.exec`, `fs.read` and `fs.write` are tool capabilities: confined to the workspace,
+    using an allow-list child environment, with redacted output and a deadline kill.
+  - **Security.** `blux_runtime.security` provides dangerous-command detection and session approvals
+    (device commands need a one-time approval; YOLO never covers them), write safety (symlink-resolved)
+    and redaction. It is stricter than BLHermes in listed places.
+  - **Sessions.** `blux_runtime.sessions.SessionStore` uses SQLite with FTS and emits `session.*` hook
+    events.
+  - **Parity matrix.** It gains `evidence`: MIGRATED/IN_PROGRESS features must cite existing BLUX tests.
+    MIGRATED: BLH-006, 007, 008, 009, 010, 012. IN_PROGRESS: BLH-002, 004, 011.
+  - **Tests.** `tests/core/test_core_migration.py` includes the hard gate: the core runs without
+    importing the fork.
+
 ## Unreleased: Stage 12
 - **BLUX Hook System v1** (ADR-0012, docs/hooks/v1.md). `outervoid-blux` 0.4.0; `blux-sdk` is unchanged.
   - **Contract.** `contracts/hooks/v1/` (own checksum lock, packaged with the runtime) defines 37 typed,

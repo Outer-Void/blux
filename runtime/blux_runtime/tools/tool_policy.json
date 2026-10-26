@@ -1,0 +1,14 @@
+{
+  "contract": "blux.policy",
+  "contract_version": "1.0",
+  "policy_id": "blux-tools-default",
+  "default_effect": "deny",
+  "rules": [
+    {"rule_id": "allow-read-tools", "effect": "allow", "capabilities": ["fs.read"],
+     "actor_types": ["user", "agent", "service"], "max_side_effects": "read", "grants": ["tool:fs.read"]},
+    {"rule_id": "allow-write-tools", "effect": "allow", "capabilities": ["fs.write"],
+     "actor_types": ["user", "agent"], "max_side_effects": "write", "grants": ["tool:fs.write"]},
+    {"rule_id": "allow-shell", "effect": "allow", "capabilities": ["shell.exec"],
+     "actor_types": ["user", "agent"], "max_side_effects": "destructive", "grants": ["tool:shell.exec"]}
+  ]
+}

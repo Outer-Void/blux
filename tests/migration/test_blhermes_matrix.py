@@ -136,6 +136,17 @@ def test_every_retained_feature_has_a_target_and_an_evidence_plan() -> None:
             assert f["blocker"] or f["evidence_plan"], f["id"]
 
 
+def test_migrated_states_are_backed_by_existing_blux_tests() -> None:
+    """No feature is green because code was copied: IN_PROGRESS/MIGRATED need tests that exist."""
+    for f in features():
+        if f["migration_state"] in ("IN_PROGRESS", "MIGRATED"):
+            assert f["evidence"], f["id"]
+        for ref in f["evidence"]:
+            path, _, name = ref.partition("::")
+            source = (ROOT / path).read_text(encoding="utf-8")
+            assert re.search(rf"^def {re.escape(name)}\(", source, re.M), (f["id"], ref)
+
+
 def test_characterization_references_point_at_recorded_probes() -> None:
     from tests.migration.test_blhermes_characterization import PROBES
 
@@ -147,7 +158,7 @@ def test_characterization_references_point_at_recorded_probes() -> None:
             assert name and name.group(1) in PROBES, (f["id"], ref)
             assert (GOLDEN / f"{name.group(1)}.json").exists(), (f["id"], ref)
         if f["tests"]["characterization"]:
-            assert f["migration_state"] == "CHARACTERIZED", f["id"]
+            assert f["migration_state"] in ("CHARACTERIZED", "IN_PROGRESS", "MIGRATED"), f["id"]
 
 
 def test_blux_sources_do_not_contact_removed_upstream_services() -> None:

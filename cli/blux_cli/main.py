@@ -22,7 +22,7 @@ from typing import Any, NoReturn, TextIO
 
 import blux_runtime
 import blux_sdk
-from blux_cli import direct
+from blux_cli import direct, migrate
 from blux_runtime.builtin import builtin_registry, reference_policy
 from blux_runtime.executor import Outcome, Runtime
 from blux_runtime.models import ModelRouter
@@ -115,6 +115,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--pretty", action="store_true", help="indent JSON output")
     sub = p.add_subparsers(dest="command", required=True, parser_class=_Parser)
     direct.add_parsers(sub, _Parser)
+    migrate.add_parser(sub)
 
     sub.add_parser("version", help="SDK/runtime versions and supported contract versions")
 
@@ -208,6 +209,8 @@ def main(
     try:
         if args.command in direct.COMMANDS:
             return direct.run(args, stdin, out, err)
+        if args.command == "migrate":
+            return migrate.run(args, out, err)
         return _dispatch(args, stdin, out)
     except BluxError as exc:
         _emit(exc.to_document(), out, args.pretty)

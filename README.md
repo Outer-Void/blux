@@ -4,7 +4,7 @@ BLUX is the contract authority for the Outer-Void ecosystem. It defines the cano
 registry, runtime and model interfaces, and the `blux` command line. Other repositories stay independent and
 integrate through a `.blux/` directory (federated, not a monorepo; see ADR-0001).
 
-**Status:** Stage 12. Hook System v1 (`1.0`); runtime + CLI `outervoid-blux 0.4.0` (SDK `blux-sdk 0.2.0` unchanged). Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
+**Status:** Stage 13 (BLHermes core migrated: state, tools, approvals, credentials, sessions). Hook System v1 (`1.0`); runtime + CLI `outervoid-blux 0.4.0` (SDK `blux-sdk 0.2.0` unchanged). Contract v1 (`1.0`) and BLUX Model API v1 (`1.0`), Python SDK `blux-sdk 0.2.0`, reference runtime + CLI `outervoid-blux 0.3.0`.
 
 `blux` is direct intelligence; ecosystem orchestration is `ax`.
 
@@ -53,7 +53,8 @@ make ci                 # drift/lock check, format, lint, mypy --strict, tests, 
 [0009](docs/adr/0009-subprocess-provider.md) subprocess provider ·
 [0010](docs/adr/0010-model-api.md) Model API v1 ·
 [0011](docs/adr/0011-direct-cli.md) direct `blux` CLI ·
-[0012](docs/adr/0012-hook-system.md) Hook System v1
+[0012](docs/adr/0012-hook-system.md) Hook System v1 ·
+[0013](docs/adr/0013-blhermes-core-migration.md) BLHermes core migration
 
 ## Licensing and credits
 See [CREDITS.md](CREDITS.md) and [docs/ecosystem/licensing.md](docs/ecosystem/licensing.md).

@@ -66,7 +66,8 @@
    "inventory_categories": [
     "module",
     "session"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-002",
@@ -96,7 +97,7 @@
      "tests/hermes_cli/test_auth*"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -111,12 +112,17 @@
     ],
     "policy": "Provider transport lives only in the BluxGPT backend; BLUX never calls a provider."
    },
-   "blocker": null,
+   "blocker": "OpenAI, Anthropic, DeepSeek and OpenAI-compatible servers are routed through BluxGPT; the other upstream providers in the provider_registry golden each still need a BluxGPT route (or retirement).",
    "evidence_plan": "Each retained provider becomes a BluxGPT route; compare base URL and credential-variable mapping with the provider_registry golden.",
    "inventory_categories": [
     "provider",
     "url",
     "env_var"
+   ],
+   "evidence": [
+    "tests/models/test_model_api.py::test_a_logical_model_is_served_without_naming_a_provider",
+    "tests/integration/test_model_api.py::test_hard_gate_logical_model_without_provider_knowledge",
+    "tests/core/test_core_migration.py::test_legacy_provider_credentials_map_onto_bluxgpt_names"
    ]
   },
   {
@@ -162,7 +168,8 @@
     "env_var",
     "identifier",
     "provider"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-004",
@@ -178,7 +185,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "runtime/blux_runtime/capabilities/tools/ (one capability descriptor per tool)",
+    "module": "runtime/blux_runtime/tools/builtin.py (shell.exec, fs.read, fs.write as capabilities)",
     "owner": "blux"
    },
    "tests": {
@@ -189,7 +196,7 @@
      "tests/tools/test_registry*"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -204,10 +211,15 @@
     ],
     "policy": "Each tool capability declares side_effects: external and its endpoints; policy decides."
    },
-   "blocker": null,
+   "blocker": "3 core tools migrated; the remaining tools in the tool_registry golden need a capability each (or retirement).",
    "evidence_plan": "Port tools one by one as capabilities; the tool_registry golden lists the names that need a target or an explicit retirement.",
    "inventory_categories": [
     "tool"
+   ],
+   "evidence": [
+    "tests/core/test_core_migration.py::test_shell_exec_runs_safe_commands_with_a_credential_free_environment",
+    "tests/core/test_core_migration.py::test_tools_are_confined_and_honour_write_safety",
+    "tests/core/test_core_migration.py::test_tool_calls_emit_hook_events_and_a_hook_can_stop_them"
    ]
   },
   {
@@ -252,7 +264,8 @@
    "evidence_plan": "Toolsets become policy grant bundles; the toolsets golden fixes the resolved membership BLUX must reproduce.",
    "inventory_categories": [
     "toolset"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-006",
@@ -267,7 +280,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "runtime/blux_runtime/capabilities/shell (subprocess provider, ADR-0009)",
+    "module": "runtime/blux_runtime/security/environment.py (child_env allow-list) used by shell.exec",
     "owner": "blux"
    },
    "tests": {
@@ -279,7 +292,7 @@
      "tests/tools/test_*subprocess_env*"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "MIGRATED",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -294,11 +307,16 @@
     ],
     "policy": "Remote backends are separate capabilities with their own declarations."
    },
-   "blocker": "Characterized gap: the upstream scrub passes AWS_SECRET_ACCESS_KEY and DATABASE_URL to children. BLUX must not reproduce this; its minimal_env allow-list is the target behaviour.",
+   "blocker": "Remote sandbox backends (ssh, docker, modal) are not migrated; only local execution.",
    "evidence_plan": "Port backends behind the subprocess provider; the child_env_scrub golden documents upstream behaviour, and the BLUX test asserts the stricter allow-list instead.",
    "inventory_categories": [
     "credential",
     "env_var"
+   ],
+   "evidence": [
+    "tests/core/test_core_migration.py::test_child_environment_is_an_allow_list_closing_the_characterized_gap",
+    "tests/core/test_core_migration.py::test_shell_exec_runs_safe_commands_with_a_credential_free_environment",
+    "tests/core/test_core_migration.py::test_a_hung_command_is_killed_at_the_deadline"
    ]
   },
   {
@@ -315,7 +333,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "runtime/blux_runtime/policy (approval decisions as receipts) + Stage 12 hooks",
+    "module": "runtime/blux_runtime/security/commands.py + security/approvals.py (+ Stage 12 hook vetoes)",
     "owner": "blux"
    },
    "tests": {
@@ -327,7 +345,7 @@
      "tests/tools/test_approval*"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "MIGRATED",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -340,10 +358,16 @@
     "endpoints": [],
     "policy": ""
    },
-   "blocker": null,
+   "blocker": "Gateway/remote approval prompts (approval over messaging platforms) move with BLH-021.",
    "evidence_plan": "Detection patterns port with provenance headers; approvals become policy decisions recorded in receipts. YOLO never authorizes destructive device operations (Stage 12 rule).",
    "inventory_categories": [
     "approval"
+   ],
+   "evidence": [
+    "tests/core/test_core_migration.py::test_dangerous_command_detection_covers_the_golden_and_is_stricter_only_where_listed",
+    "tests/core/test_core_migration.py::test_session_approvals_match_the_golden_and_never_cover_device_commands",
+    "tests/core/test_core_migration.py::test_shell_exec_requires_approval_for_dangerous_and_device_commands",
+    "tests/hooks/test_bus.py::test_hooks_cannot_authorize_or_alter_destructive_device_operations"
    ]
   },
   {
@@ -358,7 +382,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "runtime/blux_runtime/policy/paths",
+    "module": "runtime/blux_runtime/security/paths.py",
     "owner": "blux"
    },
    "tests": {
@@ -369,7 +393,7 @@
      "tests/agent/test_file_safety*"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "MIGRATED",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -387,6 +411,10 @@
    "inventory_categories": [
     "path",
     "credential"
+   ],
+   "evidence": [
+    "tests/core/test_core_migration.py::test_file_write_safety_covers_the_golden_and_is_stricter_only_where_listed",
+    "tests/core/test_core_migration.py::test_tools_are_confined_and_honour_write_safety"
    ]
   },
   {
@@ -401,7 +429,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "sdk/python/src/blux_sdk/model_api.py scrub + blux-system redaction",
+    "module": "runtime/blux_runtime/security/environment.py redact() over the SDK scrub patterns",
     "owner": "blux"
    },
    "tests": {
@@ -412,7 +440,7 @@
      "tests/agent/test_redact*"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "MIGRATED",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -429,6 +457,10 @@
    "evidence_plan": "Extend BLUX scrub patterns until every redaction golden sample is at least as redacted.",
    "inventory_categories": [
     "credential"
+   ],
+   "evidence": [
+    "tests/core/test_core_migration.py::test_redaction_is_at_least_as_strong_as_the_golden",
+    "tests/hooks/test_bus.py::test_payloads_are_secret_safe_and_sensitive_fields_need_permission"
    ]
   },
   {
@@ -459,7 +491,7 @@
      "tests/test_credential_file_permissions.py"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "MIGRATED",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -472,12 +504,17 @@
     "endpoints": [],
     "policy": ""
    },
-   "blocker": "Import of an existing ~/.hermes/.env must be explicit and owner-confirmed; BLUX itself never stores provider keys (ADR-0011).",
+   "blocker": "Credential pools/rotation and OAuth providers are not migrated (BluxGPT reads one key per provider).",
    "evidence_plan": "Offer a one-time import of ~/.hermes/.env provider keys into BluxGPT's config; afterwards the Hermes paths are ignored.",
    "inventory_categories": [
     "credential",
     "env_var",
     "path"
+   ],
+   "evidence": [
+    "tests/core/test_core_migration.py::test_credential_import_writes_names_privately_and_keeps_existing_values",
+    "tests/core/test_core_migration.py::test_child_environment_is_an_allow_list_closing_the_characterized_gap",
+    "tests/hooks/test_runtime_hooks.py::test_model_events_and_credentials_by_name_only"
    ]
   },
   {
@@ -495,7 +532,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "runtime/blux_runtime/sessions (+ blux-system receipts for execution truth)",
+    "module": "runtime/blux_runtime/sessions.py (SessionStore) + compat import from state.db",
     "owner": "blux"
    },
    "tests": {
@@ -506,7 +543,7 @@
      "tests/hermes_state/*"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "IN_PROGRESS",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -519,11 +556,15 @@
     "endpoints": [],
     "policy": ""
    },
-   "blocker": null,
+   "blocker": "Core store, search and import migrated; branching, rewind, compression and lineage are not.",
    "evidence_plan": "Port the session schema with a migration from state.db; the session_store golden plus upstream hermes_state tests are the acceptance set.",
    "inventory_categories": [
     "session",
     "module"
+   ],
+   "evidence": [
+    "tests/core/test_core_migration.py::test_session_store_matches_the_session_golden_and_emits_events",
+    "tests/core/test_core_migration.py::test_legacy_import_is_read_only_idempotent_and_never_takes_hidden_reasoning"
    ]
   },
   {
@@ -539,7 +580,7 @@
    ],
    "target": {
     "repository": "Outer-Void/blux",
-    "module": "cli/blux_cli/config.py state root (BLUX_HOME) with HERMES_HOME read as a fallback",
+    "module": "runtime/blux_runtime/state.py (BLUX_HOME, profiles) + runtime/blux_runtime/compat/hermes.py (time-bounded legacy import)",
     "owner": "blux"
    },
    "tests": {
@@ -551,7 +592,7 @@
      "tests/test_hermes_home_key_cache.py"
     ]
    },
-   "migration_state": "CHARACTERIZED",
+   "migration_state": "MIGRATED",
    "provenance": {
     "license": "MIT",
     "holder": "Nous Research",
@@ -564,11 +605,18 @@
     "endpoints": [],
     "policy": ""
    },
-   "blocker": null,
+   "blocker": "Compatibility import (hermes-home-import) expires 2027-04-30 and must then be removed.",
    "evidence_plan": "BLUX reads HERMES_HOME/~/.hermes only to import; the paths golden fixes profile resolution for the importer.",
    "inventory_categories": [
     "path",
     "env_var"
+   ],
+   "evidence": [
+    "tests/core/test_core_migration.py::test_blux_home_and_profiles_follow_the_characterized_semantics",
+    "tests/core/test_core_migration.py::test_blux_never_uses_hermes_home_as_its_state",
+    "tests/core/test_core_migration.py::test_compatibility_paths_are_explicit_and_time_bounded",
+    "tests/core/test_core_migration.py::test_legacy_import_is_read_only_idempotent_and_never_takes_hidden_reasoning",
+    "tests/core/test_core_migration.py::test_blux_migrate_cli_dry_run_then_apply"
    ]
   },
   {
@@ -614,7 +662,8 @@
    "evidence_plan": "Add a memory probe (MEMORY.md/USER.md format) before porting; providers follow as plugin-adapter capabilities.",
    "inventory_categories": [
     "memory"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-014",
@@ -656,7 +705,8 @@
    "evidence_plan": "Characterize depth limits and child toolset derivation as pure functions first, then end-to-end with the mock backend.",
    "inventory_categories": [
     "subagent"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-015",
@@ -703,7 +753,8 @@
    "evidence_plan": "Load skills through the adapter one family at a time; each needs a licence check and a declared network surface.",
    "inventory_categories": [
     "skill"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-016",
@@ -749,7 +800,8 @@
    "evidence_plan": "Characterize the plugin manifest (plugin.yaml) contract, then implement the adapter; catalogue entries are re-reviewed before BLUX lists them.",
    "inventory_categories": [
     "plugin"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-017",
@@ -792,7 +844,8 @@
    "evidence_plan": "Characterize config parsing and the tool-name mapping before porting the transport.",
    "inventory_categories": [
     "mcp"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-018",
@@ -834,7 +887,8 @@
    "evidence_plan": "Port after the capability set stabilizes; the upstream test defines the protocol surface.",
    "inventory_categories": [
     "mcp"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-019",
@@ -877,7 +931,8 @@
    "evidence_plan": "Re-review each definition (licence, endpoint, credential needs) before listing.",
    "inventory_categories": [
     "mcp"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-020",
@@ -923,7 +978,8 @@
    "evidence_plan": "ax owns scheduling; the cron_schedules golden fixes schedule parsing for the port.",
    "inventory_categories": [
     "cron"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-021",
@@ -968,7 +1024,8 @@
    "evidence_plan": "Characterize inbound authorization and session routing first; port adapters behind it.",
    "inventory_categories": [
     "gateway"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-022",
@@ -1013,7 +1070,8 @@
    "evidence_plan": "Port adapters individually with their upstream tests.",
    "inventory_categories": [
     "gateway"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-023",
@@ -1061,7 +1119,8 @@
    "evidence_plan": "Map every slash command in the golden to blux chat, ax or retirement.",
    "inventory_categories": [
     "command"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-024",
@@ -1102,7 +1161,8 @@
    "evidence_plan": "Ship forwarding shims with a deprecation notice; retire after one release.",
    "inventory_categories": [
     "command"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-025",
@@ -1149,7 +1209,8 @@
    "inventory_categories": [
     "install",
     "url"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-026",
@@ -1193,7 +1254,8 @@
    "inventory_categories": [
     "updater",
     "network_hook"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-027",
@@ -1235,7 +1297,8 @@
    "inventory_categories": [
     "network_hook",
     "env_var"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-028",
@@ -1280,7 +1343,8 @@
    "evidence_plan": "Keep the JSON-RPC method contract as the characterization target when the TUI is scheduled.",
    "inventory_categories": [
     "tui"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-029",
@@ -1322,7 +1386,8 @@
    "evidence_plan": "Port after agent.run; upstream ACP tests are the acceptance set.",
    "inventory_categories": [
     "command"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-030",
@@ -1371,7 +1436,8 @@
    "inventory_categories": [
     "network_hook",
     "updater"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-031",
@@ -1413,7 +1479,8 @@
    "evidence_plan": "If kept, characterize via web/src tests and tests/dashboard.",
    "inventory_categories": [
     "network_hook"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-032",
@@ -1454,7 +1521,8 @@
    "evidence_plan": "Port with provenance headers; Android detection must use sys.platform of the actual interpreter (baseline finding).",
    "inventory_categories": [
     "android"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-033",
@@ -1501,7 +1569,8 @@
     "termux",
     "android",
     "url"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-034",
@@ -1544,7 +1613,8 @@
    "evidence_plan": "BLUX keeps exact pins; PM behaviour is not reproduced.",
    "inventory_categories": [
     "package_id"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-035",
@@ -1593,7 +1663,8 @@
    "evidence_plan": "Rewritten for BLUX; nothing upstream ships.",
    "inventory_categories": [
     "package_id"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-036",
@@ -1635,7 +1706,8 @@
    "evidence_plan": "Characterize server selection when blux-code needs it.",
    "inventory_categories": [
     "module"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-037",
@@ -1680,7 +1752,8 @@
    "evidence_plan": "Characterize the URL policy (allowed/blocked redirects) as a probe before porting.",
    "inventory_categories": [
     "tool"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-038",
@@ -1718,7 +1791,8 @@
    },
    "blocker": null,
    "evidence_plan": "Port string tables that BLUX surfaces still use; keep the MIT notice.",
-   "inventory_categories": []
+   "inventory_categories": [],
+   "evidence": []
   },
   {
    "id": "BLH-039",
@@ -1758,7 +1832,8 @@
    "evidence_plan": "BLUX writes its own docs; upstream docs links are REPLACE or UPSTREAM_ATTRIBUTION per inventory.",
    "inventory_categories": [
     "url"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-040",
@@ -1801,7 +1876,8 @@
    "evidence_plan": "Upstream tests are ported per feature together with the feature, with provenance headers.",
    "inventory_categories": [
     "module"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-041",
@@ -1841,7 +1917,8 @@
    "evidence_plan": "Distribution check: any BLUX artifact with a provenance header pointing at LIN-001 must ship the notice.",
    "inventory_categories": [
     "attribution"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-042",
@@ -1890,7 +1967,8 @@
    "evidence_plan": "Re-home helpers only when a ported feature needs them.",
    "inventory_categories": [
     "module"
-   ]
+   ],
+   "evidence": []
   },
   {
    "id": "BLH-043",
@@ -1928,7 +2006,8 @@
    },
    "blocker": "Review what native/ builds and its licences.",
    "evidence_plan": "Review before any port.",
-   "inventory_categories": []
+   "inventory_categories": [],
+   "evidence": []
   },
   {
    "id": "BLH-044",
@@ -1975,7 +2054,8 @@
     "path",
     "package_id",
     "module"
-   ]
+   ],
+   "evidence": []
   }
  ]
 }

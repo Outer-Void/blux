@@ -172,6 +172,25 @@ def test_hard_gate_config_failures_end_cleanly(env: dict[str, str], tmp_path: Pa
     assert p.returncode == 2
 
 
+def _children(pid: int) -> list[int]:
+    out = []
+    for stat in Path("/proc").glob("[0-9]*/stat"):
+        try:
+            fields = stat.read_text().rsplit(")", 1)[1].split()
+        except (OSError, IndexError):
+            continue
+        if int(fields[1]) == pid:
+            out.append(int(stat.parent.name))
+    return out
+
+
+def _wait_for_child(pid: int, timeout: float = 10) -> None:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline and not _children(pid):
+        time.sleep(0.1)
+    time.sleep(0.5)  # the backend is running the slow route
+
+
 def test_ctrl_c_cancels_the_call_and_stops_the_backend(env: dict[str, str], tmp_path: Path) -> None:
     table = routes(tmp_path, [mock_route("main.slow", "slow-30000")])
     proc = subprocess.Popen(
@@ -182,13 +201,15 @@ def test_ctrl_c_cancels_the_call_and_stops_the_backend(env: dict[str, str], tmp_
         text=True,
         env=env,
     )
-    time.sleep(3)
+    _wait_for_child(proc.pid)  # interrupt the call in flight, not the CLI's start-up
     t0 = time.monotonic()
     proc.send_signal(signal.SIGINT)
     out, err = proc.communicate(timeout=30)
     assert time.monotonic() - t0 < 10
     assert (proc.returncode, out) == (130, ""), err
-    assert "cancelled" in err and "Traceback" not in err
+    # Usually the call is in flight ("cancelled"); if the signal lands just before it starts the CLI reports
+    # "interrupted". Either way: exit 130, nothing on stdout, no traceback, and the process ends promptly.
+    assert ("cancelled" in err or "interrupted" in err) and "Traceback" not in err
 
 
 def test_hard_gate_receipts_are_linked_and_safe(env: dict[str, str], tmp_path: Path) -> None:

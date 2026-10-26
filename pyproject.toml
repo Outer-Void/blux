@@ -17,7 +17,10 @@ dependencies = ["blux-sdk==0.2.0", "tomli>=1.1; python_version < \"3.11\""]
 blux = "blux_cli.main:main"
 
 [tool.setuptools]
-packages = ["blux_runtime", "blux_runtime.builtin", "blux_runtime.models", "blux_runtime.hooks", "blux_cli"]
+packages = [
+  "blux_runtime", "blux_runtime.builtin", "blux_runtime.models", "blux_runtime.hooks", "blux_runtime.compat",
+  "blux_runtime.security", "blux_runtime.tools", "blux_cli",
+]
 
 [tool.setuptools.package-dir]
 blux_runtime = "runtime/blux_runtime"
@@ -27,6 +30,7 @@ blux_cli = "cli/blux_cli"
 "blux_runtime.builtin" = ["reference_policy.json"]
 "blux_runtime.models" = ["default_routes.json", "model_policy.json"]
 "blux_runtime.hooks" = ["schemas/v1/*.schema.json"]
+"blux_runtime.tools" = ["tool_policy.json"]
 
 [tool.ruff]
 line-length = 120
