@@ -2,6 +2,11 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 18
+- **`blux agent`.** It runs a task with the BLUX agent loop: tools confined to `--workspace`, no
+  approvals (dangerous commands refused), and the same routes and config as `blux ask`. This is what
+  `ax agent` routes to (Outer-Void/axiom).
+
 ## Unreleased: Stage 16
 - **BLHermes decoupling and retirement gate.**
   - **Scan.** `migration/blhermes/decoupling.py` scans every tracked file for source imports, build, CI
