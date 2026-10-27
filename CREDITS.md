@@ -10,6 +10,16 @@ separately and keep their own licences:
 
 Development tooling: pytest, ruff, mypy, build, setuptools, and GitHub Actions.
 
+Phase 1 optional offline training tooling additionally installs scikit-learn, NumPy and SciPy
+(BSD-3-Clause), joblib (BSD-3-Clause), and threadpoolctl (BSD-3-Clause) separately. None is bundled into
+the runtime or model artifact. The portable classifier export uses numeric parameters and standard-library
+inference; see [training/ARTIFACT-POLICY.md](training/ARTIFACT-POLICY.md).
+
+Router experiment data is referenced, not copied, from Outer-Void/blux-coga-dataset and
+Outer-Void/blux-ca-dataset under their BLUX Proprietary Licenses. Exact commits, original authorship and
+engine provenance are recorded in [the experiment audit](training/experiments/AUDIT.md) and frozen
+metadata. No external provider responses or new training examples were collected for this experiment.
+
 ## Standards implemented (independent implementations, no code copied)
 - JSON Schema Draft 2020-12
 - RFC 3339
@@ -33,6 +43,11 @@ carry the same notice.
 The Stage 00 baseline and the Stage 01 contracts, SDK, runtime, CLI, tests and docs were produced with
 Claude Code (Anthropic, Claude Opus 5.5), recorded in `Co-authored-by` trailers (`AIL` entries in the
 ledger). This credit implies no endorsement by Anthropic.
+
+Phase 1 router training infrastructure, tests, experiment execution and documentation were developed
+with OpenAI Codex assistance. This acknowledgement does not imply endorsement. The earlier Anthropic
+credit above remains historical attribution; no Claude/Anthropic outputs were newly added as training
+examples by this experiment.
 
 ## Licensing
 Since 2026-10-25 this repository, including the SDK and runtime packages, is under the BLUX Proprietary License
