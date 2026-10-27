@@ -1,5 +1,10 @@
 # Stage 00: Organization-Wide Baseline
 
+> **Historical record (2026-10-24).** This is the Stage 00 baseline, kept unchanged as evidence of the state before
+> the staged rebuild. Many statements here are no longer true; for instance, BLHermes is archived and no longer a
+> dependency. The current state is in [Outer-Void/docs](https://github.com/Outer-Void/docs): the ecosystem
+> status matrix, the findings and the constitution.
+
 - **Baselined:** 2026-10-24 (UTC)
 - **Scope:** every git repository under `~/ov` and `~/ov/ov-webpages` (30 repos)
 - **Host:** aarch64 Debian under PRoot on an Android kernel. Python 3.13.5, Node 20.19.2, OpenJDK 21, shellcheck. **No Android SDK.** `gh` is not authenticated.
