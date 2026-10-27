@@ -2,6 +2,13 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 37
+- **Generation 2 readiness gap (`training/GENERATION2.md`).** No coding or reasoning model is trained: per
+  target, the missing data, baseline and compute are listed, plus the requirements already met.
+- **Logical-model isolation guard (`tests/models/test_logical_model_isolation.py`).** No tracked code may name
+  a physical provider model, and every logical model keeps a fallback route, so a native route can be added
+  and rolled back through the routing table alone.
+
 ## Unreleased: Stage 36
 - **Native specialist register (`training/SPECIALISTS.md`, `specialists.json`).** All eight Generation 1
   candidates with the ten required points. None integrated. Rejected with evidence: capability routing
