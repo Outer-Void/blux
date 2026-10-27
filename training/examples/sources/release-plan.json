@@ -1,0 +1,93 @@
+{
+ "kind": "blux.trajectory-source",
+ "version": "1",
+ "source_type": "synthetic",
+ "source_project": "blux",
+ "eligibility": {
+  "basis": "synthetic",
+  "data_class": "synthetic",
+  "note": "Hand-written example; no user or project data."
+ },
+ "receipts": [],
+ "trajectory": {
+  "input": {
+   "task": "Order the release steps for a CLI tool: build the wheel, sign it, publish it, announce it."
+  },
+  "intent": "reason.plan",
+  "context_summary": "Four dependent release steps; announcing must wait for publishing.",
+  "reasoning_structure": {
+   "steps": [
+    "build",
+    "sign",
+    "publish",
+    "announce"
+   ],
+   "edges": [
+    [
+     "build",
+     "sign"
+    ],
+    [
+     "sign",
+     "publish"
+    ],
+    [
+     "publish",
+     "announce"
+    ]
+   ]
+  },
+  "planned_actions": [
+   {
+    "capability": "reason.plan"
+   }
+  ],
+  "tool_calls": [
+   {
+    "capability": "reason.plan",
+    "input_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+   }
+  ],
+  "tool_results": [
+   {
+    "status": "succeeded"
+   }
+  ],
+  "constructed_artifacts": [
+   {
+    "artifact_id": "art_release_plan",
+    "license": "LicenseRef-OuterVoid-Proprietary"
+   }
+  ],
+  "validation_results": [
+   {
+    "check": "dag-acyclic",
+    "passed": true
+   },
+   {
+    "check": "all-steps-ordered",
+    "passed": true
+   }
+  ],
+  "repair_iterations": 0,
+  "final_result": {
+   "order": [
+    "build",
+    "sign",
+    "publish",
+    "announce"
+   ]
+  },
+  "accept_reject": "accept"
+ },
+ "licenses": [
+  {
+   "subject": "record",
+   "spdx": "LicenseRef-OuterVoid-Proprietary"
+  }
+ ],
+ "model_versions": {},
+ "engine_versions": {
+  "coga": "2.0.0"
+ }
+}

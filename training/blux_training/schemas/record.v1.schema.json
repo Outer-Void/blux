@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:blux:training:v1:record",
+  "title": "BLUX canonical training/evaluation record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["record_id", "schema_version", "source_type", "source_project", "operation_id", "parent_operation_id", "input", "intent",
+               "context_summary", "reasoning_structure", "planned_actions", "tool_calls", "tool_results", "constructed_artifacts",
+               "validation_results", "repair_iterations", "final_result", "accept_reject", "quality_scores", "safety_class", "privacy_class",
+               "provenance", "licenses", "hashes", "dataset_split", "model_versions", "engine_versions"],
+  "properties": {
+    "record_id": {"type": "string", "pattern": "^trj_[0-9a-f]{24}$"},
+    "schema_version": {"const": "1"},
+    "source_type": {"enum": ["synthetic", "blux-operation", "engine-fixture"]},
+    "source_project": {"type": "string"},
+    "operation_id": {"type": ["string", "null"]},
+    "parent_operation_id": {"type": ["string", "null"]},
+    "input": {},
+    "intent": {"type": "string"},
+    "context_summary": {"type": "string"},
+    "reasoning_structure": {"type": "object"},
+    "planned_actions": {"type": "array"},
+    "tool_calls": {"type": "array"},
+    "tool_results": {"type": "array"},
+    "constructed_artifacts": {"type": "array"},
+    "validation_results": {"type": "array"},
+    "repair_iterations": {"type": "integer", "minimum": 0},
+    "final_result": {},
+    "accept_reject": {"enum": ["accept", "reject"]},
+    "quality_scores": {
+      "type": "object", "additionalProperties": false, "required": ["completeness", "validation", "repair", "overall"],
+      "properties": {"completeness": {"type": "number", "minimum": 0, "maximum": 1}, "validation": {"type": "number", "minimum": 0, "maximum": 1},
+                     "repair": {"type": "number", "minimum": 0, "maximum": 1}, "overall": {"type": "number", "minimum": 0, "maximum": 1}}
+    },
+    "safety_class": {"enum": ["benign", "adversarial"]},
+    "privacy_class": {"enum": ["synthetic", "public", "redacted"]},
+    "provenance": {
+      "type": "object", "additionalProperties": false, "required": ["source_sha256", "receipt_ids", "eligibility", "pipeline_version"],
+      "properties": {"source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "receipt_ids": {"type": "array", "items": {"type": "string"}},
+                     "eligibility": {"type": "object"}, "pipeline_version": {"type": "string"}, "redactions": {"type": "array", "items": {"type": "string"}}}
+    },
+    "licenses": {"type": "array", "minItems": 1},
+    "hashes": {
+      "type": "object", "additionalProperties": false, "required": ["content_sha256", "record_sha256"],
+      "properties": {"content_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "record_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+    },
+    "dataset_split": {"enum": ["train", "validation", "test", "holdout", "regression"]},
+    "model_versions": {"type": "object"},
+    "engine_versions": {"type": "object"}
+  }
+}

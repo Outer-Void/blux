@@ -38,7 +38,7 @@ other engines. Ecosystem map and status matrix: [Outer-Void/docs `ecosystem/`](h
 | `registry/` | Federated capability index |
 | `integrations/` | How repositories integrate |
 | `migration/blhermes/` | BLHermes forensic inventory, parity matrix, characterization goldens and decoupling evidence (historical reference; MIT-derived data, see its UPSTREAM-NOTICE) |
-| `training/` | Reserved; no training code yet |
+| `training/` | `blux_training` (installed): the trajectory → dataset pipeline with privacy, secret, reasoning, licence and contamination gates ([blux_training/README.md](training/blux_training/README.md)); plus offline learned-model experiments, not installed (Router 0.1, [training/README.md](training/README.md)) |
 | `packaging/` | Schema sync/lock, wheel verification, Termux `.deb` build/audit (`packaging/termux/`) |
 | `tests/` | Contract, SDK, runtime, compatibility and CLI tests, plus v1 fixtures |
 | `docs/` | ADRs, contract reference, `.blux/` spec, versioning, ecosystem baseline |

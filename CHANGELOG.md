@@ -2,6 +2,14 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 34
+- **Training data pipeline (`blux_training`, `training/`).** Turns explicit trajectory sources into versioned
+  datasets: eligibility, hidden-reasoning, secret and licence gates; receipt validation; personal-data
+  redaction; normalization; quality; exact and near-duplicate removal; contamination checks against protected
+  evaluation sets; lock-protected split assignment; manifest, per-input report and `validate`. Private data
+  is never training data, secrets are rejected rather than redacted, and provider hidden reasoning is never
+  stored. Deterministic builds. Tests: `tests/training/` (22).
+
 ## Unreleased: Stage 18
 - **`blux agent`.** It runs a task with the BLUX agent loop: tools confined to `--workspace`, no
   approvals (dangerous commands refused), and the same routes and config as `blux ask`. This is what

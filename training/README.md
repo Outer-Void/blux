@@ -1,5 +1,9 @@
 # BLUX Router 0.1
 
+> **Also in this directory:** `blux_training/`, the trajectory → dataset pipeline (Stage 34): eligibility,
+> secret, hidden-reasoning, licence and contamination gates, lock-protected splits, `python -m blux_training`.
+> See [blux_training/README.md](blux_training/README.md). It is separate from the Router 0.1 experiment below.
+
 An offline, narrow learned classifier: natural-language task → engine family → capability → confidence
 → route recommendation or **ABSTAIN**. It learns no general reasoning, generates no code, and is not a
 foundation model. It cannot certify work, authorize tools, or invoke an engine. Normal BLUX Model API
