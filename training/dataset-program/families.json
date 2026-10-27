@@ -1,0 +1,335 @@
+{
+  "version": "1",
+  "families": [
+    {
+      "id": "english-instruction",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "conversation",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "structured-reasoning-planning",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "python",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "kotlin-android",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "java",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "javascript-typescript",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "html-css-web",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "bash-linux-termux",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "git-github",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "ci-cd",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "repository-understanding",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "debugging",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "code-generation-repair-refactoring",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "testing",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "tool-capability-selection",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "research-evidence-synthesis",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "architecture-analysis",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "software-security",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "learning-adaptation",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "human-behavior-psychology",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    },
+    {
+      "id": "outer-void-contracts-tools",
+      "status": "source_acquisition_pending",
+      "minimum_required_provenance": [
+        "origin",
+        "revision",
+        "license",
+        "permission_evidence",
+        "source_type",
+        "family_id",
+        "deduplication_state",
+        "contamination_state"
+      ],
+      "private_data_eligible": false
+    }
+  ]
+}
