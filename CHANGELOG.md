@@ -2,6 +2,12 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 43
+- **Fix: `blux agent` records receipts in BLUX System.** It ignored a configured `system_store` (its runtime had
+  no receipt sink), so `ax agent` runs left nothing in BLUX System. It now uses the same sink as `blux ask`, links
+  each tool call to the model call that requested it (`parent_operation_id`, so `blux-system graph` shows the
+  turn), and exits 5 when a receipt was not recorded. Found by the Stage 43 release-candidate run.
+
 ## Unreleased: Stage 37
 - **Generation 2 readiness gap (`training/GENERATION2.md`).** No coding or reasoning model is trained: per
   target, the missing data, baseline and compute are listed, plus the requirements already met.

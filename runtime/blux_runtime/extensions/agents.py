@@ -46,6 +46,8 @@ class AgentResult:
     turns: int
     tool_calls: list[dict[str, Any]] = field(default_factory=list)
     operations: list[str] = field(default_factory=list)
+    # Operations whose receipt the runtime's sink failed to record durably (the result itself still stands).
+    unrecorded: list[str] = field(default_factory=list)
 
 
 class AgentRunner:
@@ -97,6 +99,8 @@ class AgentRunner:
                     envelopes.execution_request("model.generate", req, actor=actor, session_id=session_id)
                 )
                 result.operations.append(gen.result["operation_id"])
+                if gen.sink_error is not None:
+                    result.unrecorded.append(gen.result["operation_id"])
                 if gen.result["status"] != "succeeded":
                     raise AgentError(f"model call failed: {(gen.result['error'] or {}).get('code')}")
                 output = gen.result["output"]["output"]
@@ -114,9 +118,17 @@ class AgentRunner:
                         content = json.dumps({"error": "tool not available to this agent"})
                     else:
                         out = self.runtime.execute(
-                            envelopes.execution_request(cid, call["arguments"], actor=actor, session_id=session_id)
+                            envelopes.execution_request(
+                                cid,
+                                call["arguments"],
+                                actor=actor,
+                                session_id=session_id,
+                                parent_operation_id=gen.result["operation_id"],  # the model call that asked for it
+                            )
                         )
                         result.operations.append(out.result["operation_id"])
+                        if out.sink_error is not None:
+                            result.unrecorded.append(out.result["operation_id"])
                         content = json.dumps(
                             out.result["output"]
                             if out.result["status"] == "succeeded"

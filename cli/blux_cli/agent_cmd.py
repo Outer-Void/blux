@@ -4,8 +4,10 @@
 
 The agent uses the logical model through the Model API (same routes and config as `blux ask`). Its tools are
 the built-in tool capabilities confined to --workspace (default: the current directory). No approvals are
-granted, so dangerous commands are refused. Policy, hooks and receipts apply to every step.
-Exit codes: 0 answered, 1 the agent failed, 2 usage, 3 configuration.
+granted, so dangerous commands are refused. Policy, hooks and receipts apply to every step; with `system_store`
+configured (as for `blux ask`) every receipt is recorded in BLUX System, and a tool call is linked to the model call
+that requested it.
+Exit codes: 0 answered, 1 the agent failed, 2 usage, 3 configuration, 5 answered but a receipt was not recorded.
 """
 
 from __future__ import annotations
@@ -21,6 +23,7 @@ from blux_runtime.devices import voidforge
 from blux_runtime.executor import Runtime
 from blux_runtime.extensions.agents import AgentError, AgentRunner
 from blux_runtime.models import capability as model_capability
+from blux_runtime.system_sink import BluxSystemSink
 from blux_runtime.tools import builtin as tools
 from blux_sdk import ids, model_api
 from blux_sdk.serialization import dumps_json
@@ -61,6 +64,13 @@ def run(args: argparse.Namespace, out: TextIO, err: TextIO) -> int:
         cfg.override(settings, "routes", args.routes, "--routes")
         registry = builtin_registry()
         model_capability.register(registry, direct.make_router(direct.load_routes(settings)))
+        store = settings.system_store
+        if store and not direct._system_available():
+            raise direct.Abort(
+                direct.CONFIG,
+                f"system_store is set ({settings.sources['system_store']}) but blux-system is not installed",
+                "system_store",
+            )
     except cfg.ConfigError as exc:
         print(f"blux: {exc}", file=err)
         return direct.CONFIG
@@ -73,7 +83,8 @@ def run(args: argparse.Namespace, out: TextIO, err: TextIO) -> int:
     if any(t in DEVICE_TOOLS for t in chosen):
         voidforge.register(registry)
         policy["rules"] = [*policy["rules"], *voidforge.device_policy()["rules"]]
-    runner = AgentRunner(Runtime(registry, policy), model=settings.model, max_turns=args.max_turns)
+    sink = BluxSystemSink(store) if store else None
+    runner = AgentRunner(Runtime(registry, policy, receipt_sink=sink), model=settings.model, max_turns=args.max_turns)
     try:
         result = runner.run(" ".join(args.task), tools=chosen, session_id=ids.new_session_id())
     except AgentError as exc:
@@ -95,4 +106,8 @@ def run(args: argparse.Namespace, out: TextIO, err: TextIO) -> int:
     else:
         out.write((result.text or "").rstrip("\n") + "\n")
         print(f"-- {result.turns} turn(s), {len(result.tool_calls)} tool call(s), agent {result.agent_id}", file=err)
+    if result.unrecorded:
+        # Fail closed, as `blux ask` does: the answer is real, but not every step was durably recorded.
+        print(f"blux: receipts not recorded by BLUX System for {', '.join(result.unrecorded)}", file=err)
+        return direct.NOT_RECORDED
     return direct.OK
