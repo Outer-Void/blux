@@ -53,3 +53,13 @@ examples by this experiment.
 Since 2026-10-25 this repository, including the SDK and runtime packages, is under the BLUX Proprietary License
 (`LicenseRef-BLUX-Proprietary`, see `LICENSE`); the package metadata matches. This was the owner's decision
 on `UNR-008`. Copies and releases obtained before 2026-10-25 keep Apache-2.0.
+
+## Native routing program: Phase 2 and development research
+
+Router 0.2 tooling, validators, tests, deterministic owner-template expansion, and development research
+were implemented with OpenAI Codex assistance. No Codex-authored natural-language corpus was added to
+model training. The owner explicitly chose existing eligible source records with coverage gaps recorded.
+Source commits, inherited authorship/rights, generation methods and attestations are preserved under
+`training/phase2/evidence/`; engine regression datasets remain unchanged. TF-IDF, logistic regression,
+softmax/temperature scaling, character n-grams and grouped cross-validation are standard techniques,
+implemented using the separately installed dependencies already listed above; no new library is bundled.

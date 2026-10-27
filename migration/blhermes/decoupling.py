@@ -95,6 +95,11 @@ ALLOWED: list[tuple[str, str, str]] = [
     ),
     (".dat/policy.json", "stale_branding", "release-gate suppression reasons naming the migration probe fixtures"),
     ("docs/**", "*", "architecture decisions and history (no runtime or build effect)"),
+    (
+        "training/experiments/REPORT.md",
+        "stale_branding",
+        "immutable Router 0.1 evidence names a skipped legacy-checkout prerequisite; no runtime/build effect",
+    ),
     ("CHANGELOG.md", "*", "history"),
     ("CREDITS.md", "*", "attribution required by the licence and the credits ledger"),
     ("README.md", "stale_branding", "states the migration directory and its notice"),
