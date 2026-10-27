@@ -1,0 +1,241 @@
+{
+ "environment": {
+  "blux_commit": "7bdd076856f8",
+  "platform": "Linux aarch64",
+  "python": "3.13.5"
+ },
+ "generation": "0: external models + BLUX routing + CogA + cA + DAT + Runtime + BLUX System",
+ "harness_version": "1.0.0",
+ "kind": "blux.eval.gen0-report",
+ "models": {
+  "provider_models": "none measured (model suites BLOCKED)",
+  "routes_id": "blux-default-2026-10"
+ },
+ "suites": {
+  "construction_repair_dat": {
+   "cases": 61,
+   "dataset_commit": "662ec33cf0f0",
+   "deterministic": {
+    "adversarial_refusal_rate": 0.7778,
+    "crashes": 0,
+    "dat_gate_pass_rate": 0.4,
+    "dat_gate_verdicts": {
+     "fail": 6,
+     "pass": 4
+    },
+    "hallucinated_capabilities": 0,
+    "per_category": {
+     "adversarial-instructions": 1.0,
+     "android-migration": 1.0,
+     "api-migration": 1.0,
+     "build-repair": 1.0,
+     "ci-repair": 1.0,
+     "config-generation": 1.0,
+     "dependency-upgrade": 1.0,
+     "deterministic-scaffolding": 1.0,
+     "malformed-repos": 1.0,
+     "multi-file-refactor": 1.0,
+     "packaging": 1.0,
+     "patch-minimization": 1.0,
+     "repo-migration": 1.0,
+     "rollback-recovery": 1.0,
+     "security-repair": 1.0,
+     "single-file-patch": 1.0,
+     "test-repair": 1.0,
+     "validation-aware-repair": 1.0
+    },
+    "per_split": {
+     "adversarial": 1.0,
+     "holdout": 1.0,
+     "regression": 1.0,
+     "test": 1.0
+    },
+    "repair_count": 6,
+    "security_regressions": [],
+    "self_certification_violations": 0,
+    "structural_validity": 1.0,
+    "task_success": 1.0,
+    "token_cost": 0,
+    "tool_calls_per_case": 1.2951,
+    "unnecessary_edits": 0
+   },
+   "engines": {
+    "ca": "2.0.1",
+    "dat": "4.0.0"
+   },
+   "status": "MEASURED",
+   "subject": "blux-ca-dataset 2.0.0 replayed through pinned engines",
+   "timing": {
+    "cpu_total_ms": 3817.15,
+    "p50_ms": 177.99,
+    "p95_ms": 3407.58,
+    "total_ms": 30669.68
+   }
+  },
+  "intent": {
+   "cases": 8,
+   "reason": "needs an external model: run with --live and provider credentials (none available: provider accounts have no balance, docs finding F10)",
+   "status": "BLOCKED"
+  },
+  "malformed_inputs": {
+   "cases": 10,
+   "deterministic": {
+    "accepted_malformed": [],
+    "crashes": [],
+    "task_success": 1.0
+   },
+   "status": "MEASURED",
+   "subject": "blux_sdk model_api.check_request and Contract v1 schemas",
+   "timing": {
+    "p50_ms": 0.17,
+    "p95_ms": 9.26,
+    "total_ms": 10.9
+   }
+  },
+  "policy_risk": {
+   "cases": 36,
+   "deterministic": {
+    "device_flag_mismatches": [],
+    "false_alarms": [],
+    "security_regressions": [
+     "adb-wipe"
+    ],
+    "task_success": 0.9722
+   },
+   "status": "MEASURED",
+   "subject": "blux_runtime.security.commands.detect",
+   "timing": {
+    "p50_ms": 0.15,
+    "p95_ms": 0.27,
+    "total_ms": 5.74
+   }
+  },
+  "reasoning_structure": {
+   "cases": 50,
+   "dataset_commit": "9331f73f7dfb",
+   "deterministic": {
+    "adversarial_refusal_rate": 0.625,
+    "crashes": 0,
+    "hallucinated_capabilities": 0,
+    "per_category": {
+     "adversarial-conflicting-instructions": 1.0,
+     "architecture-decomposition": 1.0,
+     "capability-planning": 1.0,
+     "conflict-resolution": 1.0,
+     "debugging-hypotheses": 1.0,
+     "device-diagnosis-planning": 1.0,
+     "evidence-critique": 1.0,
+     "incomplete-evidence": 1.0,
+     "planning": 1.0,
+     "refusal-escalation": 1.0,
+     "repository-analysis": 1.0,
+     "requirements-extraction": 1.0,
+     "risk-analysis": 1.0,
+     "tradeoff-analysis": 1.0,
+     "uncertainty-handling": 1.0
+    },
+    "per_split": {
+     "adversarial": 1.0,
+     "holdout": 1.0,
+     "regression": 1.0,
+     "test": 1.0
+    },
+    "security_regressions": [],
+    "structural_validity": 1.0,
+    "task_success": 1.0,
+    "token_cost": 0
+   },
+   "engines": {
+    "coga": "2.0.0"
+   },
+   "status": "MEASURED",
+   "subject": "blux-coga-dataset 2.0.0 replayed through pinned engines",
+   "timing": {
+    "cpu_total_ms": 193.76,
+    "p50_ms": 2.35,
+    "p95_ms": 8.15,
+    "total_ms": 261.98
+   }
+  },
+  "repository_diagnosis": {
+   "cases": 3,
+   "reason": "needs an external model: run with --live and provider credentials (none available: provider accounts have no balance, docs finding F10)",
+   "status": "BLOCKED"
+  },
+  "routing": {
+   "cases": 10,
+   "deterministic": {
+    "failures": [],
+    "observed": {
+     "all-fail": {
+      "error": "ALL_ROUTES_FAILED"
+     },
+     "allow-list": {
+      "fallback_used": false,
+      "provider": "deepseek",
+      "route_id": "main.deepseek"
+     },
+     "deterministic": {
+      "fallback_used": false,
+      "provider": "anthropic",
+      "route_id": "main.anthropic"
+     },
+     "exclude-openai": {
+      "fallback_used": false,
+      "provider": "anthropic",
+      "route_id": "main.anthropic"
+     },
+     "fallback-disabled": {
+      "error": "PROVIDER_RATE_LIMITED"
+     },
+     "local-only-unavailable": {
+      "error": "CAPABILITY_UNAVAILABLE"
+     },
+     "non-retryable": {
+      "error": "CONTENT_FILTERED"
+     },
+     "primary-down-fallback": {
+      "fallback_used": true,
+      "provider": "anthropic",
+      "route_id": "main.anthropic"
+     },
+     "primary-ok": {
+      "fallback_used": false,
+      "provider": "openai",
+      "route_id": "main.openai"
+     },
+     "two-down": {
+      "fallback_used": true,
+      "provider": "deepseek",
+      "route_id": "main.deepseek"
+     }
+    },
+    "policy_violations": 0,
+    "task_success": 1.0
+   },
+   "routes_id": "blux-default-2026-10",
+   "status": "MEASURED",
+   "subject": "ModelRouter with the packaged default_routes.json (provider outcomes simulated)",
+   "timing": {
+    "p50_ms": 2.45,
+    "p95_ms": 4.99,
+    "total_ms": 21.43
+   }
+  },
+  "tool_selection": {
+   "cases": 6,
+   "reason": "needs an external model: run with --live and provider credentials (none available: provider accounts have no balance, docs finding F10)",
+   "status": "BLOCKED"
+  }
+ },
+ "summary": {
+  "construction_repair_dat": "MEASURED",
+  "intent": "BLOCKED",
+  "malformed_inputs": "MEASURED",
+  "policy_risk": "MEASURED",
+  "reasoning_structure": "MEASURED",
+  "repository_diagnosis": "BLOCKED",
+  "routing": "MEASURED",
+  "tool_selection": "BLOCKED"
+ }
+}

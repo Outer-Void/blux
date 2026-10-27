@@ -2,6 +2,14 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 35
+- **Generation 0 evaluation baseline (`evals/`).** A reproducible harness and the committed baseline
+  (`evals/reports/gen0/`). MEASURED: policy/risk (36 commands incl. Android/Termux; 1 miss), routing over
+  the packaged table (10/10), malformed inputs (10/10 refused, no crashes), CogA reasoning replay (50
+  records), cA construction/repair with DAT (61 records, 0 self-certification). BLOCKED: intent, tool
+  selection, repository diagnosis (no provider credentials). `--check` fails on any deterministic
+  difference.
+
 ## Unreleased: Stage 34
 - **Training data pipeline (`blux_training`, `training/`).** Turns explicit trajectory sources into versioned
   datasets: eligibility, hidden-reasoning, secret and licence gates; receipt validation; personal-data

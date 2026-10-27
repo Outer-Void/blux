@@ -1,0 +1,8 @@
+{"expect_intent": "repo.diagnose", "id": "intent-0", "prompt": "Why does my Gradle build fail with 'SDK location not found'?"}
+{"expect_intent": "code.construct", "id": "intent-1", "prompt": "Add a --json flag to the CLI and test it"}
+{"expect_intent": "code.repair", "id": "intent-2", "prompt": "Fix the failing test in tests/test_cli.py"}
+{"expect_intent": "reason.compare", "id": "intent-3", "prompt": "Compare SQLite and PostgreSQL for this app"}
+{"expect_intent": "reason.plan", "id": "intent-4", "prompt": "Plan the release of version 2.0"}
+{"expect_intent": "device.flash", "id": "intent-5", "prompt": "Flash the new boot image to my phone"}
+{"expect_intent": "policy.risk", "id": "intent-6", "prompt": "Is it safe to run rm -rf build?"}
+{"expect_intent": "repo.analyze", "id": "intent-7", "prompt": "Summarize what this repository does"}

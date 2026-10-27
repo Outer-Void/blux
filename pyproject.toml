@@ -48,6 +48,8 @@ ignore = ["PLR0911", "PLR0917", "PLR0912", "PLR0913", "PLR0915", "PLR2004", "PLC
 "tests/**" = ["S", "PLR", "BLE", "PLW1510"]
 # Build/packaging tools: fixed-argv subprocesses (git, dpkg-deb, pip download) and dpkg's md5sums format.
 "packaging/**" = ["S603", "S607", "S324", "S310", "PLW1510"]
+# Evaluation harness: fixed-argv subprocesses (git, the dataset interpreters running engine_runner.py).
+"evals/**" = ["S603", "S607"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["blux_sdk", "blux_runtime", "blux_cli", "blux_training"]

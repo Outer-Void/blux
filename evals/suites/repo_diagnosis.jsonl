@@ -1,0 +1,3 @@
+{"expect": "ANDROID_HOME/sdk.dir not set", "fixture": "android project with sdk.dir unset", "id": "diag-missing-sdk"}
+{"expect": "PATH leak from Termux", "fixture": "Termux binaries ahead of Debian PATH in PRoot", "id": "diag-termux-path"}
+{"expect": "dangling interpreter", "fixture": "virtualenv pointing at a removed interpreter", "id": "diag-broken-venv"}

@@ -1,0 +1,6 @@
+{"expect_capability": "devices.list", "id": "tool-0", "task": "List the attached Android devices"}
+{"expect_capability": "repo.security", "id": "tool-1", "task": "Audit this repository for leaked secrets"}
+{"expect_capability": "repo.construct", "id": "tool-2", "task": "Create a new Python package skeleton"}
+{"expect_capability": "code.patch", "id": "tool-3", "task": "Patch the README typo on line 3"}
+{"expect_capability": "repo.quality", "id": "tool-4", "task": "Check whether the release workflow is safe"}
+{"expect_capability": "reason.compare", "id": "tool-5", "task": "Explain the trade-offs of two queue designs"}

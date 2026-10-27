@@ -1,0 +1,10 @@
+{"doc": "hello", "id": "request-not-object", "kind": "model-request"}
+{"doc": {"contract": "blux.model-request", "messages": [{"content": "hi", "role": "user"}], "model_api_version": "1.0"}, "id": "request-missing-model", "kind": "model-request"}
+{"doc": {"contract": "blux.model-request", "messages": [{"content": "hi", "role": "user"}], "model": "gpt-9", "model_api_version": "1.0"}, "id": "request-unknown-model", "kind": "model-request"}
+{"doc": {"contract": "blux.model-request", "messages": [{"content": "hi", "role": "wizard"}], "model": "blux-main", "model_api_version": "1.0"}, "id": "request-bad-role", "kind": "model-request"}
+{"doc": {"contract": "blux.model-request", "messages": [{"content": "hi", "role": "user"}], "model": "blux-main", "model_api_version": "9.0"}, "id": "request-future-version", "kind": "model-request"}
+{"doc": {"contract": "blux.receipt", "contract_version": "1.0", "input_sha256": "XYZ"}, "id": "receipt-bad-sha", "kind": "receipt"}
+{"doc": {}, "id": "receipt-empty", "kind": "receipt"}
+{"doc": {"capability_id": 7, "contract": "blux.capability", "contract_version": "1.0"}, "id": "capability-wrong-types", "kind": "capability"}
+{"doc": {"contract": "blux.project", "contract_version": "1.0", "injected": "$(id)", "name": "x", "project_id": "x"}, "id": "project-extra-fields", "kind": "project"}
+{"doc": null, "id": "result-null", "kind": "result"}

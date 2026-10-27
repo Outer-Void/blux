@@ -1,0 +1,10 @@
+{"expect": {"fallback_used": false, "route_id": "main.openai"}, "id": "primary-ok", "model": "blux-main", "outcomes": {}}
+{"expect": {"fallback_used": true, "route_id": "main.anthropic"}, "id": "primary-down-fallback", "model": "blux-main", "outcomes": {"main.openai": "PROVIDER_UNAVAILABLE"}}
+{"expect": {"fallback_used": true, "route_id": "main.deepseek"}, "id": "two-down", "model": "blux-main", "outcomes": {"main.anthropic": "PROVIDER_TIMEOUT", "main.openai": "PROVIDER_UNAVAILABLE"}}
+{"expect": {"error": "PROVIDER_RATE_LIMITED"}, "id": "fallback-disabled", "model": "blux-main", "outcomes": {"main.openai": "PROVIDER_RATE_LIMITED"}, "routing": {"allow_fallback": false}}
+{"expect": {"error": "CONTENT_FILTERED"}, "id": "non-retryable", "model": "blux-main", "outcomes": {"main.openai": "CONTENT_FILTERED"}}
+{"expect": {"never_providers": ["openai"], "route_id": "main.anthropic"}, "id": "exclude-openai", "model": "blux-main", "outcomes": {}, "routing": {"exclude_providers": ["openai"]}}
+{"expect": {"never_providers": ["openai", "anthropic"], "route_id": "main.deepseek"}, "id": "allow-list", "model": "blux-main", "outcomes": {}, "routing": {"providers": ["deepseek"]}}
+{"capabilities": ["local_only"], "expect": {"error": "CAPABILITY_UNAVAILABLE", "never_providers": ["openai", "anthropic", "deepseek"]}, "id": "local-only-unavailable", "model": "blux-main", "outcomes": {}}
+{"capabilities": ["deterministic"], "expect": {"route_id": "main.anthropic"}, "id": "deterministic", "model": "blux-main", "outcomes": {}}
+{"expect": {"error": "ALL_ROUTES_FAILED"}, "id": "all-fail", "model": "blux-main", "outcomes": {"main.anthropic": "PROVIDER_TIMEOUT", "main.deepseek": "PROVIDER_UNAVAILABLE", "main.openai": "PROVIDER_QUOTA_EXCEEDED"}}
