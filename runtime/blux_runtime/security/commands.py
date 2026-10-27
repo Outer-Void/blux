@@ -48,7 +48,9 @@ RULES: tuple[Rule, ...] = (
     _r(
         "device.adb-destructive",
         "destructive command on an attached Android device",
-        r"\badb\b.*\bshell\b.*\b(?:rm|dd|mkfs|wipe|format|pm\s+(?:uninstall|clear)|setprop|reboot)\b",
+        # `wipe\w*` also catches `--wipe_data`/`wipe_cache` ("_" is a word character, so `\bwipe\b` missed them;
+        # found by the Stage 35 Generation 0 policy suite).
+        r"\badb\b.*\bshell\b.*\b(?:rm|dd|mkfs|wipe\w*|format|pm\s+(?:uninstall|clear)|setprop|reboot)\b",
         device=True,
     ),
     _r(

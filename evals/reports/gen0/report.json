@@ -1,6 +1,6 @@
 {
  "environment": {
-  "blux_commit": "7bdd076856f8",
+  "blux_commit": "8ef10d5dbd87",
   "platform": "Linux aarch64",
   "python": "3.13.5"
  },
@@ -66,10 +66,10 @@
    "status": "MEASURED",
    "subject": "blux-ca-dataset 2.0.0 replayed through pinned engines",
    "timing": {
-    "cpu_total_ms": 3817.15,
-    "p50_ms": 177.99,
-    "p95_ms": 3407.58,
-    "total_ms": 30669.68
+    "cpu_total_ms": 3504.73,
+    "p50_ms": 160.4,
+    "p95_ms": 3239.56,
+    "total_ms": 29573.72
    }
   },
   "intent": {
@@ -88,8 +88,8 @@
    "subject": "blux_sdk model_api.check_request and Contract v1 schemas",
    "timing": {
     "p50_ms": 0.17,
-    "p95_ms": 9.26,
-    "total_ms": 10.9
+    "p95_ms": 9.4,
+    "total_ms": 11.1
    }
   },
   "policy_risk": {
@@ -97,17 +97,15 @@
    "deterministic": {
     "device_flag_mismatches": [],
     "false_alarms": [],
-    "security_regressions": [
-     "adb-wipe"
-    ],
-    "task_success": 0.9722
+    "security_regressions": [],
+    "task_success": 1.0
    },
    "status": "MEASURED",
    "subject": "blux_runtime.security.commands.detect",
    "timing": {
     "p50_ms": 0.15,
-    "p95_ms": 0.27,
-    "total_ms": 5.74
+    "p95_ms": 0.26,
+    "total_ms": 5.89
    }
   },
   "reasoning_structure": {
@@ -151,10 +149,10 @@
    "status": "MEASURED",
    "subject": "blux-coga-dataset 2.0.0 replayed through pinned engines",
    "timing": {
-    "cpu_total_ms": 193.76,
-    "p50_ms": 2.35,
-    "p95_ms": 8.15,
-    "total_ms": 261.98
+    "cpu_total_ms": 173.38,
+    "p50_ms": 1.89,
+    "p95_ms": 9.55,
+    "total_ms": 247.6
    }
   },
   "repository_diagnosis": {
@@ -217,9 +215,9 @@
    "status": "MEASURED",
    "subject": "ModelRouter with the packaged default_routes.json (provider outcomes simulated)",
    "timing": {
-    "p50_ms": 2.45,
-    "p95_ms": 4.99,
-    "total_ms": 21.43
+    "p50_ms": 2.46,
+    "p95_ms": 5.52,
+    "total_ms": 22.53
    }
   },
   "tool_selection": {

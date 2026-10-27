@@ -223,6 +223,7 @@ def test_dangerous_command_detection_covers_the_golden_and_is_stricter_only_wher
         else:
             assert not d.dangerous, row["command"]
     assert detect("fastboot flashing unlock").device and detect("adb shell rm -rf /sdcard").device
+    assert detect("adb shell recovery --wipe_data").device and detect("adb shell recovery --wipe_cache").dangerous
     assert detect("echo 'unterminated").dangerous and detect("x" * 20000).dangerous
 
 

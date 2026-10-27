@@ -2,6 +2,15 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: Stage 36
+- **Native specialist register (`training/SPECIALISTS.md`, `specialists.json`).** All eight Generation 1
+  candidates with the ten required points. None integrated. Rejected with evidence: capability routing
+  (Router 0.1 failed protected evaluation; 0.2 blocked on data), risk classification (the deterministic
+  rule scores 36/36), verdict classification (DAT is the deterministic authority). Blocked on data:
+  intent, tool selection, repair ranking, code-patch ranking.
+- **Command risk:** `adb shell recovery --wipe_data` / `--wipe_cache` are now detected as destructive device
+  commands (`\bwipe\b` missed `wipe_data`; found by the Gen 0 policy suite). The baseline was regenerated.
+
 ## Unreleased: Stage 35
 - **Generation 0 evaluation baseline (`evals/`).** A reproducible harness and the committed baseline
   (`evals/reports/gen0/`). MEASURED: policy/risk (36 commands incl. Android/Termux; 1 miss), routing over
