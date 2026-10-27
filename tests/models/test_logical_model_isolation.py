@@ -23,14 +23,18 @@ def physical_models() -> set[str]:
 
 
 def tracked_python() -> list[Path]:
-    out = subprocess.run(["git", "-C", str(ROOT), "ls-files", "--", *CODE_DIRS], capture_output=True, text=True, check=True)
+    out = subprocess.run(
+        ["git", "-C", str(ROOT), "ls-files", "--", *CODE_DIRS], capture_output=True, text=True, check=True
+    )
     return [ROOT / p for p in out.stdout.split() if p.endswith(".py")]
 
 
 def test_code_never_names_a_physical_model() -> None:
     models = physical_models()
     assert models
-    offenders = [(p.relative_to(ROOT), m) for p in tracked_python() for m in models if m in p.read_text(encoding="utf-8")]
+    offenders = [
+        (p.relative_to(ROOT), m) for p in tracked_python() for m in models if m in p.read_text(encoding="utf-8")
+    ]
     assert offenders == []
 
 
