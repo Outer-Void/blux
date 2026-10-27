@@ -1,0 +1,24 @@
+{
+  "schema": "blux.development-research-protocol",
+  "version": 1,
+  "seed": 1729,
+  "n_splits": 5,
+  "splitter": "StratifiedGroupKFold shuffle=True; groups are source semantic families",
+  "representations": ["word", "char", "word-char"],
+  "C": 4.0,
+  "class_weight": "balanced",
+  "solver": "lbfgs",
+  "max_iter": 2000,
+  "threads": 1,
+  "protected_evaluations": [],
+  "promotion": "not permitted by development cross-validation",
+  "calibration": "none; report raw diagnostic probabilities and accuracy, not operational confidence",
+  "paired_bootstrap": {"unit": "semantic family", "resamples": 1000, "interval": [0.025, 0.975]},
+  "learning_curve": {"objective": "family", "representation": "word", "training_family_fractions": [0.5, 0.75, 1.0], "subset_rule": "hash-ranked source families within each capability; at least one per present class"},
+  "experiments": [
+    {"id": "blux-family-router-0.1", "hypothesis": "Family signal survives source-family grouping and outperforms deterministic keyword-family routing; word family head also represents the equivalent Phase-1 hierarchical family submodel."},
+    {"id": "blux-router-representation-0.1", "hypothesis": "Character features or combined word/character features improve capability routing on held-out development families relative to word-only direct classification and unchanged keyword routing."},
+    {"id": "blux-ood-feasibility-0.1", "hypothesis": "In-domain lexical novelty and confidence can diagnose errors but cannot establish OOD precision/recall without rights-cleared negatives; no OOD model may be promoted."},
+    {"id": "blux-routing-data-quality-0.1", "hypothesis": "Record counts overstate independent family evidence, and missing labels/negatives and source refusal semantics limit interpretation."}
+  ]
+}
