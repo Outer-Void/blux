@@ -91,6 +91,12 @@
    "path": "tests/models/test_model_api.py",
    "fingerprint": "9960892cfed86f7feda2b1587d599357f5fea8d2ac746f4e195f28e780cf058d",
    "reason": "deliberately fake credential-shaped test constant proving redaction/no-leak behaviour"
+  },
+  {
+   "rule_id": "secrets.stripe-key",
+   "path": "tests/training/test_pipeline.py",
+   "fingerprint": "082a5f59a99a038762758bdfd93854c9f1613246e7a9ad8e25f65047e73d1062",
+   "reason": "deliberately fake credential-shaped value in a test proving redaction or rejection"
   }
  ]
 }
