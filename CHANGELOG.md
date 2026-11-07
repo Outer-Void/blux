@@ -2,6 +2,22 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: OV-53
+Found by the OV-53 review of the native-model research controls. Each fix has a test that fails on cfd7470
+(`tests/training/test_ov53_gates.py`). `blux_training` pipeline version 1.1.0.
+- **Fix: reasoning-model output passed the hidden-reasoning gate.** `<think>` blocks (the format of Qwen3, the
+  shortlisted base, and DeepSeek-R1), harmony analysis channels and fields such as `reasoning`,
+  `reasoning_details`, `thought_process` and `thinking_blocks` were accepted as training data. They are now
+  rejected; BLUX's explicit structures (`reasoning_structure`, CogA's `reflection`) are kept.
+- **Fix: common personal data passed unredacted.** Look-alike e-mail domains (`notexample.com`), phone numbers
+  without a country code or in international groups, IPv6, `/root` and Windows home paths, card numbers and US
+  SSNs. Python slices, times, MAC addresses, hashes and ids are not redacted (tested).
+- **Fix: reworded siblings of protected items could enter training.** In one build, or in the next version built
+  with the previous split lock, a lightly reworded copy of a holdout item was assigned to train. Such records are
+  now rejected as contamination; the previous dataset's protected splits are protected automatically.
+- **F94:** `training/dataset-program` is formatted and lint-clean (no behaviour change: the preflight's syntax
+  tree is unchanged), so `make lint` passes for the whole repository.
+
 ## Unreleased: OV-52
 Found by the OV-52 review of receipt durability (deep-audit findings F83–F85 and the delta review). Each fix has
 a test that fails on 9cd53ef (`tests/runtime/test_receipt_durability.py`, `tests/cli/test_agent_cmd.py`,

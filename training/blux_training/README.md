@@ -20,13 +20,13 @@ trajectory source (schemas/source.v1)
 | Gate | Rule | Outcome |
 |---|---|---|
 | Eligibility | Synthetic sources declare `basis=synthetic`, `data_class=synthetic`. BLUX operations need an owner approval (`approved_by`, `approved_at`), public data and their receipts. **Private user or project data is never training data, even when approved.** | reject |
-| Hidden reasoning | Any field named like model reasoning (`chain_of_thought`, `scratchpad`, `thinking`, …) or a `<thinking>` marker. Only explicit BLUX structures are kept. | reject |
+| Hidden reasoning | Any field named like model reasoning (`chain_of_thought`, `scratchpad`, `thinking`, `reasoning`, `reasoning_details`, `thought_process`, …) or a reasoning marker (`<think>` as Qwen3 and DeepSeek-R1 emit it, `<thinking>`, a harmony `analysis` channel). Only explicit BLUX structures (`reasoning_structure`, CogA's `reflection`) are kept. | reject |
 | Secrets | Credentials and secret-named values anywhere (BLUX's `redact()` patterns) | reject (never partly redacted) |
-| Personal data | E-mail outside example domains, phone numbers, non-documentation IPv4, home paths, terms from `--private-terms` | redacted; `privacy_class: redacted` |
+| Personal data | E-mail outside the reserved example domains (and their subdomains), phone numbers with separators or a `+` country code, non-documentation IPv4 and IPv6, home paths (`/home`, `/Users`, `/root`, Termux, `C:\Users`), Luhn-valid card numbers, US SSNs, terms from `--private-terms`. Bare digit runs are not treated as phone numbers | redacted; `privacy_class: redacted` |
 | Licences | At least one allowed licence; every constructed artifact has one | reject |
 | Quality | Overall score below 0.5 (completeness, validation results, repair iterations) | reject |
 | Duplicates | Same content hash, or 3-gram Jaccard ≥ 0.9 with a kept record | reject |
-| Contamination | ≥ 80% of a record's input appears in one protected evaluation item (`--protected`) | reject |
+| Contamination | ≥ 80% of a record's input appears in one protected evaluation item: `--protected` files, the previous dataset's test/holdout/regression splits (found next to `--lock`), or a protected record of the same build | reject |
 | Splits | Hash-based train/validation/test. A `split_hint` can only protect (holdout, test, regression). A record in the lock never moves. | assign |
 
 Reports name the rule and the location, never the offending value.

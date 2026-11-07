@@ -21,3 +21,5 @@ model ID fallback/rollback. No promotion from Router-only accuracy.
 
 Status: protocol drafted; custodian, independent items, final thresholds, compute budget,
 baselines, serious training, protected evaluation and rollback exercise NOT COMPLETE.
+OV-53 (2026-11-07): still not complete. The custodian and the compute budget are owner decision D-15;
+the corpus is D-09. Native models stay EXPERIMENTAL.

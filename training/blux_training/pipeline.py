@@ -4,7 +4,11 @@ Order (each stage sees only what the previous one passed):
   source schema -> eligibility -> hidden reasoning -> secrets -> licences -> receipt validation
   -> personal-data redaction -> normalization -> canonical record -> record schema -> quality
   -> exact and near-duplicate removal -> contamination against protected evaluation sets
-  -> split assignment (lock-protected) -> versioned dataset (records, manifest, report, lock)
+  -> split assignment (lock-protected) -> sibling check: a train/validation record whose input is contained in a
+     protected record of the same build is rejected (OV-53) -> versioned dataset (records, manifest, report, lock)
+
+When `lock_path` is a previous dataset's `split-lock.json`, that dataset's protected splits are added to the
+protected evaluation sets automatically, so a reworded sibling of an earlier holdout item cannot enter training.
 
 Outputs never include rejected content: the report lists each input file, its outcome and the reasons.
 """
@@ -271,7 +275,11 @@ def build(
 ) -> dict[str, Any]:
     files = sorted(p for p in inputs.rglob("*.json") if p.is_file())
     lock: dict[str, str] = json.loads(lock_path.read_text())["assignments"] if lock_path and lock_path.exists() else {}
-    protected_sets = load_protected(protected or [])
+    protected_paths = list(protected or [])
+    if lock_path and lock_path.exists():
+        previous = lock_path.parent / "splits"
+        protected_paths += [previous / f"{s}.jsonl" for s in PROTECTED_SPLITS if (previous / f"{s}.jsonl").is_file()]
+    protected_sets = load_protected(protected_paths)
     outcomes, kept, hints = [], [], {}
     seen_content: dict[str, str] = {}
     kept_shingles: list[tuple[str, set[str]]] = []
@@ -319,8 +327,21 @@ def build(
 
     by_split: dict[str, list[dict[str, Any]]] = {s: [] for s in SPLITS}
     new_lock = dict(lock)
-    for record in kept:
-        split = assign_split(record, hints[record["record_id"]], lock)
+    assigned = [(record, assign_split(record, hints[record["record_id"]], lock)) for record in kept]
+    guarded = [(r["record_id"], shingles(text_of(r))) for r, split in assigned if split in PROTECTED_SPLITS]
+    by_outcome = {o.record_id: o for o in outcomes if o.record_id}
+    for record, split in assigned:
+        if split not in PROTECTED_SPLITS and record["record_id"] not in lock:
+            task = shingles(text_of(record["input"]))
+            sibling = next(
+                (rid for rid, sh in guarded if rid != record["record_id"] and containment(task, sh) >= CONTAMINATION),
+                None,
+            )
+            if sibling:
+                o = by_outcome[record["record_id"]]
+                o.record_id = None
+                o.reject(f"contamination: input appears in protected record {sibling} of this build")
+                continue
         record["dataset_split"] = split
         new_lock[record["record_id"]] = split
         by_split[split].append(seal(record))
@@ -355,7 +376,7 @@ def build(
         "split_sha256": split_digests,
         "inputs_sha256": sha256("".join(sha256(p.read_bytes()) for p in files)),
         "lock_sha256": sha256(json.dumps(lock_doc, indent=1, sort_keys=True) + "\n"),
-        "protected_sources": len(protected_sets),
+        "protected_sources": len(protected_sets),  # items, including a previous dataset's protected splits
     }
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
     return {"manifest": manifest, "report": report}

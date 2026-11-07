@@ -287,8 +287,9 @@ def test_authoritative_integrity_gate(tmp_path, mutation):
     import shutil
     import subprocess
 
-    source = Path("/workspace/blux-coga-dataset")
-    interpreter = Path("/workspace/setup/blux-coga-dataset/bin/python")
+    # The cloud layout by default; elsewhere point these at a checkout and its pinned environment (OV-53).
+    source = Path(os.environ.get("BLUX_COGA_DATASET", "/workspace/blux-coga-dataset"))
+    interpreter = Path(os.environ.get("BLUX_COGA_DATASET_PYTHON", "/workspace/setup/blux-coga-dataset/bin/python"))
     if not source.exists() or not interpreter.exists():
         pytest.skip("requires sibling dataset and its pinned environment")
     root = tmp_path / "dataset"

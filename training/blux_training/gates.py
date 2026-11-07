@@ -6,10 +6,12 @@ Policy (v1, fixed in code so it cannot be loosened by an input file):
   (who, when) and public data. Private user or project data is never training data, approved or not;
 - secrets: any credential or secret-named value anywhere means rejection (never redaction), because a partly
   redacted secret is still a leak;
-- personal data (e-mail outside reserved example domains, phone numbers, non-documentation IPv4, home-directory
-  paths, owner-listed private terms): redacted in place, and the record is marked `privacy_class: redacted`;
-- hidden reasoning: any field named like model reasoning (`chain_of_thought`, `scratchpad`, `thinking` …) or a
-  `<thinking>` marker means rejection. Only explicit BLUX structures are kept;
+- personal data (e-mail outside reserved example domains, phone numbers, non-documentation IPv4 and IPv6,
+  home-directory paths, payment card numbers, US social security numbers, owner-listed private terms): redacted in
+  place, and the record is marked `privacy_class: redacted`;
+- hidden reasoning: any field named like model reasoning (`chain_of_thought`, `scratchpad`, `thinking`,
+  `reasoning` …) or a reasoning marker (`<think>`, `<thinking>`, a harmony `analysis` channel) means rejection.
+  Only explicit BLUX structures (such as `reasoning_structure` and CogA's `reflection`) are kept;
 - licences: every source needs at least one allowed licence, and every constructed artifact its own.
 """
 
@@ -29,18 +31,35 @@ ALLOWED_LICENSES = frozenset(
 
 EMAIL = re.compile(r"\b[A-Za-z0-9._%+-]+@((?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,})\b")
 ALLOWED_EMAIL_DOMAINS = ("example.com", "example.org", "example.net", "example.invalid")
-PHONE = re.compile(r"(?<![\w.])\+?\d{1,3}[ .-]?\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4}(?![\w.])")
-IPV4 = re.compile(r"(?<![\w.])(\d{1,3}(?:\.\d{1,3}){3})(?![\w.])")
-DOC_NETS = [ipaddress.ip_network(n) for n in ("192.0.2.0/24", "198.51.100.0/24", "203.0.113.0/24", "127.0.0.0/8")]
-HOME = re.compile(
-    r"(/home/(?!user\b)[a-z_][a-z0-9_-]*|/Users/(?!user\b)[A-Za-z0-9_-]+|/data/data/[a-z]+\.[a-z.]+/files/home)"
+# A national number with separators ("555-123-4567", "(555) 123-4567", "+1 555 123 4567"), or an international
+# number in digit groups ("+44 20 7946 0958"). Bare digit runs are not matched: ids and counts look the same.
+PHONE = re.compile(
+    r"(?<![\w.+])(?:\+\d{1,3}[ .-]?)?\(?\d{3}\)?[ .-]\d{3}[ .-]\d{4}(?![\w.])"
+    r"|(?<![\w.+])\+\d{1,3}(?:[ .-]\(?\d{1,4}\)?){2,5}(?![\w.])"
 )
+IPV4 = re.compile(r"(?<![\w.])(\d{1,3}(?:\.\d{1,3}){3})(?![\w.])")
+IPV6 = re.compile(r"(?<![\w:.])([0-9A-Fa-f]{0,4}(?::[0-9A-Fa-f]{0,4}){2,7})(?![\w:.])")
+DOC_NETS = [
+    ipaddress.ip_network(n)
+    for n in ("192.0.2.0/24", "198.51.100.0/24", "203.0.113.0/24", "127.0.0.0/8", "2001:db8::/32", "::1/128", "::/128")
+]
+HOME = re.compile(
+    r"(/home/(?!user\b)[a-z_][a-z0-9_-]*|/Users/(?!user\b)[A-Za-z0-9_-]+|/data/data/[a-z]+\.[a-z.]+/files/home"
+    r"|/root(?![\w-]))"
+)
+WIN_HOME = re.compile(r"\b([A-Za-z]:[\\/]+Users[\\/]+)(?!user\b|Public\b)[^\\/\s\"']+", re.I)
+CARD = re.compile(r"(?<![\w.])[2-6](?:[ -]?\d){12,18}(?![\w.])")  # card networks start with 2-6; Luhn-checked
+SSN = re.compile(r"(?<![\w.-])(?!000|666|9\d\d)\d{3}-(?!00)\d{2}-(?!0000)\d{4}(?![\w.-])")
 COT_KEY = re.compile(
-    r"^(thoughts?|chain[_-]?of[_-]?thoughts?|cot|scratch[_-]?pad|hidden[_-]?reasoning|reasoning[_-]?(trace|tokens|content)"
-    r"|inner[_-]?monologue|internal[_-]?reasoning|thinking)$",
+    r"^(thoughts?|thought[_-]?process|chain[_-]?of[_-]?thoughts?|cot|scratch[_-]?pad|hidden[_-]?reasoning"
+    r"|reasoning([_-]?(trace|tokens|content|details|summary|items|text))?"
+    r"|inner[_-]?monologue|internal[_-]?reasoning|thinking([_-]?(blocks?|content|text))?)$",
     re.I,
 )
-COT_MARKER = re.compile(r"</?\s*(thinking|scratchpad|antThinking|reasoning)\s*>", re.I)
+# Tags reasoning models emit inline (Qwen3 and DeepSeek-R1 use <think>), and gpt-oss's harmony analysis channel.
+COT_MARKER = re.compile(
+    r"</?\s*(think|thinking|thought|scratchpad|antThinking|reasoning)\s*>|<\|channel\|>\s*analysis", re.I
+)
 
 
 @dataclass
@@ -100,7 +119,9 @@ def secrets(document: Any) -> GateResult:
 
 def _redact_text(text: str, private_terms: tuple[str, ...], hits: set[str]) -> str:
     def email(m: re.Match[str]) -> str:
-        if m.group(1).lower().endswith(ALLOWED_EMAIL_DOMAINS):
+        domain = m.group(1).lower()
+        # The reserved domain itself or a subdomain of it; "notexample.com" is a real domain.
+        if any(domain == d or domain.endswith("." + d) for d in ALLOWED_EMAIL_DOMAINS):
             return m.group(0)
         hits.add("email")
         return "[REDACTED:email]"
@@ -115,13 +136,39 @@ def _redact_text(text: str, private_terms: tuple[str, ...], hits: set[str]) -> s
         hits.add("ipv4")
         return "[REDACTED:ip]"
 
+    def ip6(m: re.Match[str]) -> str:
+        if sum(1 for g in m.group(1).split(":") if g) < 3:
+            return m.group(0)  # slices such as xs[1::2], scopes such as a::b: too short to identify anyone
+        try:
+            addr = ipaddress.IPv6Address(m.group(1))
+        except ValueError:
+            return m.group(0)  # times such as 12:30:45 and other colon-separated text
+        if any(addr in n for n in DOC_NETS):
+            return m.group(0)
+        hits.add("ipv6")
+        return "[REDACTED:ip]"
+
+    def card(m: re.Match[str]) -> str:
+        digits = [int(c) for c in m.group(0) if c.isdigit()]
+        total = sum(d if i % 2 == 0 else (d * 2 - 9 if d > 4 else d * 2) for i, d in enumerate(reversed(digits)))
+        if total % 10:
+            return m.group(0)  # not a Luhn-valid card number
+        hits.add("card")
+        return "[REDACTED:card]"
+
     text = EMAIL.sub(email, text)
     text = IPV4.sub(ip, text)
+    text = IPV6.sub(ip6, text)
+    text = CARD.sub(card, text)
+    text, n = SSN.subn("[REDACTED:ssn]", text)
+    if n:
+        hits.add("ssn")
     text, n = PHONE.subn("[REDACTED:phone]", text)
     if n:
         hits.add("phone")
     text, n = HOME.subn("/home/user", text)
-    if n:
+    text, m = WIN_HOME.subn(lambda x: x.group(1) + "user", text)
+    if n or m:
         hits.add("home-path")
     for term in private_terms:
         pattern = re.compile(re.escape(term), re.I)
