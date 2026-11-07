@@ -2,6 +2,16 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: OV-51
+Found by the OV-51 engine-reliability review through GOD, which reads every project under a root with this
+loader (as the runtime does). Each fix has a test that fails on 4163637 (`tests/sdk/test_dot_blux_hostile.py`).
+- **Fix: one hostile `.blux/` could hang or crash discovery.** A named pipe blocked `dot_blux.load` for ever, a
+  symbolic link was followed out of `.blux/`, a file was read whole before the 1 MiB check, and deeply nested
+  YAML raised `RecursionError`. The SDK now opens only regular files (`O_NOFOLLOW`, non-blocking, `fstat`),
+  reads at most the limit, and reports `not_a_regular_file` and `nesting_too_deep` as `MALFORMED_INPUT`.
+- **Fix: YAML alias bombs.** About 350 bytes of aliases took 24 s to check, and each further level costs nine
+  times more. Alias expansion is now bounded by the byte limit (`too_large`); the check is iterative.
+
 ## Unreleased: OV-50
 Found by the OV-50 delta review of tool approvals, path confinement, timeouts and no-model use; each fix has a
 test that fails on 56c9b76 (`tests/runtime/test_tool_hardening.py`, `tests/cli/test_agent_cmd.py`).

@@ -14,6 +14,11 @@ A repository joins the BLUX federation by committing a `.blux/` directory at its
 - **Quote `contract_version`** (`"1.0"`). Unquoted `1.0` is a YAML float and fails with `MALFORMED_CONTRACT_VERSION`.
 - `manifest.capabilities` and `manifest.policy` are bare file names inside `.blux/`. Paths and `..` are rejected by schema.
 - Duplicate keys, non-string keys, dates, NaN and custom tags are rejected (`MALFORMED_INPUT`).
+- Each file is a regular file of at most 1 MiB. Symbolic links, pipes, devices and directories are refused
+  (`MALFORMED_INPUT`, `reason: not_a_regular_file`) without being opened for reading, so they cannot point outside
+  `.blux/` or block a scan. Reads stop at the limit (`too_large`). Nesting too deep for the parser is
+  `nesting_too_deep`, and YAML aliases may not expand a document to more values than its byte limit
+  (`too_large`); no alias-free document within the limit reaches it.
 - Files are untrusted metadata. Loading them never executes code, installs anything or resolves `provider.entrypoint`.
 - Each capability's `side_effects` and `required_permissions` must be honest. Policy can only constrain what is declared.
 

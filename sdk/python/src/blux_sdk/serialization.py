@@ -1,8 +1,9 @@
 """Strict parsing and canonical serialization.
 
-Inputs are parsed defensively: duplicate keys, NaN/Infinity, non-UTF-8 bytes, oversized payloads and
-non-object documents are MALFORMED_INPUT. Output is canonical JSON (sorted keys, no insignificant
-whitespace, UTF-8) so hashes in receipts are reproducible.
+Inputs are parsed defensively: duplicate keys, NaN/Infinity, non-UTF-8 bytes, oversized payloads, nesting too
+deep for the parser, YAML aliases that expand past the size limit, and non-object documents are
+MALFORMED_INPUT. Output is canonical JSON (sorted keys, no insignificant whitespace, UTF-8) so hashes in
+receipts are reproducible.
 """
 
 from __future__ import annotations
@@ -91,27 +92,41 @@ def loads_yaml(data: str | bytes, *, max_bytes: int = MAX_DOCUMENT_BYTES) -> dic
     except yaml.YAMLError as exc:
         mark = getattr(exc, "problem_mark", None)
         raise _malformed("invalid_yaml", line=(mark.line + 1) if mark else None) from None
+    except RecursionError:
+        raise _malformed("nesting_too_deep") from None
     if not isinstance(value, dict):
         raise _malformed("not_an_object", type=type(value).__name__)
-    _check_json_compatible(value)
+    _check_json_compatible(value, max_nodes=max_bytes)
     return value
 
 
-def _check_json_compatible(value: Any, path: str = "$") -> None:
-    """YAML can express values JSON cannot (dates, non-string keys, NaN); contracts are JSON."""
-    if isinstance(value, dict):
-        for k, v in value.items():
-            if not isinstance(k, str):
-                raise _malformed("non_string_key", path=path)
-            _check_json_compatible(v, f"{path}.{k}")
-    elif isinstance(value, list):
-        for i, v in enumerate(value):
-            _check_json_compatible(v, f"{path}[{i}]")
-    elif isinstance(value, float):
-        if not math.isfinite(value):
-            raise _malformed("non_finite_number", path=path)
-    elif not (value is None or isinstance(value, (str, int, bool))):
-        raise _malformed("unsupported_type", path=path, type=type(value).__name__)
+def _check_json_compatible(value: Any, *, max_nodes: int) -> None:
+    """YAML can express values JSON cannot (dates, non-string keys, NaN); contracts are JSON.
+
+    Aliases let a few hundred bytes of YAML expand to billions of values, so the walk stops after max_nodes
+    values (the byte limit). Every value in an alias-free document takes at least one byte, so a document within
+    the size limit never reaches it. The walk is iterative and visits values in document order, as before.
+    """
+    stack: list[tuple[Any, str]] = [(value, "$")]
+    seen = 1
+    while stack:
+        value, path = stack.pop()
+        if isinstance(value, (dict, list)):
+            seen += len(value)  # counted before they are queued, so the queue stays bounded too
+            if seen > max_nodes:
+                raise _malformed("too_large", expands_to_more_than=max_nodes)
+        if isinstance(value, dict):
+            for k in value:
+                if not isinstance(k, str):
+                    raise _malformed("non_string_key", path=path)
+            stack.extend((v, f"{path}.{k}") for k, v in reversed(value.items()))
+        elif isinstance(value, list):
+            stack.extend((value[i], f"{path}[{i}]") for i in reversed(range(len(value))))
+        elif isinstance(value, float):
+            if not math.isfinite(value):
+                raise _malformed("non_finite_number", path=path)
+        elif not (value is None or isinstance(value, (str, int, bool))):
+            raise _malformed("unsupported_type", path=path, type=type(value).__name__)
 
 
 def canonical_json(value: Any) -> str:
