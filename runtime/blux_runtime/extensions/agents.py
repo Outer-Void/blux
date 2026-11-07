@@ -32,7 +32,12 @@ from blux_sdk import envelopes, model_api
 
 
 class AgentError(RuntimeError):
-    pass
+    """`outcome` is the failed model call's Outcome when the model call is what failed (OV-50), so a caller can
+    explain it, e.g. that no model is configured, instead of only "EXECUTION_FAILED"."""
+
+    def __init__(self, message: str, *, outcome: Any = None) -> None:
+        super().__init__(message)
+        self.outcome = outcome
 
 
 def tool_name(capability_id: str) -> str:
@@ -102,7 +107,9 @@ class AgentRunner:
                 if gen.sink_error is not None:
                     result.unrecorded.append(gen.result["operation_id"])
                 if gen.result["status"] != "succeeded":
-                    raise AgentError(f"model call failed: {(gen.result['error'] or {}).get('code')}")
+                    error = gen.result["error"] or {}
+                    code = (error.get("details") or {}).get("provider_code") or error.get("code")
+                    raise AgentError(f"model call failed: {code}", outcome=gen)
                 output = gen.result["output"]["output"]
                 calls = output["tool_calls"]
                 messages.append(

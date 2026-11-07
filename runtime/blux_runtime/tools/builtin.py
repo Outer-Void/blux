@@ -15,14 +15,17 @@ Clean-room implementations of retained BLHermes behaviour; no upstream code.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import shutil
 import signal
 import subprocess
+import threading
+import time
 from importlib import resources
 from pathlib import Path
-from typing import Any
+from typing import IO, Any
 
 from blux_runtime.interfaces import ExecutionContext
 from blux_runtime.registry import CapabilityRegistry
@@ -32,6 +35,7 @@ from blux_runtime.security import (
     confine,
     detect,
     redact,
+    workspace_write_needs_approval,
     write_denied,
     write_needs_approval,
 )
@@ -113,6 +117,42 @@ def _fail(message: str, **details: Any) -> BluxError:
     return BluxError(ErrorCode.EXECUTION_FAILED, message, details=details)
 
 
+class _Capture:
+    """Drain one pipe on a thread, keeping the first MAX_OUTPUT bytes and counting the rest (OV-50: a command's
+    output no longer has to fit in memory before it is cut)."""
+
+    def __init__(self, stream: IO[bytes] | None) -> None:
+        self.data = bytearray()
+        self.truncated = False
+        self.stream = stream
+        self.thread = threading.Thread(target=self._drain, daemon=True)
+        self.thread.start()
+
+    def _drain(self) -> None:
+        stream = self.stream
+        if stream is None:
+            return
+        with contextlib.suppress(OSError, ValueError):
+            for chunk in iter(lambda: stream.read1(65536), b""):  # type: ignore[attr-defined]
+                room = MAX_OUTPUT - len(self.data)
+                if len(chunk) > room:
+                    self.truncated = True
+                self.data += chunk[: max(0, room)]
+
+    def alive(self) -> bool:
+        return self.thread.is_alive()
+
+    def join(self) -> None:
+        # A process that left the command's process group can hold the pipe open; never wait on it for long.
+        self.thread.join(2)
+        if self.stream is not None:
+            with contextlib.suppress(OSError):
+                self.stream.close()
+
+    def text(self) -> str:
+        return bytes(self.data).decode("utf-8", "replace")
+
+
 def _session(ctx: ExecutionContext) -> str:
     return ctx.session_id or ctx.operation_id  # without a session, no approval can carry over
 
@@ -151,18 +191,36 @@ def register(
             stderr=subprocess.PIPE,
             start_new_session=True,
         )
+        out, err = _Capture(proc.stdout), _Capture(proc.stderr)
+        deadline = time.monotonic() + max(0.1, context.timeout_ms / 1000 - 0.2)
+        stopped = None
         try:
-            out, err = proc.communicate(timeout=max(0.1, context.timeout_ms / 1000 - 0.2))
-        except subprocess.TimeoutExpired:
-            os.killpg(proc.pid, signal.SIGKILL)
-            proc.communicate()
-            raise _fail("Command exceeded its timeout and was killed.", reason="timeout") from None
-        truncated = len(out) > MAX_OUTPUT or len(err) > MAX_OUTPUT
+            # Like communicate(): finish when the shell has exited and both pipes are closed. Unlike it, keep
+            # only MAX_OUTPUT bytes of each stream, and stop at the deadline or when the caller cancels.
+            while proc.poll() is None or out.alive() or err.alive():
+                if context.cancel.is_set():
+                    stopped = "cancelled"
+                    break
+                if time.monotonic() >= deadline:
+                    stopped = "timeout"
+                    break
+                time.sleep(0.02)
+        finally:
+            if stopped is not None or proc.poll() is None:
+                with contextlib.suppress(ProcessLookupError):
+                    os.killpg(proc.pid, signal.SIGKILL)
+            proc.wait()
+            out.join()
+            err.join()
+        if stopped == "cancelled":
+            raise _fail("Command was cancelled and killed.", reason="cancelled")
+        if stopped == "timeout":
+            raise _fail("Command exceeded its timeout and was killed.", reason="timeout")
         return {
             "exit_code": proc.returncode,
-            "stdout": redact(out[:MAX_OUTPUT].decode("utf-8", "replace")),
-            "stderr": redact(err[:MAX_OUTPUT].decode("utf-8", "replace")),
-            "truncated": truncated,
+            "stdout": redact(out.text()),
+            "stderr": redact(err.text()),
+            "truncated": out.truncated or err.truncated,
             "approval": decision.basis,
             "rule": detection.rule,
         }
@@ -186,7 +244,7 @@ def register(
         if write_denied(path):
             raise _fail("Writing credential or system files is not allowed.", reason="denied_path")
         basis = "safe"
-        if write_needs_approval(path):
+        if write_needs_approval(path) or workspace_write_needs_approval(path, root):
             rule = f"fs.write:{path}"
             if not gate.is_approved(_session(context), rule):
                 raise _fail(

@@ -2,6 +2,21 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: OV-50
+Found by the OV-50 delta review of tool approvals, path confinement, timeouts and no-model use; each fix has a
+test that fails on 56c9b76 (`tests/runtime/test_tool_hardening.py`, `tests/cli/test_agent_cmd.py`).
+- **Fix: `shell.exec` bypassed the file tools' rules.** `cat ~/.ssh/id_ed25519` and `echo ... >> ~/.bashrc` ran
+  without approval although `fs.read` and `fs.write` refuse or gate those paths. New rules `credential.path` and
+  `autorun.write` require an approval (none of the BLHermes goldens change).
+- **Fix: `fs.write` could plant a git hook.** Writes into a workspace's `.git/` or `.blux/` now need an approval.
+- **Fix: `shell.exec` buffered all output.** It held the whole output before cutting it to 64 KiB (400 MB of
+  output cost about 765 MB of memory). It now keeps 64 KiB per stream while reading.
+- **Fix: `shell.exec` ignored cancellation.** A cancelled call ran to the end and reported success. It now
+  kills the process group and fails with reason `cancelled`.
+- **Fix: `blux agent` hid why the model failed.** With no provider configured it printed only
+  `EXECUTION_FAILED` and exited 1. It now prints the routes, hints and receipt as `blux ask` does, with the same
+  exit codes (3 configuration, 4 timeout, 130 cancelled).
+
 ## Unreleased: Stage 43
 - **Fix: `blux agent` records receipts in BLUX System.** It ignored a configured `system_store` (its runtime had
   no receipt sink), so `ax agent` runs left nothing in BLUX System. It now uses the same sink as `blux ask`, links

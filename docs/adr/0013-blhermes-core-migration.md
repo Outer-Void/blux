@@ -35,7 +35,14 @@ Stage 13 moves that core into BLUX-owned modules in a fixed order:
    - **Device commands.** Device commands (fastboot, bootloader, partition, destructive adb) need a
      one-time approval per command. Session approvals and YOLO never cover them.
    - **Write safety.** Legacy `auth.json` is write-denied. Shell start-up files and `.gitconfig` need
-     approval.
+     approval. Since OV-50, so does a write into a workspace's `.git/` (hooks, config) or `.blux/`, which hold
+     code that runs later.
+   - **Shell matches the file tools (OV-50).** A command that mentions a credential file fs.read refuses
+     (`credential.path`), or writes a start-up file, a PATH directory, a git hook or `.blux/` (`autorun.write`),
+     needs approval. Command detection is still pattern matching, not a sandbox: it narrows what runs without
+     approval but cannot prove that a command stays inside the workspace.
+   - **Output and cancellation (OV-50).** `shell.exec` keeps at most 64 KiB per stream while it reads, and a
+     cancelled call kills the command's process group instead of letting it finish.
    - **Child environment.** It is an allow-list, so `AWS_SECRET_ACCESS_KEY`, `DATABASE_URL` and other
      secrets never reach a child. BLHermes leaked them.
 4. **Temporary compatibility is explicit and time-bounded.**

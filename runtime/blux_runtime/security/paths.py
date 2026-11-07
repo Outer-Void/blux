@@ -90,6 +90,19 @@ def write_needs_approval(path: str | Path, environ: Mapping[str, str] | None = N
     return any(_under(p, home / d) for d in APPROVE_HOME)
 
 
+# OV-50: inside a workspace, a repository's .git/ (hooks, config) and a .blux/ directory hold code or commands that
+# run later, outside BLUX's approvals, so writing there needs an approval too.
+APPROVE_WORKSPACE = (".git", ".blux")
+
+
+def workspace_write_needs_approval(path: str | Path, root: str | Path) -> bool:
+    """True when the resolved `path` lies in a .git/ or .blux/ directory anywhere below `root`."""
+    p, base = resolve(path), resolve(root)
+    if not _under(p, base) or p == base:
+        return False
+    return any(part in APPROVE_WORKSPACE for part in p.relative_to(base).parts)
+
+
 def confine(path: str | Path, root: str | Path) -> Path:
     """Resolve `path` relative to `root`; refuse anything that escapes it (after resolving symlinks)."""
     base = resolve(root)

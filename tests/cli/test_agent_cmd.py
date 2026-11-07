@@ -104,3 +104,15 @@ def test_agent_records_receipts_in_the_configured_store(monkeypatch: pytest.Monk
 
     monkeypatch.setattr(direct, "_system_available", lambda: False)
     assert cli("agent", "--workspace", str(tmp_path), "answer")[0] == direct.CONFIG
+
+
+def test_agent_without_a_model_says_why_and_exits_as_ask_does(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    # OV-50: with no provider configured the agent printed only "model call failed: EXECUTION_FAILED" and exited 1.
+    script = Script(main_a="PROVIDER_NOT_CONFIGURED")
+    monkeypatch.setattr(direct, "make_router", lambda doc: ModelRouter(doc, {"test": CallableBackend(script)}))
+    code, out, err = cli("agent", "--workspace", str(tmp_path), "answer")
+    assert code == direct.CONFIG and out == ""
+    assert "PROVIDER_NOT_CONFIGURED" in err and "run `blux doctor`" in err and "receipt rcpt_" in err
+    script = Script(main_a="CONTENT_FILTERED")
+    monkeypatch.setattr(direct, "make_router", lambda doc: ModelRouter(doc, {"test": CallableBackend(script)}))
+    assert cli("agent", "--workspace", str(tmp_path), "answer")[0] == direct.FAILED

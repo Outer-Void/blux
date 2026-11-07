@@ -13,6 +13,8 @@ import re
 import shlex
 from dataclasses import dataclass
 
+from blux_runtime.security.paths import DENY_HOME
+
 MAX_COMMAND_CHARS = 16384
 
 
@@ -32,6 +34,17 @@ ROOTISH = (
     r"(?:/|/\*|~|~/|\$home|/home|/root|/etc|/usr|/var|/boot|/bin|/sbin|/lib|/opt|/sdcard|/storage|/data)"
     r"(?:/?\s|/?$|/?;|/?&)"
 )
+# OV-50: the files fs.read/fs.write refuse or gate (security/paths.py) must not be reachable through shell.exec
+# without the same approval. Any mention of a credential file needs approval, read or write. A write into a shell
+# start-up file, a PATH directory, a repository's .git/hooks or .git/config, or a .blux/ directory (code that runs
+# later, outside BLUX's approvals) needs approval; reading those does not.
+# One list for both: the credential files fs.read/fs.write refuse (paths.DENY_HOME).
+CREDENTIAL_PATHS = "|".join(re.escape(d) + r"\b" for d in DENY_HOME)
+AUTORUN_PATHS = (
+    r"(?:\.bashrc|\.bash_profile|\.profile|\.zshrc|\.zprofile|\.zshenv|\.gitconfig|\.config/fish/\S*"
+    r"|\.termux/boot\S*|\.config/autostart\S*|\.local/bin/\S*|\.git/hooks\S*|\.git/config|\.blux/\S*)"
+)
+_AUTORUN_END = r"""["']?(?=$|[\s;&|)])"""
 RULES: tuple[Rule, ...] = (
     _r(
         "device.bootloader",
@@ -52,6 +65,15 @@ RULES: tuple[Rule, ...] = (
         # found by the Stage 35 Generation 0 policy suite).
         r"\badb\b.*\bshell\b.*\b(?:rm|dd|mkfs|wipe\w*|format|pm\s+(?:uninstall|clear)|setprop|reboot)\b",
         device=True,
+    ),
+    _r("credential.path", "access to a credential file", CREDENTIAL_PATHS),
+    _r(
+        "autorun.write",
+        "write to a start-up file, PATH directory, git hook or .blux/ configuration",
+        # redirection or tee into the file; cp/mv/ln/install/rsync with it as the last argument; sed -i on it
+        rf"""(?:>>?|\btee\b(?:\s+-a)?)\s*["']?(?:\S*/)?{AUTORUN_PATHS}{_AUTORUN_END}"""
+        rf"""|\b(?:cp|mv|ln|install|rsync)\b[^;&|]*\s["']?(?:\S*/)?{AUTORUN_PATHS}["']?\s*(?:$|[;&|)])"""
+        rf"""|\bsed\b[^;&|]*\s-i[^;&|]*\s["']?(?:\S*/)?{AUTORUN_PATHS}{_AUTORUN_END}""",
     ),
     _r(
         "delete.root",

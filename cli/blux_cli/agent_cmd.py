@@ -7,7 +7,8 @@ the built-in tool capabilities confined to --workspace (default: the current dir
 granted, so dangerous commands are refused. Policy, hooks and receipts apply to every step; with `system_store`
 configured (as for `blux ask`) every receipt is recorded in BLUX System, and a tool call is linked to the model call
 that requested it.
-Exit codes: 0 answered, 1 the agent failed, 2 usage, 3 configuration, 5 answered but a receipt was not recorded.
+Exit codes: 0 answered, 1 the agent failed, 2 usage, 3 configuration (e.g. no model configured), 4 the model timed
+out, 5 answered but a receipt was not recorded, 130 cancelled.
 """
 
 from __future__ import annotations
@@ -89,7 +90,11 @@ def run(args: argparse.Namespace, out: TextIO, err: TextIO) -> int:
         result = runner.run(" ".join(args.task), tools=chosen, session_id=ids.new_session_id())
     except AgentError as exc:
         print(f"blux: agent failed: {exc}", file=err)
-        return direct.FAILED
+        if exc.outcome is None:
+            return direct.FAILED
+        # The model call failed: say why and exit as `blux ask` would (3 when no model is configured).
+        direct.describe_failure(exc.outcome, err)
+        return direct.classify(exc.outcome)
     if args.json:
         out.write(
             dumps_json(
