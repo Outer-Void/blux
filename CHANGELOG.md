@@ -2,6 +2,27 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: OV-52
+Found by the OV-52 review of receipt durability (deep-audit findings F83–F85 and the delta review). Each fix has
+a test that fails on 9cd53ef (`tests/runtime/test_receipt_durability.py`, `tests/cli/test_agent_cmd.py`,
+`tests/integration/test_blux_system.py`).
+- **Fix (F83): an outage lost the receipt of every operation with an artifact.** The artifact upload raised first,
+  so the receipt was neither sent nor spooled; every `model.generate` attaches one. The receipt is now always
+  attempted, artifacts are spooled with their bytes like receipts, and `sink_error.missing_artifacts` names any
+  artifact not stored.
+- **Fix (F84): a flush could delete a receipt spooled at the same moment.** Spooling and flushing are now
+  serialized with a lock file, and a flush works from `<outbox>.flushing.jsonl`, so a crash mid-flush loses
+  nothing (an identical re-send is a duplicate in BLUX System).
+- **Fix (F85): spooled receipts were never sent.** New `blux receipts status|flush [--include-refused]`;
+  `blux doctor` warns while receipts wait. A refusal without its own code (`SINK_REFUSED`) is no longer retried
+  for ever.
+- **Fix: a refused receipt was dropped.** A receipt BLUX System refused at emit time (invalid, conflict, corrupt
+  store) was kept nowhere. It is now set aside in `<outbox>.refused.jsonl`. The outbox files are owner-only.
+- **Fix: `blux agent` kept acting after a receipt was refused.** It now stops before its next step when a
+  receipt is neither recorded nor queued (exit 5, `ReceiptNotRecorded`); queued receipts still let it finish.
+- `Outcome.receipt_not_queued` tells callers when to stop. New subcommand: the word `receipts` after `blux` is
+  no longer read as a prompt (`blux -- receipts ...` still asks).
+
 ## Unreleased: OV-51
 Found by the OV-51 engine-reliability review through GOD, which reads every project under a root with this
 loader (as the runtime does). Each fix has a test that fails on 4163637 (`tests/sdk/test_dot_blux_hostile.py`).

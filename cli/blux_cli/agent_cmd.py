@@ -6,9 +6,10 @@ The agent uses the logical model through the Model API (same routes and config a
 the built-in tool capabilities confined to --workspace (default: the current directory). No approvals are
 granted, so dangerous commands are refused. Policy, hooks and receipts apply to every step; with `system_store`
 configured (as for `blux ask`) every receipt is recorded in BLUX System, and a tool call is linked to the model call
-that requested it.
+that requested it. A receipt that BLUX System refuses (not merely queued in the outbox) stops the agent before its
+next step (OV-52).
 Exit codes: 0 answered, 1 the agent failed, 2 usage, 3 configuration (e.g. no model configured), 4 the model timed
-out, 5 answered but a receipt was not recorded, 130 cancelled.
+out, 5 a receipt was not recorded (answered with receipts queued, or stopped because one was refused), 130 cancelled.
 """
 
 from __future__ import annotations
@@ -22,7 +23,7 @@ from blux_cli import direct
 from blux_runtime.builtin import builtin_registry
 from blux_runtime.devices import voidforge
 from blux_runtime.executor import Runtime
-from blux_runtime.extensions.agents import AgentError, AgentRunner
+from blux_runtime.extensions.agents import AgentError, AgentRunner, ReceiptNotRecorded
 from blux_runtime.models import capability as model_capability
 from blux_runtime.system_sink import BluxSystemSink
 from blux_runtime.tools import builtin as tools
@@ -88,6 +89,12 @@ def run(args: argparse.Namespace, out: TextIO, err: TextIO) -> int:
     runner = AgentRunner(Runtime(registry, policy, receipt_sink=sink), model=settings.model, max_turns=args.max_turns)
     try:
         result = runner.run(" ".join(args.task), tools=chosen, session_id=ids.new_session_id())
+    except ReceiptNotRecorded as exc:
+        # Fail closed (OV-52): BLUX System refused a step's receipt, so the agent stopped before its next action.
+        print(f"blux: agent stopped: {exc}", file=err)
+        print(f"blux: receipt problem: {dumps_json(exc.sink_error)}", file=err)
+        print(f"blux: operations so far: {', '.join(exc.result.operations)}", file=err)
+        return direct.NOT_RECORDED
     except AgentError as exc:
         print(f"blux: agent failed: {exc}", file=err)
         if exc.outcome is None:

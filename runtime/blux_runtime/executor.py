@@ -54,6 +54,12 @@ class Outcome:
     # Set when the receipt sink failed. The result is still authoritative; durable recording did not happen.
     sink_error: dict[str, Any] | None = None
 
+    @property
+    def receipt_not_queued(self) -> bool:
+        """The receipt (or an artifact) is neither in the store nor queued for a retry: it was refused, or the
+        sink cannot spool. Callers that take further actions stop here (OV-52: required receipts fail closed)."""
+        return self.sink_error is not None and not self.sink_error.get("spooled")
+
 
 @dataclass
 class _Trace:
@@ -441,16 +447,7 @@ class Runtime:
             finished_at=finished_at,
             issuer=dict(ISSUER),
         )
-        sink_error: dict[str, Any] | None = None
-        try:
-            emit_artifact = getattr(self.receipt_sink, "emit_artifact", None)
-            if callable(emit_artifact):
-                for descriptor, data in artifacts:
-                    emit_artifact(descriptor, data)
-            self.receipt_sink.emit(receipt)
-        except Exception as exc:  # noqa: BLE001 - a sink failure must never lose the result
-            to_doc = getattr(exc, "to_document", None)
-            sink_error = to_doc() if callable(to_doc) else {"exception_type": type(exc).__name__}
+        sink_error = self._record(receipt, artifacts)
         self._notify(
             "receipt.created",
             {"receipt_id": receipt_id, "operation_id": trace.operation_id, "status": result["status"],
@@ -458,6 +455,39 @@ class Runtime:
             trace,
         )  # fmt: skip
         return Outcome(result=result, receipt=receipt, sink_error=sink_error)
+
+    def _record(self, receipt: dict[str, Any], artifacts: list[tuple[dict[str, Any], bytes]]) -> dict[str, Any] | None:
+        """Hand the artifacts, then the receipt, to the sink. Returns None, or what was not recorded.
+
+        A failed artifact never stops the receipt from being attempted (OV-52, F83): before, one unavailable store
+        lost the receipt of every operation with an artifact. A sink failure never loses the result either.
+        The returned document is the receipt's error when the receipt failed, else the first artifact's error;
+        `missing_artifacts` lists artifacts that were not stored (spooled or set aside, per `spooled`)."""
+
+        def doc(exc: Exception) -> dict[str, Any]:
+            to_doc = getattr(exc, "to_document", None)
+            return dict(to_doc()) if callable(to_doc) else {"exception_type": type(exc).__name__}
+
+        artifact_errors: list[tuple[str, dict[str, Any]]] = []
+        emit_artifact = getattr(self.receipt_sink, "emit_artifact", None)
+        if callable(emit_artifact):
+            for descriptor, data in artifacts:
+                try:
+                    emit_artifact(descriptor, data)
+                except Exception as exc:  # noqa: BLE001 - keep going: the receipt matters most
+                    artifact_errors.append((descriptor["artifact_id"], doc(exc)))
+        error: dict[str, Any] | None = None
+        try:
+            self.receipt_sink.emit(receipt)
+        except Exception as exc:  # noqa: BLE001 - a sink failure must never lose the result
+            error = doc(exc)
+        if error is None and artifact_errors:
+            error = {**artifact_errors[0][1], "receipt_recorded": True}
+        if error is not None and artifact_errors:
+            error["missing_artifacts"] = [aid for aid, _e in artifact_errors]
+            # Spooled only when everything that failed was spooled.
+            error["spooled"] = bool(error.get("spooled")) and all(e.get("spooled") for _a, e in artifact_errors)
+        return error
 
     def _artifacts(self, trace: _Trace) -> list[tuple[dict[str, Any], bytes]]:
         """Artifacts the handler attached that are valid descriptors of this operation's bytes."""

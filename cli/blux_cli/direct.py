@@ -611,6 +611,15 @@ def _doctor(settings: cfg.Settings, args: argparse.Namespace, out: TextIO, err: 
         check(f"backend {name}", "ok" if exe else "fail", exe or f"{b['entrypoint'].split()[0]} not found on PATH")
     if settings.system_store:
         check("system_store", "ok" if _system_available() else "fail", settings.system_store)
+        pending = BluxSystemSink(settings.system_store).pending()
+        if pending["waiting"] or pending["refused"]:
+            check(
+                "receipts",
+                "warn",
+                f"{pending['waiting']} waiting for BLUX System, {pending['refused']} set aside as refused; "
+                "run `blux receipts flush`",
+                **pending,
+            )
     models: list[dict[str, Any]] = []
     code = OK
     for model in [args.model] if args.model else list(model_api.LOGICAL_MODELS):

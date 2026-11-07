@@ -40,6 +40,16 @@ class AgentError(RuntimeError):
         self.outcome = outcome
 
 
+class ReceiptNotRecorded(AgentError):
+    """A step's receipt was neither recorded nor queued for a retry, so the agent took no further step (OV-52).
+    `result` is the run so far; its last operation is the unrecorded one."""
+
+    def __init__(self, message: str, *, result: AgentResult, sink_error: dict[str, Any]) -> None:
+        super().__init__(message)
+        self.result = result
+        self.sink_error = sink_error
+
+
 def tool_name(capability_id: str) -> str:
     return capability_id.replace(".", "__")[:64]
 
@@ -106,6 +116,7 @@ class AgentRunner:
                 result.operations.append(gen.result["operation_id"])
                 if gen.sink_error is not None:
                     result.unrecorded.append(gen.result["operation_id"])
+                self._stop_if_not_recorded(gen, result)
                 if gen.result["status"] != "succeeded":
                     error = gen.result["error"] or {}
                     code = (error.get("details") or {}).get("provider_code") or error.get("code")
@@ -136,6 +147,7 @@ class AgentRunner:
                         result.operations.append(out.result["operation_id"])
                         if out.sink_error is not None:
                             result.unrecorded.append(out.result["operation_id"])
+                        self._stop_if_not_recorded(out, result)
                         content = json.dumps(
                             out.result["output"]
                             if out.result["status"] == "succeeded"
@@ -147,6 +159,19 @@ class AgentRunner:
         except AgentError as exc:
             self._emit("agent.failed", {"agent_id": agent_id, "error_code": str(exc)[:64] or "agent_error"}, session_id)
             raise
+
+    @staticmethod
+    def _stop_if_not_recorded(outcome: Any, result: AgentResult) -> None:
+        # A spooled receipt is durable and will be recorded by `blux receipts flush`, so the run continues (and
+        # still exits NOT_RECORDED). A receipt that is not even queued means the evidence authority refused it
+        # or cannot be reached durably: fail closed before the next action.
+        if outcome.receipt_not_queued:
+            code = outcome.sink_error.get("code") or outcome.sink_error.get("exception_type") or "unknown"
+            raise ReceiptNotRecorded(
+                f"receipt not recorded ({code}); no further step was taken",
+                result=result,
+                sink_error=outcome.sink_error,
+            )
 
     def delegate(
         self,

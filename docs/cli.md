@@ -82,5 +82,13 @@ blux models                 # the catalog: logical models and what their routes 
 Every call is a `model.generate` execution with a receipt.
 - **Linkage.** A chat is one session, and each turn's parent is the previous turn.
 - **Recording.** Set `system_store` (or `--system-store`) to record receipts and their model-call
-  metadata in BLUX System.
+  metadata in BLUX System. A receipt that could not be recorded exits 5 (`blux ask`, `blux agent`) or 1
+  (machine commands); the answer or result itself is still printed.
+- **Outbox.** When BLUX System is unavailable (not installed, busy, store not created yet), receipts and their
+  artifacts wait in `<store>.outbox.jsonl` (owner-only). `blux receipts status` shows how many wait;
+  `blux receipts flush` sends them (exit 0 when nothing is left). A document BLUX System refuses is set aside
+  in `<store>.outbox.refused.jsonl`, never dropped; after repairing the store, `blux receipts flush
+  --include-refused` re-sends it. `blux doctor` warns while anything waits.
+- **Fail closed.** `blux agent` continues while receipts are only queued, but stops before its next step when
+  a receipt was refused or could not be queued (exit 5).
 - **Content.** Receipts hold routing, usage and timing, never prompts, input, answers or keys.

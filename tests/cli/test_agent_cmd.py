@@ -67,11 +67,19 @@ def test_agent_refuses_dangerous_commands_and_bad_usage(monkeypatch: pytest.Monk
     assert cli("agent", "--workspace", str(tmp_path / "missing"), "x")[0] == direct.USAGE
 
 
+class _Spooled(Exception):
+    def to_document(self) -> dict[str, Any]:
+        return {"sink": "blux-system", "code": "STORE_LOCKED", "spooled": True}
+
+
 class FakeSink:
-    def __init__(self, store: str, fail: bool = False) -> None:
-        self.store, self.fail, self.receipts = store, fail, []
+    def __init__(self, store: str, fail: bool = False, spooled: bool = False) -> None:
+        self.store, self.fail, self.spooled, self.receipts = store, fail, spooled, []
 
     def emit(self, receipt: dict[str, Any]) -> None:
+        if self.spooled:
+            self.receipts.append(receipt)
+            raise _Spooled()
         if self.fail:
             raise RuntimeError("store unavailable")
         self.receipts.append(receipt)
@@ -97,10 +105,23 @@ def test_agent_records_receipts_in_the_configured_store(monkeypatch: pytest.Monk
     gen, read = receipts[0], receipts[1]
     assert read["capability_id"] == "fs.read" and read["parent_operation_id"] == gen["operation_id"]
 
-    monkeypatch.setattr(agent_cmd, "BluxSystemSink", lambda store: FakeSink(store, fail=True))
+    # Receipts queued in the outbox (store busy or unreachable) are durable: the agent answers, exit 5.
+    monkeypatch.setattr(
+        agent_cmd, "BluxSystemSink", lambda store: sinks.append(FakeSink(store, spooled=True)) or sinks[-1]
+    )
     install(monkeypatch, steps)
     code, out, err = cli("agent", "--workspace", str(tmp_path), "--json", "answer")
     assert code == direct.NOT_RECORDED and json.loads(out)["text"] == "42" and "not recorded" in err
+
+    # OV-52: a receipt that is not even queued fails closed: the agent stops before the tool call it was asked for.
+    monkeypatch.setattr(
+        agent_cmd, "BluxSystemSink", lambda store: sinks.append(FakeSink(store, fail=True)) or sinks[-1]
+    )
+    script = install(monkeypatch, steps)
+    code, out, err = cli("agent", "--workspace", str(tmp_path), "--json", "answer")
+    assert code == direct.NOT_RECORDED and out == ""
+    assert "agent stopped: receipt not recorded (RuntimeError)" in err
+    assert len(script.seen) == 1  # one model call, then a stop: fs.read never ran
 
     monkeypatch.setattr(direct, "_system_available", lambda: False)
     assert cli("agent", "--workspace", str(tmp_path), "answer")[0] == direct.CONFIG

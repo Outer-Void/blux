@@ -5,6 +5,7 @@ Runs against the real `blux-system` CLI. Skips if it is not installed, unless BL
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -210,3 +211,57 @@ def test_cli_run_with_system_store(store: Path) -> None:
     assert proc.returncode == 1
     assert json.loads(proc.stdout)["status"] == "succeeded"
     assert b"receipt not recorded by BLUX System" in proc.stderr
+
+
+def test_outage_spools_receipt_and_artifact_and_blux_receipts_flush_records_both(tmp_path: Path) -> None:
+    # OV-52 (F83, F85) end to end with the real blux-system: during an outage an operation with an artifact keeps
+    # both in the outbox, and `blux receipts flush` records them once the store exists.
+    store = tmp_path / "later"
+    rt = Runtime(builtin_registry(), reference_policy(), receipt_sink=BluxSystemSink(store, executable=EXE))
+    data = b'{"model": "call"}'
+    rt._artifacts = lambda trace: [  # type: ignore[method-assign]
+        (
+            envelopes.artifact_from_bytes(
+                operation_id=trace.operation_id, name="m.json", media_type="application/json", data=data
+            ),
+            data,
+        )
+    ]
+    outcome = run(rt, "offline")
+    assert outcome.sink_error is not None and outcome.sink_error["spooled"] is True
+    (artifact_id,) = outcome.receipt["artifact_ids"]
+    assert outcome.sink_error["missing_artifacts"] == [artifact_id]
+
+    env = {**os.environ, "PATH": f"{Path(EXE).parent}{os.pathsep}{os.environ.get('PATH', '')}"}
+
+    def blux(*args: str) -> tuple[int, Any]:
+        proc = subprocess.run(
+            [sys.executable, "-m", "blux_cli", "receipts", *args, "--system-store", str(store)],
+            capture_output=True,
+            cwd=ROOT,
+            env=env,
+            timeout=120,
+        )
+        return proc.returncode, json.loads(proc.stdout)
+
+    code, status = blux("status")
+    assert (code, status["waiting"], status["refused"]) == (1, 2, 0)
+    code, flushed = blux("flush")  # the store does not exist yet: both stay queued
+    assert (code, flushed["flush"]["remaining"], flushed["waiting"]) == (1, 2, 2)
+    assert system("init", "--store", str(store))[0] == 0
+    code, flushed = blux("flush")
+    assert (code, flushed["flush"], flushed["waiting"]) == (0, {"sent": 2, "remaining": 0, "refused": 0}, 0)
+    code, stored = system("show", "--store", str(store), "--receipt", outcome.receipt["receipt_id"])
+    assert code == 0 and stored == outcome.receipt
+    assert system("artifact-verify", artifact_id, "--store", str(store)) == (
+        0,
+        {
+            "artifact_id": artifact_id,
+            "ok": True,
+            "expected_sha256": hashlib.sha256(data).hexdigest(),
+            "actual_sha256": hashlib.sha256(data).hexdigest(),
+            "expected_size": len(data),
+            "actual_size": len(data),
+        },
+    )
+    assert system("verify", "--store", str(store))[1]["ok"] is True

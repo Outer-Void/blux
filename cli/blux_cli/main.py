@@ -23,6 +23,7 @@ from typing import Any, NoReturn, TextIO
 import blux_runtime
 import blux_sdk
 from blux_cli import agent_cmd, direct, migrate
+from blux_cli import config as cfg
 from blux_runtime.builtin import builtin_registry, reference_policy
 from blux_runtime.executor import Outcome, Runtime
 from blux_runtime.models import ModelRouter
@@ -106,6 +107,34 @@ def _write_receipt(path: str | None, receipt: dict[str, Any]) -> None:
         Path(path).write_text(dumps_json(receipt, pretty=True) + "\n", encoding="utf-8")
 
 
+def _receipts(args: argparse.Namespace, out: TextIO) -> int:
+    """`blux receipts status|flush` (OV-52, F85): receipts spooled while BLUX System was unavailable are only
+    recorded when something sends them. Exit 0 when nothing is left waiting or set aside, else 1."""
+    try:
+        store = args.system_store or cfg.load().system_store
+    except cfg.ConfigError as exc:
+        raise BluxError(ErrorCode.MALFORMED_INPUT, str(exc), details={"reason": "bad_config"}) from None
+    if not store:
+        raise BluxError(
+            ErrorCode.MALFORMED_INPUT,
+            "No BLUX System store: pass --system-store or set system_store.",
+            details={"reason": "no_system_store"},
+        )
+    sink = BluxSystemSink(store)
+    doc: dict[str, Any] = {"store": str(sink.store), "outbox": str(sink.outbox), "refused_file": str(sink.refused_path)}
+    if args.action == "flush":
+        if not direct._system_available():
+            raise BluxError(
+                ErrorCode.EXECUTION_FAILED, "blux-system is not installed.", details={"reason": "no_blux_system"}
+            )
+        doc["flush"] = sink.flush(include_refused=args.include_refused)
+    doc.update(sink.pending())
+    _emit(doc, out, args.pretty)
+    return (
+        EXIT_OK if doc["waiting"] == 0 and doc["refused"] == 0 and not doc.get("flush", {}).get("busy") else EXIT_FAILED
+    )
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = _Parser(
         prog="blux",
@@ -146,6 +175,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     c = sub.add_parser("capabilities", help="print the blux.capability-set (built-ins, plus --project)")
     c.add_argument("--project", help="also list capabilities from DIR/.blux")
+
+    rc = sub.add_parser("receipts", help="receipts waiting for BLUX System: status, or flush them now")
+    rc.add_argument("action", choices=["status", "flush"])
+    rc.add_argument("--system-store", help="the BLUX System store (default: system_store from the config)")
+    rc.add_argument("--include-refused", action="store_true", help="flush: also re-send receipts set aside as refused")
 
     i = sub.add_parser("id", help="generate an identifier")
     i.add_argument("kind", choices=["operation", "receipt", "artifact", "session"])
@@ -273,6 +307,9 @@ def _dispatch(args: argparse.Namespace, stdin: TextIO, out: TextIO) -> int:
     if args.command == "capabilities":
         _emit(_registry(args.project)[0].to_capability_set(), out, args.pretty)
         return EXIT_OK
+
+    if args.command == "receipts":
+        return _receipts(args, out)
 
     if args.command == "id":
         kind = ids.IdKind(f"{args.kind}_id")

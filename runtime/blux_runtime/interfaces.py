@@ -47,7 +47,8 @@ class ReceiptSink(Protocol):
     """Where receipts go. BLUX emits; durable storage is blux-system's authority (ADR-0002).
 
     A sink may also define `emit_artifact(descriptor, data)`; the executor calls it, before the receipt, for
-    each artifact a handler attached.
+    each artifact a handler attached. A failing artifact never stops the receipt from being emitted (OV-52).
+    An exception whose `to_document()` has `spooled: true` means the document is queued for a retry.
     """
 
     def emit(self, receipt: dict[str, Any]) -> None: ...
