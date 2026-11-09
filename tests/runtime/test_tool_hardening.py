@@ -64,8 +64,12 @@ def test_shell_credential_access_needs_an_approval(tmp_path: Path, monkeypatch: 
     assert res["error"]["details"]["rule"] == "credential.path"
     res = call(rt, "shell.exec", {"command": "echo 'alias ls=rm' >> ~/.bashrc"})
     assert res["error"]["details"]["rule"] == "autorun.write" and not (tmp_path / ".bashrc").exists()
-    gate.approve_session(SESSION, "autorun.write")  # an approval still works as before
-    assert call(rt, "shell.exec", {"command": "echo 'x=1' >> ~/.bashrc"})["output"]["approval"] == "session-approval"
+    gate.approve_session(SESSION, "autorun.write")  # OV-62 (F95): a session approval no longer covers commands
+    assert call(rt, "shell.exec", {"command": "echo 'x=1' >> ~/.bashrc"})["error"]["details"]["reason"] == (
+        "approval_required"
+    )
+    gate.approve_once(SESSION, "echo 'x=1' >> ~/.bashrc")  # the person approves this exact command
+    assert call(rt, "shell.exec", {"command": "echo 'x=1' >> ~/.bashrc"})["output"]["approval"] == "one-time-approval"
 
 
 def test_file_writes_into_git_and_blux_directories_need_an_approval(tmp_path: Path) -> None:
@@ -83,7 +87,8 @@ def test_file_writes_into_git_and_blux_directories_need_an_approval(tmp_path: Pa
 
 
 def test_shell_output_is_capped_while_it_is_read(tmp_path: Path) -> None:
-    rt, _ = runtime(tmp_path)
+    rt, gate = runtime(tmp_path)
+    gate.enable_yolo(SESSION)  # every command needs approval (F95); YOLO is the person's choice for a session
     tracemalloc.start()
     try:
         res = call(rt, "shell.exec", {"command": "head -c 33554432 /dev/zero; echo done >&2"})
@@ -97,7 +102,8 @@ def test_shell_output_is_capped_while_it_is_read(tmp_path: Path) -> None:
 
 
 def test_shell_honours_cancellation_and_kills_the_command(tmp_path: Path) -> None:
-    rt, _ = runtime(tmp_path)
+    rt, gate = runtime(tmp_path)
+    gate.enable_yolo(SESSION)
     cancel = threading.Event()
     threading.Timer(0.3, cancel.set).start()
     t0 = time.monotonic()
@@ -111,6 +117,60 @@ def test_shell_honours_cancellation_and_kills_the_command(tmp_path: Path) -> Non
 
 
 def test_shell_still_waits_for_output_and_reports_exit_codes(tmp_path: Path) -> None:
-    rt, _ = runtime(tmp_path)
+    rt, gate = runtime(tmp_path)
+    gate.enable_yolo(SESSION)
     out = call(rt, "shell.exec", {"command": "(sleep 0.3; echo late) & echo early; exit 3"})["output"]
     assert out["exit_code"] == 3 and out["stdout"] == "early\nlate\n" and out["truncated"] is False
+
+
+ESCAPES = [
+    ("echo x > ../outside1.txt", "outside1.txt"),
+    ("echo x > {base}/outside2.txt", "outside2.txt"),
+    ("d=..; f=outside3.txt; echo x > $d/$f", "outside3.txt"),
+]
+
+
+def test_ov62_no_shell_command_runs_without_the_persons_approval(tmp_path: Path) -> None:
+    """OV-62 drill (F95): with no approvals, these commands wrote and deleted outside the workspace on 5995419.
+    Pattern detection cannot catch them, so every command now needs approval."""
+    ws = tmp_path / "ws"
+    ws.mkdir()
+    (tmp_path / "victim").mkdir()
+    (tmp_path / "victim" / "keep.txt").write_text("keep")
+    rt, gate = runtime(ws)
+    gate.approve_session(SESSION, "shell.unconfined")  # a blanket session approval must not open the shell
+    for command, effect in ESCAPES:
+        res = call(rt, "shell.exec", {"command": command.format(base=tmp_path)})
+        assert res["status"] == "failed" and res["error"]["details"]["reason"] == "approval_required", command
+        assert not (tmp_path / effect).exists(), command
+    res = call(rt, "shell.exec", {"command": 'r=r; m=m; $r$m -r ../vic"tim"'})
+    assert res["error"]["details"]["reason"] == "approval_required"
+    assert (tmp_path / "victim" / "keep.txt").exists()
+
+
+@pytest.mark.parametrize(("cap", "payload"), [("fs.write", {"content": "x"}), ("fs.read", {})])
+def test_ov62_a_directory_swapped_for_a_symlink_after_the_check_is_not_followed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, cap: str, payload: dict[str, Any]
+) -> None:
+    """OV-62 drill: fs.write resolved and checked the path, then open() followed a symlink swapped in between; a
+    race drill wrote a file outside the workspace (1 in 584 tries on 5995419). Now nothing swapped in is followed."""
+    ws, outside = tmp_path / "ws", tmp_path / "outside"
+    (ws / "d").mkdir(parents=True)
+    outside.mkdir()
+    (outside / "f.txt").write_text("outside secret")
+    (ws / "d" / "f.txt").write_text("inside")
+    rt, _ = runtime(ws)
+    real_confine = tools.confine
+
+    def confine_then_swap(raw: str, root: Path) -> Path:
+        checked = real_confine(raw, root)
+        if (ws / "d").is_dir() and not (ws / "d").is_symlink():  # the attacker wins the race
+            (ws / "d" / "f.txt").unlink()
+            (ws / "d").rmdir()
+            (ws / "d").symlink_to(outside)
+        return checked
+
+    monkeypatch.setattr(tools, "confine", confine_then_swap)
+    res = call(rt, cap, {"path": "d/f.txt", **payload})
+    assert res["status"] == "failed" and res["error"]["details"]["reason"] == "outside_workspace"
+    assert (outside / "f.txt").read_text() == "outside secret"

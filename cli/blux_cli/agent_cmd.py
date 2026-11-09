@@ -4,7 +4,8 @@
 
 The agent uses the logical model through the Model API (same routes and config as `blux ask`). Its tools are
 the built-in tool capabilities confined to --workspace (default: the current directory). No approvals are
-granted, so dangerous commands are refused. Policy, hooks and receipts apply to every step; with `system_store`
+granted, so shell.exec refuses every command (OV-62: each command needs the person's approval). Policy,
+hooks and receipts apply to every step; with `system_store`
 configured (as for `blux ask`) every receipt is recorded in BLUX System, and a tool call is linked to the model call
 that requested it. A receipt that BLUX System refuses (not merely queued in the outbox) stops the agent before its
 next step (OV-52).

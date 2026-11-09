@@ -319,10 +319,12 @@ def test_shell_exec_runs_safe_commands_with_a_credential_free_environment(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setenv("OPENAI_API_KEY", FAKE_KEY)
-    rt, _ = tool_runtime(tmp_path)
+    rt, gate = tool_runtime(tmp_path)
+    assert call(rt, "shell.exec", {"command": "echo hi; env"})["error"]["details"]["rule"] == "shell.unconfined"
+    gate.enable_yolo("ses_01J00000000000000000000000")  # OV-62 (F95): every command needs the person's approval
     res = call(rt, "shell.exec", {"command": "echo hi; env"})
     out = res["output"]
-    assert res["status"] == "succeeded" and out["stdout"].startswith("hi") and out["approval"] == "safe"
+    assert res["status"] == "succeeded" and out["stdout"].startswith("hi") and out["approval"] == "yolo"
     assert FAKE_KEY not in out["stdout"] and "OPENAI_API_KEY" not in out["stdout"]
     res = call(rt, "shell.exec", {"command": f"echo export TOKEN={FAKE_KEY}"})
     assert FAKE_KEY not in res["output"]["stdout"]  # output is redacted
@@ -334,9 +336,13 @@ def test_shell_exec_requires_approval_for_dangerous_and_device_commands(tmp_path
     res = call(rt, "shell.exec", {"command": "rm -rf build"})
     assert res["status"] == "failed" and res["error"]["details"]["reason"] == "approval_required"
     assert (tmp_path / "build").exists()
-    gate.approve_session("ses_01J00000000000000000000000", "delete.recursive")
-    assert call(rt, "shell.exec", {"command": "rm -rf build"})["output"]["approval"] == "session-approval"
+    gate.approve_session("ses_01J00000000000000000000000", "delete.recursive")  # no longer enough (F95)
+    assert call(rt, "shell.exec", {"command": "rm -rf build"})["status"] == "failed"
+    assert (tmp_path / "build").exists()
+    gate.approve_once("ses_01J00000000000000000000000", "rm -rf build")
+    assert call(rt, "shell.exec", {"command": "rm -rf build"})["output"]["approval"] == "one-time-approval"
     assert not (tmp_path / "build").exists()
+    assert call(rt, "shell.exec", {"command": "rm -rf build"})["status"] == "failed"  # the approval was consumed
     assert (
         call(rt, "shell.exec", {"command": "rm -rf build"}, session="ses_01J00000000000000000000001")["status"]
         == "failed"

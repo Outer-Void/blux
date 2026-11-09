@@ -5,8 +5,9 @@ events) and receipts apply. On top of that:
 
 - Workspace confinement. Paths resolve inside the workspace root (symlinks followed), or the call fails.
 - Write safety. Credential and system paths are denied. Shell start-up files need an approval.
-- Commands. Dangerous commands need an approval in the calling session (SessionApprovals). Device commands
-  need a one-time approval every time; YOLO never covers them.
+- Commands. Every command needs a one-time approval of that exact command, or YOLO switched on by the person
+  for the session (OV-62, F95: this is not an OS sandbox). Device commands need a one-time approval every time;
+  YOLO never covers them.
 - Children. They get the allow-list environment (no credentials) and their own process group, and they are
   killed at the deadline. Output is capped and redacted.
 
@@ -20,6 +21,7 @@ import json
 import os
 import shutil
 import signal
+import stat
 import subprocess
 import threading
 import time
@@ -39,10 +41,13 @@ from blux_runtime.security import (
     write_denied,
     write_needs_approval,
 )
-from blux_runtime.security.paths import PathDenied
+from blux_runtime.security.commands import Detection
+from blux_runtime.security.paths import PathDenied, open_confined
 from blux_sdk.errors import BluxError, ErrorCode
 
 MAX_OUTPUT = 64 * 1024
+# Every shell command needs approval (F95): this stands in for commands the patterns call safe.
+UNCONFINED = Detection(True, "shell.unconfined", "every shell command (shell.exec is not an OS sandbox)", False)
 MAX_READ = 1024 * 1024
 PROVIDER = {"repository": "Outer-Void/blux", "kind": "builtin"}
 
@@ -171,16 +176,21 @@ def register(
 
     def shell_exec(input: dict[str, Any], context: ExecutionContext) -> dict[str, Any]:  # noqa: A002 - CapabilityHandler
         command = input["command"]
+        cwd = where(input.get("cwd", "."))  # an outside working directory is refused before any approval question
         detection = detect(command)
-        decision = gate.decide(_session(context), command, detection)
-        if not decision.allowed:
+        # OV-62 (F95, owner decision 2026-11-09): shell.exec is not an OS sandbox, and pattern detection let
+        # writes and deletions outside the workspace through. Every command now needs the person's approval of
+        # that exact command (approve_once) or YOLO, which only the person can switch on for a session. A
+        # session approval of a rule no longer covers shell commands.
+        decision = gate.decide(_session(context), command, detection if detection.dangerous else UNCONFINED)
+        if not decision.allowed or decision.basis not in ("one-time-approval", "yolo"):
+            shown = detection if detection.dangerous else UNCONFINED
             raise _fail(
-                f"Approval required: {detection.description}.",
+                f"Approval required: {shown.description}.",
                 reason="approval_required",
-                rule=detection.rule,
+                rule=shown.rule,
                 device=detection.device,
             )
-        cwd = where(input.get("cwd", "."))
         sh = shutil.which("sh") or "/bin/sh"
         proc = subprocess.Popen(  # noqa: S603 - the command is the tool's input, gated above
             [sh, "-c", command],
@@ -229,9 +239,16 @@ def register(
         path = where(input["path"])
         if write_denied(path):
             raise _fail("Reading credential or system files is not allowed.", reason="denied_path")
-        if not path.is_file():
-            raise _fail("Not a file.", reason="not_found")
-        data = path.read_bytes()
+        try:
+            fd = open_confined(path, root, os.O_RDONLY)
+        except PathDenied as exc:
+            raise _fail(str(exc), reason="outside_workspace") from None
+        except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
+            raise _fail("Not a file.", reason="not_found") from None
+        with os.fdopen(fd, "rb") as fh:
+            if not stat.S_ISREG(os.fstat(fh.fileno()).st_mode):
+                raise _fail("Not a file.", reason="not_found")
+            data = fh.read()
         return {
             "path": str(path.relative_to(root)),
             "content": redact(data[:MAX_READ].decode("utf-8", "replace")),
@@ -253,16 +270,20 @@ def register(
                     rule=rule,
                 )
             basis = "session-approval"
-        path.parent.mkdir(parents=True, exist_ok=True)
         data = input["content"].encode("utf-8")
-        with path.open("ab" if input.get("append") else "wb") as fh:
+        flags = os.O_WRONLY | os.O_CREAT | (os.O_APPEND if input.get("append") else os.O_TRUNC)
+        try:
+            fd = open_confined(path, root, flags, make_parents=True)  # nothing swapped in is followed (OV-62)
+        except PathDenied as exc:
+            raise _fail(str(exc), reason="outside_workspace") from None
+        with os.fdopen(fd, "ab" if input.get("append") else "wb") as fh:
             fh.write(data)
         return {"path": str(path.relative_to(root)), "bytes": len(data), "approval": basis}
 
     registry.register(
         _descriptor(
             "shell.exec",
-            "Run a shell command in the workspace (approval for dangerous commands).",
+            "Run a shell command in the workspace (every command needs approval).",
             "destructive",
             SHELL_IN,
             SHELL_OUT,

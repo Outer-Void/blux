@@ -41,6 +41,12 @@ Stage 13 moves that core into BLUX-owned modules in a fixed order:
      (`credential.path`), or writes a start-up file, a PATH directory, a git hook or `.blux/` (`autorun.write`),
      needs approval. Command detection is still pattern matching, not a sandbox: it narrows what runs without
      approval but cannot prove that a command stays inside the workspace.
+   - **Every shell command needs approval (OV-62, F95, owner decision 2026-11-09).** A drill showed five of nine
+     escape attempts writing or deleting outside the workspace with no approval (`../`, absolute paths, shell
+     variables, an obfuscated `rm`). Until an OS sandbox exists (none works on Android/PRoot), `shell.exec`
+     runs a command only with a one-time approval of that exact command, or with YOLO, which only the person can
+     switch on for a session. Session approvals of a rule no longer cover shell commands. Detection still
+     names the rule, so the person sees why a command is risky.
    - **Output and cancellation (OV-50).** `shell.exec` keeps at most 64 KiB per stream while it reads, and a
      cancelled call kills the command's process group instead of letting it finish.
    - **Child environment.** It is an allow-list, so `AWS_SECRET_ACCESS_KEY`, `DATABASE_URL` and other

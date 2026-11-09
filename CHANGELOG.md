@@ -2,6 +2,18 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: OV-62
+Found by the OV-62 adversarial and fault-injection drills.
+- **F95 (owner decision 2026-11-09): every `shell.exec` command needs the person's approval.** With no
+  approvals, a drill wrote and deleted outside the workspace (`echo x > ../f`, absolute paths, shell variables,
+  an obfuscated `rm -r`). A command now runs only with a one-time approval of that exact command or with YOLO;
+  session approvals no longer cover shell commands, and an outside `cwd` is refused first. `blux agent` and the
+  scheduler grant no approvals, so they cannot run shell commands unattended. `fs.read`/`fs.write` are
+  unchanged. Test: `test_ov62_no_shell_command_runs_without_the_persons_approval`.
+- **Receipt store faults.** blux-system now reports a full disk as `STORE_IO_ERROR` (F135); BLUX treats it as
+  retryable, so the receipt is spooled. The F114 preflight no longer blocks on a torn tail alone, which the next
+  write repairs.
+
 ## Unreleased: OV-61
 Versioned cross-repository integration. Tests fail on 60ddc76 (`tests/runtime/test_receipt_preflight.py`,
 `tests/packaging/test_integration_targets.py`).

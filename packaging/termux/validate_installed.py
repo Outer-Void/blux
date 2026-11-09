@@ -176,25 +176,35 @@ def main() -> int:
         reg = CapabilityRegistry()
         ws = work / "ws"
         ws.mkdir(exist_ok=True)
-        builtin.register(reg, workspace=ws)
-        return Runtime(reg, builtin.tool_policy()), ws
+        gate = builtin.register(reg, workspace=ws)
+        return Runtime(reg, builtin.tool_policy()), ws, gate
 
     @check("tools")
     def _tools() -> str:
         from blux_sdk import envelopes
 
-        rt, ws = tool_runtime()
+        rt, ws, gate = tool_runtime()
         actor = {"type": "user", "id": "v"}
-        ok = rt.execute(envelopes.execution_request("shell.exec", {"command": "echo hi; env"}, actor=actor)).result
+        session = "ses_01J00000000000000000000000"
+
+        def shell(command: str) -> Any:
+            req = envelopes.execution_request("shell.exec", {"command": command}, actor=actor, session_id=session)
+            return rt.execute(req).result
+
+        # OV-62 (F95): every command needs the person's approval of that exact command.
+        held = shell("echo hi; env")
+        assert held["status"] == "failed" and held["error"]["details"]["reason"] == "approval_required"
+        gate.approve_once(session, "echo hi; env")
+        ok = shell("echo hi; env")
         assert (
             ok["status"] == "succeeded"
             and ok["output"]["stdout"].startswith("hi")
             and FAKE_KEY not in ok["output"]["stdout"]
         )
         (ws / "build").mkdir()
-        denied = rt.execute(envelopes.execution_request("shell.exec", {"command": "rm -rf build"}, actor=actor)).result
+        denied = shell("rm -rf build")
         assert denied["status"] == "failed" and (ws / "build").exists()
-        return "shell.exec safe run without credentials; dangerous command held for approval"
+        return "shell.exec held until approved, then ran without credentials; unapproved delete held"
 
     @check("skills")
     def _skills() -> str:
@@ -321,7 +331,7 @@ def main() -> int:
     def _cron() -> str:
         from blux_runtime.extensions import scheduler
 
-        rt, _ = tool_runtime()
+        rt, _, _ = tool_runtime()
         store = scheduler.JobStore(work / "jobs.json")
         now = dt.datetime(2026, 10, 26, 9, 0, tzinfo=dt.timezone.utc)
         store.add("every 30m", "fs.read", {"path": "missing"}, now=now)

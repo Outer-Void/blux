@@ -3,9 +3,9 @@
  "version": 1,
  "note": "The single pin set for BLUX's cross-repository integration tests (OV-61). CI and local runs install and check out exactly these commits with tools/integration_targets.py. Bump a pin deliberately, rerun the integration tests with every BLUX_REQUIRE_* set, and record the result in Outer-Void/docs ecosystem/integration-matrix.",
  "targets": [
-  {"name": "blux-system", "repository": "Outer-Void/blux-system", "commit": "26f22400256e836dcc79ae5f69b9acd9c5231f6c", "package": "blux-system", "python_min": "3.10", "require": "BLUX_REQUIRE_SYSTEM", "project_env": null},
-  {"name": "dat", "repository": "Outer-Void/dat", "commit": "57c8099d346ad3259b82829b95f6cd9d5b51ff39", "package": "outervoid-dat", "python_min": "3.11", "require": "BLUX_REQUIRE_DAT", "project_env": "DAT_PROJECT_DIR"},
-  {"name": "lrc", "repository": "Outer-Void/lrc", "commit": "ea82afcc45703370cc5e4e312872051182e3259a", "package": "outervoid-lrc", "python_min": "3.11", "require": "BLUX_REQUIRE_LRC", "project_env": "LRC_PROJECT_DIR"},
+  {"name": "blux-system", "repository": "Outer-Void/blux-system", "commit": "93924495d00a913e35bf74df64b38b16c06fc67d", "package": "blux-system", "python_min": "3.10", "require": "BLUX_REQUIRE_SYSTEM", "project_env": null},
+  {"name": "dat", "repository": "Outer-Void/dat", "commit": "24a7290ec628f2126c1a8b422dac15862a0c8682", "package": "outervoid-dat", "python_min": "3.11", "require": "BLUX_REQUIRE_DAT", "project_env": "DAT_PROJECT_DIR"},
+  {"name": "lrc", "repository": "Outer-Void/lrc", "commit": "3765215b09f60ee4c328fd373811f2dfa72d4570", "package": "outervoid-lrc", "python_min": "3.11", "require": "BLUX_REQUIRE_LRC", "project_env": "LRC_PROJECT_DIR"},
   {"name": "god", "repository": "Outer-Void/god", "commit": "613b8002ee87359bfbc4720dfea1bec2019cb01b", "package": "god-cli", "python_min": "3.11", "require": "BLUX_REQUIRE_GOD", "project_env": "GOD_PROJECT_DIR"},
   {"name": "blux-coga", "repository": "Outer-Void/blux-coga", "commit": "c94dc9c1d93207266ecff9ff8d296e191ee16ab3", "package": "blux-coga", "python_min": "3.10", "require": "BLUX_REQUIRE_COGA", "project_env": "COGA_PROJECT_DIR"},
   {"name": "blux-ca", "repository": "Outer-Void/blux-ca", "commit": "689ec703416c8762f475b0d4e9bdc4c3b03ffed4", "package": "blux-ca", "python_min": "3.11", "require": "BLUX_REQUIRE_CA", "project_env": "CA_PROJECT_DIR"},

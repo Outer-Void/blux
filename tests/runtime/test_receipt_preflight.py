@@ -163,3 +163,39 @@ def test_a_damaged_store_stops_a_destructive_capability_before_it_acts(tmp_path:
     assert calls == ["t.write"]  # the destructive handler never ran
     assert result["error"]["details"]["reason"] == "receipt_store_preflight"
     assert json.dumps(result["error"]["details"]["sink"])
+
+
+# OV-62 drills ------------------------------------------------------------------------------------------------
+def test_a_torn_tail_alone_does_not_block(tmp_path: Path) -> None:
+    """An interrupted last write is repaired by the next ingest, so it is not a reason to refuse (OV-62)."""
+    calls: list[str] = []
+    doc = '{"ok":false,"torn_tail":true,"problems":[{"line":4,"reason":"torn_tail"}]}'
+    result = _run(BluxSystemSink(tmp_path / "s", executable=_exe(tmp_path, "torn", doc)), "t.destroy", calls)
+    assert calls == ["t.destroy"] and result["status"] == "succeeded"
+
+
+def test_a_torn_tail_with_other_damage_still_blocks(tmp_path: Path) -> None:
+    calls: list[str] = []
+    doc = (
+        '{"ok":false,"torn_tail":true,"problems":[{"line":2,"reason":"hash_mismatch"},{"line":4,"reason":"torn_tail"}]}'
+    )
+    result = _run(BluxSystemSink(tmp_path / "s", executable=_exe(tmp_path, "torn", doc)), "t.destroy", calls)
+    assert calls == [] and result["error"]["details"]["sink"]["code"] == "STORE_VERIFY_FAILED"
+
+
+def test_a_store_io_error_spools_the_receipt(tmp_path: Path) -> None:
+    """blux-system reports a full disk as STORE_IO_ERROR (OV-62, F135): retryable, so the receipt is queued."""
+    exe = tmp_path / "full"
+    exe.write_text(
+        '#!/bin/sh\ncase "$1" in verify) echo \'{"ok":true}\';;\n'
+        '  ingest) cat >/dev/null; echo \'{"code":"STORE_IO_ERROR","message":"disk full"}\'; exit 1;;\nesac\n'
+    )
+    exe.chmod(0o755)
+    calls: list[str] = []
+    sink = BluxSystemSink(tmp_path / "s", executable=str(exe))
+    outcome = Runtime(_registry(calls), POLICY, receipt_sink=sink).execute(
+        envelopes.execution_request("t.write", {}, actor=USER)
+    )
+    assert outcome.sink_error is not None and outcome.sink_error["spooled"] is True
+    assert not outcome.receipt_not_queued
+    assert sink.outbox.read_text().count("blux.receipt") == 1

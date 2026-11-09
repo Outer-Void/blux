@@ -11,6 +11,7 @@ Paths are resolved (symlinks followed) before they are checked. Clean-room imple
 
 from __future__ import annotations
 
+import errno
 import os
 from collections.abc import Mapping
 from pathlib import Path
@@ -110,3 +111,45 @@ def confine(path: str | Path, root: str | Path) -> Path:
     if not _under(p, base):
         raise PathDenied(f"{path!s} is outside the workspace")
     return p
+
+
+_NOFOLLOW = getattr(os, "O_NOFOLLOW", 0)
+_DIRECTORY = getattr(os, "O_DIRECTORY", 0)
+_FD_WALK = _NOFOLLOW and _DIRECTORY and os.open in os.supports_dir_fd and os.mkdir in os.supports_dir_fd
+
+
+def open_confined(
+    resolved: Path, root: str | Path, flags: int, *, mode: int = 0o644, make_parents: bool = False
+) -> int:
+    """Open a path `confine()` returned without following anything that changed since (OV-62).
+
+    `confine()` resolves symlinks and checks the result, but a plain open() follows whatever is there when it runs:
+    a directory swapped for a symlink in between redirected an fs.write outside the workspace (a drill wrote one
+    file outside in 584 tries). Here every component of the resolved path is opened relative to its parent with
+    O_NOFOLLOW, so a component that is now a symlink fails instead of being followed. Returns a file descriptor.
+    """
+    base = resolve(root)
+    rel = resolved.relative_to(base)
+    if not _FD_WALK:  # pragma: no cover - platforms without openat(); the resolved path is used as is
+        if make_parents:
+            resolved.parent.mkdir(parents=True, exist_ok=True)
+        return os.open(resolved, flags, mode)
+    fd = os.open(base, os.O_RDONLY | _DIRECTORY)
+    try:
+        for part in rel.parts[:-1]:
+            try:
+                nxt = os.open(part, os.O_RDONLY | _DIRECTORY | _NOFOLLOW, dir_fd=fd)
+            except FileNotFoundError:
+                if not make_parents:
+                    raise
+                os.mkdir(part, 0o755, dir_fd=fd)
+                nxt = os.open(part, os.O_RDONLY | _DIRECTORY | _NOFOLLOW, dir_fd=fd)
+            os.close(fd)
+            fd = nxt
+        return os.open(rel.parts[-1], flags | _NOFOLLOW, mode, dir_fd=fd)
+    except OSError as exc:
+        if exc.errno in (errno.ELOOP, errno.ENOTDIR):
+            raise PathDenied(f"{rel} changed while it was being opened (a symlink appeared)") from None
+        raise
+    finally:
+        os.close(fd)

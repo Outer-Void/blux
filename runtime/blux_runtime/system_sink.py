@@ -37,7 +37,10 @@ except ImportError:  # pragma: no cover
 
 # Codes for which a later retry can succeed: BLUX System was not reachable or was busy. Everything else
 # (including SINK_REFUSED, a refusal without its own code) is a refusal.
-RETRYABLE_CODES = frozenset({"STORE_LOCKED", "STORE_NOT_FOUND", "SINK_UNAVAILABLE", "SINK_TIMEOUT", "SINK_PROTOCOL"})
+# STORE_IO_ERROR (blux-system, OV-62): the disk was full or a size limit was hit; the store itself is consistent.
+RETRYABLE_CODES = frozenset(
+    {"STORE_LOCKED", "STORE_NOT_FOUND", "STORE_IO_ERROR", "SINK_UNAVAILABLE", "SINK_TIMEOUT", "SINK_PROTOCOL"}
+)
 ARTIFACT_ENTRY = "blux.outbox-artifact"
 
 
@@ -135,6 +138,10 @@ class BluxSystemSink:
             raise SystemSinkError(
                 str(code), str(doc.get("message", "refused")), spooled=False, details={"store_error": doc}
             )
+        problems = doc.get("problems") or []
+        only_torn_tail = all(isinstance(p, dict) and p.get("reason") == "torn_tail" for p in problems)
+        if doc.get("torn_tail") and problems and only_torn_tail:
+            return  # an interrupted last write; the next ingest repairs it (OV-62)
         if proc.returncode != 0 or doc.get("ok") is not True:
             raise SystemSinkError(
                 "STORE_VERIFY_FAILED",
