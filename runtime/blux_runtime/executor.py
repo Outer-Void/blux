@@ -24,6 +24,7 @@ from blux_runtime.hooks.bus import Emission, EventContext, HookBus, HookError
 from blux_runtime.interfaces import ExecutionContext, ReceiptSink
 from blux_runtime.policy import NOT_EVALUATED, PolicyEngine
 from blux_runtime.registry import CapabilityRegistry, RegisteredCapability
+from blux_runtime.system_sink import SystemSinkError
 from blux_sdk import envelopes, ids
 from blux_sdk.errors import BluxError, ErrorCode, normalize_error
 from blux_sdk.schemas import check_envelope
@@ -292,6 +293,7 @@ class Runtime:
             )
             if emission is not None:
                 timeout_ms = min(timeout_ms, int(emission.payload["timeout_ms"]))  # hooks may only shorten it
+        self._preflight_receipt_store(desc)
         context = ExecutionContext(
             operation_id=req["operation_id"],
             parent_operation_id=req["parent_operation_id"],
@@ -352,6 +354,30 @@ class Runtime:
             {"capability_id": desc.capability_id, "status": "succeeded", "duration_ms": ms, "output_sha256": out_sha},
             trace,
         )
+
+    # Side effects that cannot be taken back once done; their receipt must be storable before they run (F114).
+    PREFLIGHT_SIDE_EFFECTS = frozenset({"external", "destructive"})
+
+    def _preflight_receipt_store(self, desc: Any) -> None:
+        """Stop an external or destructive capability before it acts if the receipt store would refuse its receipt
+        (OV-61, F114, owner decision 2026-11-09). Sinks without a `preflight` (in-memory) are not checked, and an
+        unavailable store passes: the receipt is spooled as for any other capability."""
+        check = getattr(self.receipt_sink, "preflight", None)
+        if desc.side_effects not in self.PREFLIGHT_SIDE_EFFECTS or check is None:
+            return
+        try:
+            check()
+        except SystemSinkError as exc:
+            raise BluxError(
+                ErrorCode.EXECUTION_FAILED,
+                "BLUX System would refuse this operation's receipt, so nothing was run. Repair the store "
+                "(blux-system verify), then retry.",
+                details={
+                    "reason": "receipt_store_preflight",
+                    "side_effects": desc.side_effects,
+                    "sink": exc.to_document(),
+                },
+            ) from None
 
     def _finish(
         self,

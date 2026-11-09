@@ -107,6 +107,42 @@ class BluxSystemSink:
             details={"store_error": doc},
         )
 
+    def preflight(self) -> None:
+        """Check, before a high-risk capability acts, that the store would not refuse its receipt (OV-61, F114).
+
+        Runs `blux-system verify` (read-only). A store that fails verification, or a refusal-class error, raises
+        SystemSinkError(spooled=False) so the caller can stop before acting. An unavailable store (missing
+        executable, timeout, protocol failure, lock held, store missing) passes: the receipt would be spooled and
+        flushed later, exactly as for any other capability."""
+        env = {k: v for k, v in os.environ.items() if k != "BLUX_SYSTEM_STORE"}
+        try:
+            proc = subprocess.run(  # noqa: S603 - fixed argv, no shell
+                [self.executable, "verify", "--store", str(self.store)],
+                capture_output=True,
+                timeout=self.timeout_s,
+                env=env,
+                check=False,
+            )
+            doc = json.loads(proc.stdout)
+        except (FileNotFoundError, subprocess.TimeoutExpired, json.JSONDecodeError):
+            return
+        if not isinstance(doc, dict):
+            return
+        code = doc.get("code")
+        if code is not None:
+            if str(code) in RETRYABLE_CODES:
+                return
+            raise SystemSinkError(
+                str(code), str(doc.get("message", "refused")), spooled=False, details={"store_error": doc}
+            )
+        if proc.returncode != 0 or doc.get("ok") is not True:
+            raise SystemSinkError(
+                "STORE_VERIFY_FAILED",
+                "blux-system verify reports a damaged store.",
+                spooled=False,
+                details={"store_error": doc},
+            )
+
     def _retryable(self, exc: SystemSinkError) -> bool:
         return exc.code in RETRYABLE_CODES
 

@@ -229,3 +229,5 @@ _god/
 _coga/
 # CI checkout of cA for its .blux/ (Stage 07)
 _ca/
+# Integration targets at the pinned commits (OV-61: tools/integration_targets.py checkout _targets)
+_targets/

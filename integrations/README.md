@@ -30,10 +30,17 @@ blux-system graph --store ./truth
 |---|---|
 | Stored, or already stored | ok |
 | Store unavailable (not found, locked, timeout, executable missing, protocol error) | Receipt appended to `<store>.outbox.jsonl`, `Outcome.sink_error.spooled = true`. `BluxSystemSink.flush()` retries later |
-| Store refuses the receipt (invalid, conflict) | Not spooled. `sink_error` carries the store's error document |
+| Store refuses the receipt (invalid, conflict, corrupt store) | Not spooled: set aside in `<outbox>.refused.jsonl` (OV-52). `sink_error` carries the store's error document |
+| An `external` or `destructive` capability, and `blux-system verify` reports a damaged store or a refusal-class error | Nothing runs: the result fails with `EXECUTION_FAILED`, `details.reason = receipt_store_preflight` (OV-61, F114). An unavailable store does not block it: the receipt is spooled as above |
 | CLI with `--system-store` | Prints the result, then exits 1 with a stderr note if the receipt was not recorded |
 
-blux-system depends on blux-sdk at tag `blux-sdk-v0.1.0` (`0b09a46`). Bump that pin deliberately when Contract v1 changes.
+blux-system depends on blux-sdk 0.2.0 at Outer-Void/blux `6ee4c80`. Bump that pin deliberately when Contract v1 changes.
+
+**Integration targets (OV-61).** The commits of BLUX System, DAT, LRC, GOD, CogA, cA and BluxGPT that the
+integration tests run against are pinned once, in [`targets.lock.json`](targets.lock.json). CI and local runs use
+`tools/integration_targets.py` (`install`, `checkout DIR`, `env DIR`); `env` sets every `BLUX_REQUIRE_*`, so a
+missing target fails instead of skipping. `integration_targets.py check` fails if CI hard-codes a commit. The
+result at each pin set is recorded in Outer-Void/docs `ecosystem/integration-matrix.md`.
 
 ## DAT (Stage 03)
 [DAT](https://github.com/Outer-Void/dat) is `role: standalone`. Its `.blux/` declares `repo.audit`,

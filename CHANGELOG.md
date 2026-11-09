@@ -2,6 +2,18 @@
 
 Versioning: the contract version (`MAJOR.MINOR`, see ADR-0005) and package versions (semver) move independently.
 
+## Unreleased: OV-61
+Versioned cross-repository integration. Tests fail on 60ddc76 (`tests/runtime/test_receipt_preflight.py`,
+`tests/packaging/test_integration_targets.py`).
+- **F114 (owner decision 2026-11-09): external and destructive capabilities check the receipt store first.**
+  Before such a capability acts, `BluxSystemSink.preflight()` runs `blux-system verify`; a damaged store or a
+  refusal-class error stops it with `EXECUTION_FAILED` (`details.reason = receipt_store_preflight`), so nothing
+  irreversible happens without a storable receipt. An unavailable store still lets it run (the receipt is
+  spooled). `read` and `write` capabilities are not checked.
+- **One pin set for the integration targets.** `integrations/targets.lock.json` replaces the commits CI had
+  hard-coded since Stages 02-09 (behind the OV-51/52 fixes; BluxGPT was installed at one commit and checked out at
+  another). `tools/integration_targets.py` installs, checks out and requires exactly those commits.
+
 ## Unreleased: OV-53
 Found by the OV-53 review of the native-model research controls. Each fix has a test that fails on cfd7470
 (`tests/training/test_ov53_gates.py`). `blux_training` pipeline version 1.1.0.
